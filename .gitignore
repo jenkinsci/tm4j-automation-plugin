@@ -3,3 +3,4 @@ work
 .idea
 jenkins.war
 run_docker.sh
+.settings
