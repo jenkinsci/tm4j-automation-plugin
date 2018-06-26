@@ -4,3 +4,5 @@ work
 jenkins.war
 run_docker.sh
 .settings
+.classpath
+.project
