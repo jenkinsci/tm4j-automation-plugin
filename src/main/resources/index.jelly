@@ -1,4 +1,3 @@
-<?jelly escape-by-default='true'?>
 <div>
-    TODO
+This plugin creates test cases in TM4J for the project unit tests.
 </div>
