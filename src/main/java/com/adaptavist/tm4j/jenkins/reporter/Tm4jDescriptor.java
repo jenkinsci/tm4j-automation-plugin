@@ -138,27 +138,6 @@ public final class Tm4jDescriptor extends BuildStepDescriptor<Publisher> {
 		return m;
 	}
 
-	public ListBoxModel doFillProjectKeyItems(@QueryParameter String serverAddress) {
-		ListBoxModel m = new ListBoxModel();
-
-		if (StringUtils.isBlank(serverAddress) || serverAddress.trim().equals(ADD_TM4J_GLOBAL_CONFIG) || (this.jiraInstances.size() == 0)) {
-			m.add(ADD_TM4J_GLOBAL_CONFIG);
-			return m;
-		}
-
-		RestClient restClient = getRestclient(serverAddress);
-		Map<Long, String> projects = Project.getAllProjects(restClient);
-
-		Set<Entry<Long, String>> projectEntrySet = projects.entrySet();
-
-		for (Iterator<Entry<Long, String>> iterator = projectEntrySet.iterator(); iterator.hasNext();) {
-			Entry<Long, String> entry = iterator.next();
-			m.add(entry.getValue(), entry.getKey() + "");
-		}
-		restClient.destroy();
-		return m;
-	}
-
 	private RestClient getRestclient(String serverAddress) {
 		String tempUserName = null;
 		String tempPassword = null;

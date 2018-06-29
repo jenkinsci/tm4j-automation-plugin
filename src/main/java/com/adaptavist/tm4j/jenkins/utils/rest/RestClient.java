@@ -45,9 +45,9 @@ public class RestClient {
 		createHttpClient();
 	}
 
-	public RestClient(@Nonnull Tm4JInstance tm4jServer) {
-		this(tm4jServer.getServerAddress(), tm4jServer.getUsername(), tm4jServer.getPassword());
-	}
+//	public RestClient(@Nonnull Tm4JInstance tm4jServer) {
+//		this(tm4jServer.getServerAddress(), tm4jServer.getUsername(), tm4jServer.getPassword());
+//	}
 
 	public void destroy(){
 		if(httpclient != null){
@@ -59,20 +59,15 @@ public class RestClient {
 		}
 	}
 
-	private HttpClientContext createClientContext(
-			String hostAddressWithProtocol, String userName, String password) {
+	private HttpClientContext createClientContext(String hostAddressWithProtocol, String userName, String password) {
 		URL url;
 		try {
 			url = new URL(hostAddressWithProtocol);
-			HttpHost targetHost = new HttpHost(url.getHost(), url.getPort(),
-					url.getProtocol());
+			HttpHost targetHost = new HttpHost(url.getHost(), url.getPort(),url.getProtocol());
 			CredentialsProvider credsProvider = new BasicCredentialsProvider();
-			credsProvider.setCredentials(AuthScope.ANY,
-					new UsernamePasswordCredentials(userName, password));
-
+			credsProvider.setCredentials(AuthScope.ANY,	new UsernamePasswordCredentials(userName, password));
 			AuthCache authCache = new BasicAuthCache();
 			authCache.put(targetHost, new BasicScheme());
-
 			context = HttpClientContext.create();
 			context.setCredentialsProvider(credsProvider);
 			context.setAuthCache(authCache);
