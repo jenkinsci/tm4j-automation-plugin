@@ -1,11 +1,16 @@
-package com.adaptavist.tm4j.jenkins.reporter;
+package com.adaptavist.tm4j.jenkins;
 
-import com.adaptavist.tm4j.jenkins.model.Tm4JInstance;
-import com.adaptavist.tm4j.jenkins.utils.ConfigurationValidator;
-import com.adaptavist.tm4j.jenkins.utils.URLValidator;
-import com.adaptavist.tm4j.jenkins.utils.rest.Project;
-import com.adaptavist.tm4j.jenkins.utils.rest.RestClient;
-import com.adaptavist.tm4j.jenkins.utils.rest.ServerInfo;
+import static com.adaptavist.tm4j.jenkins.Tm4jConstants.ADD_TM4J_GLOBAL_CONFIG;
+import static com.adaptavist.tm4j.jenkins.Tm4jConstants.NAME_POST_BUILD_ACTION;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import org.apache.commons.lang.StringUtils;
+import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.StaplerRequest;
+
 import hudson.Extension;
 import hudson.model.AbstractProject;
 import hudson.tasks.BuildStepDescriptor;
@@ -14,15 +19,6 @@ import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-import org.apache.commons.lang.StringUtils;
-import org.kohsuke.stapler.QueryParameter;
-import org.kohsuke.stapler.StaplerRequest;
-
-import java.util.*;
-import java.util.Map.Entry;
-
-import static com.adaptavist.tm4j.jenkins.reporter.Tm4jConstants.ADD_TM4J_GLOBAL_CONFIG;
-import static com.adaptavist.tm4j.jenkins.reporter.Tm4jConstants.NAME_POST_BUILD_ACTION;
 
 @Extension
 public final class Tm4jDescriptor extends BuildStepDescriptor<Publisher> {
@@ -35,8 +31,8 @@ public final class Tm4jDescriptor extends BuildStepDescriptor<Publisher> {
 	}
 
 	@Override
-	public Publisher newInstance(StaplerRequest req, JSONObject formData) throws FormException {
-		return super.newInstance(req, formData);
+	public Publisher newInstance(StaplerRequest reqquest, JSONObject formData) throws FormException {
+		return super.newInstance(reqquest, formData);
 	}
 
 	@Override
@@ -51,7 +47,7 @@ public final class Tm4jDescriptor extends BuildStepDescriptor<Publisher> {
 		Object object = formData.get("jiraInstances");
 		if (object instanceof JSONArray) {
 			JSONArray jArr = (JSONArray) object;
-			for (Iterator iterator = jArr.iterator(); iterator.hasNext();) {
+			for (Iterator<?> iterator = jArr.iterator(); iterator.hasNext();) {
 				JSONObject jObj = (JSONObject) iterator.next();
 				createAnInstance(jObj);
 			}
@@ -123,32 +119,17 @@ public final class Tm4jDescriptor extends BuildStepDescriptor<Publisher> {
 	}
 
 	public ListBoxModel doFillServerAddressItems(@QueryParameter String serverAddress) {
-
-		ListBoxModel m = new ListBoxModel();
-
+		ListBoxModel modelbox = new ListBoxModel();
 		if (this.jiraInstances != null && this.jiraInstances.size() > 0) {
 			for (Tm4JInstance s : this.jiraInstances) {
-				m.add(s.getServerAddress());
+				modelbox.add(s.getServerAddress());
 			}
 		} else if (StringUtils.isBlank(serverAddress) || serverAddress.trim().equals(ADD_TM4J_GLOBAL_CONFIG)) {
-			m.add(ADD_TM4J_GLOBAL_CONFIG);
+			modelbox.add(ADD_TM4J_GLOBAL_CONFIG);
 		} else {
-			m.add(ADD_TM4J_GLOBAL_CONFIG);
+			modelbox.add(ADD_TM4J_GLOBAL_CONFIG);
 		}
-		return m;
-	}
-
-	private RestClient getRestclient(String serverAddress) {
-		String tempUserName = null;
-		String tempPassword = null;
-		for (Tm4JInstance z : jiraInstances) {
-			if (z.getServerAddress().trim().equals(serverAddress)) {
-				tempUserName = z.getUsername();
-				tempPassword = z.getPassword();
-			}
-		}
-		RestClient restClient = new RestClient(serverAddress, tempUserName, tempPassword);
-		return restClient;
+		return modelbox;
 	}
 
 	public List<Tm4JInstance> getJiraInstances() {

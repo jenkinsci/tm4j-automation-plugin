@@ -1,4 +1,4 @@
-package com.adaptavist.tm4j.jenkins.reporter;
+package com.adaptavist.tm4j.jenkins;
 
 import java.io.File;
 import java.io.PrintStream;
@@ -6,8 +6,6 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.DataBoundConstructor;
-
-import com.adaptavist.tm4j.jenkins.model.Tm4JInstance;
 
 import hudson.Launcher;
 import hudson.model.AbstractBuild;

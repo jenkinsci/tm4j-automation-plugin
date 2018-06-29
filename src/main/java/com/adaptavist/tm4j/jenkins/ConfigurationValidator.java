@@ -1,9 +1,6 @@
-package com.adaptavist.tm4j.jenkins.utils;
+package com.adaptavist.tm4j.jenkins;
 
 import org.apache.commons.lang.StringUtils;
-
-import com.adaptavist.tm4j.jenkins.utils.rest.RestClient;
-import com.adaptavist.tm4j.jenkins.utils.rest.ServerInfo;
 
 public class ConfigurationValidator {
 

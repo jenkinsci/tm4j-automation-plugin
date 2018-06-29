@@ -1,4 +1,4 @@
-package com.adaptavist.tm4j.jenkins.utils;
+package com.adaptavist.tm4j.jenkins;
 
 /**
  * @author mohan

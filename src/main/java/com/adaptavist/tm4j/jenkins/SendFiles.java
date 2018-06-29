@@ -1,4 +1,4 @@
-package com.adaptavist.tm4j.jenkins.reporter;
+package com.adaptavist.tm4j.jenkins;
 
 import java.io.File;
 import java.util.List;

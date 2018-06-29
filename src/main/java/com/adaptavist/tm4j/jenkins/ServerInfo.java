@@ -1,4 +1,4 @@
-package com.adaptavist.tm4j.jenkins.utils.rest;
+package com.adaptavist.tm4j.jenkins;
 
 import java.io.IOException;
 

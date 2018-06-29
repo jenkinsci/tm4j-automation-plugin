@@ -8,7 +8,7 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.adaptavist.tm4j.jenkins.reporter.SendFiles;
+import com.adaptavist.tm4j.jenkins.SendFiles;
 
 public class SendFilesTest {
 

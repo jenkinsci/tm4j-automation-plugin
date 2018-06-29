@@ -1,4 +1,4 @@
-package com.adaptavist.tm4j.jenkins.model;
+package com.adaptavist.tm4j.jenkins;
 
 public class Tm4JInstance {
 

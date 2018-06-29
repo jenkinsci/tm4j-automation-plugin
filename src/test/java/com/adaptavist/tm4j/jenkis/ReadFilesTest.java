@@ -7,7 +7,7 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.adaptavist.tm4j.jenkins.reporter.ReadFiles;
+import com.adaptavist.tm4j.jenkins.ReadFiles;
 
 public class ReadFilesTest {
 

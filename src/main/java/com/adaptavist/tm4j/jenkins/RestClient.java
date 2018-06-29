@@ -1,4 +1,4 @@
-package com.adaptavist.tm4j.jenkins.utils.rest;
+package com.adaptavist.tm4j.jenkins;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -6,8 +6,6 @@ import java.net.URL;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
-
-import javax.annotation.Nonnull;
 
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
@@ -23,8 +21,6 @@ import org.apache.http.impl.client.BasicAuthCache;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-
-import com.adaptavist.tm4j.jenkins.model.Tm4JInstance;
 
 public class RestClient {
 
