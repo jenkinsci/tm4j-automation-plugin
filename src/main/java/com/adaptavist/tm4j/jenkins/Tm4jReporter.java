@@ -42,22 +42,22 @@ public class Tm4jReporter extends Notifier {
         logger.printf("%s Examining test results...%n", pInfo);
         logger.printf(String.format("Build result is %s%n", build.getResult().toString()));
         
-        Tm4JInstance instance = this.getTm4jInstance();
+        Tm4JInstance jiraInstance = this.getTm4jInstance();
     	ReadFiles read = new ReadFiles();
     	List<File> files = read.getFiles(build.getWorkspace() + "/" + this.filePath);
 
     	SendFiles tm4jSendFile = new SendFiles();
-    	String url = instance.getServerAddress() + "/rest/kanoahtests/1.0/ci/results/cucumber/" + this.projectKey + "/testruns";
-		tm4jSendFile.sendFiles(url, instance.getUsername(), instance.getPassword(), files);
+    	String url = jiraInstance.getServerAddress() + "/rest/kanoahtests/1.0/ci/results/cucumber/" + this.projectKey + "/testruns";
+		tm4jSendFile.sendFiles(url, jiraInstance.getUsername(), jiraInstance.getPassword(), files);
         logger.printf("%s Done.%n", pInfo);
         return true;
     }
 
     private Tm4JInstance getTm4jInstance() {
-        List<Tm4JInstance> jiraServers = getDescriptor().getJiraInstances();
-        for (Tm4JInstance jiraServer : jiraServers) {
-            if (StringUtils.isNotBlank(jiraServer.getServerAddress()) && jiraServer.getServerAddress().trim().equals(serverAddress)) {
-                return jiraServer;
+        List<Tm4JInstance> jiraInstances = getDescriptor().getJiraInstances();
+        for (Tm4JInstance jiraInstance : jiraInstances) {
+            if (StringUtils.isNotBlank(jiraInstance.getServerAddress()) && jiraInstance.getServerAddress().trim().equals(serverAddress)) {
+                return jiraInstance;
             }
         }
 		return null;
