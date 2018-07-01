@@ -22,7 +22,7 @@ import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 
-public class RestClient {
+public class RestClientOld {
 
 	private CloseableHttpClient httpclient;
 	private HttpClientContext context;
@@ -30,7 +30,7 @@ public class RestClient {
 	private String userName;
 	private String password;
 	
-	public RestClient(String url, String userName, String password) {
+	public RestClientOld(String url, String userName, String password) {
 		super();
 
 		this.url = url;

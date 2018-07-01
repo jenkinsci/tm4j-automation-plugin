@@ -1,0 +1,66 @@
+package com.adaptavist.tm4j.jenkins;
+
+import static com.adaptavist.tm4j.jenkins.Tm4jConstants.ADD_TM4J_GLOBAL_CONFIG;
+import static com.adaptavist.tm4j.jenkins.Tm4jConstants.CONNECTION_TO_JIRA_HAS_BEEN_VALIDATED;
+import static com.adaptavist.tm4j.jenkins.Tm4jConstants.INCORRECT_SERVER_ADDRESS_FORMAT;
+import static com.adaptavist.tm4j.jenkins.Tm4jConstants.INVALID_USER_CREDENTIALS;
+import static com.adaptavist.tm4j.jenkins.Tm4jConstants.PLEASE_ENTER_THE_PASSWORD;
+import static com.adaptavist.tm4j.jenkins.Tm4jConstants.PLEASE_ENTER_THE_SERVER_NAME;
+import static com.adaptavist.tm4j.jenkins.Tm4jConstants.PLEASE_ENTER_THE_USERNAME;
+import static com.adaptavist.tm4j.jenkins.Tm4jConstants.THIS_IS_NOT_A_VALID_JIRA_SERVER;
+
+import java.util.List;
+
+import org.apache.commons.lang.StringUtils;
+
+import hudson.util.FormValidation;
+import hudson.util.ListBoxModel;
+
+public class Tm4jForm {
+
+	public FormValidation testConnection(String serverAddress, String username, String password) {
+		serverAddress = StringUtils.removeEnd(serverAddress, "/");
+
+		if (StringUtils.isBlank(serverAddress)) {
+			return FormValidation.error(PLEASE_ENTER_THE_SERVER_NAME);
+		}
+
+		if (StringUtils.isBlank(username)) {
+			return FormValidation.error(PLEASE_ENTER_THE_USERNAME);
+		}
+
+		if (StringUtils.isBlank(password)) {
+			return FormValidation.error(PLEASE_ENTER_THE_PASSWORD);
+		}
+
+		if (!(serverAddress.trim().startsWith("https://") || serverAddress.trim().startsWith("http://"))) {
+			return FormValidation.error(INCORRECT_SERVER_ADDRESS_FORMAT);
+		}
+
+		RestClientOld restClient = new RestClientOld(serverAddress, username, password);
+
+		if (!ServerInfo.findServerAddressIsValidTm4JURL(restClient)) {
+			return FormValidation.error(THIS_IS_NOT_A_VALID_JIRA_SERVER);
+		}
+
+		if (!ServerInfo.validateCredentials(restClient)) {
+			return FormValidation.error(INVALID_USER_CREDENTIALS);
+		}
+		restClient.destroy();
+		return FormValidation.ok(CONNECTION_TO_JIRA_HAS_BEEN_VALIDATED);
+
+	}
+
+	public ListBoxModel fillServerAddressItens(List<Tm4JInstance> jiraInstances, String serverAddress) {
+		ListBoxModel modelbox = new ListBoxModel();
+		if (jiraInstances == null || jiraInstances.isEmpty()) {
+			modelbox.add(ADD_TM4J_GLOBAL_CONFIG);
+			return modelbox;
+		}
+		for (Tm4JInstance server : jiraInstances) {
+			modelbox.add(server.getServerAddress());
+		}
+		return modelbox;
+	}
+
+}

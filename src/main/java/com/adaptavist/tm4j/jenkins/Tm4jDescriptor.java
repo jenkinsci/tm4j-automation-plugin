@@ -1,10 +1,8 @@
 package com.adaptavist.tm4j.jenkins;
 
-import static com.adaptavist.tm4j.jenkins.Tm4jConstants.ADD_TM4J_GLOBAL_CONFIG;
 import static com.adaptavist.tm4j.jenkins.Tm4jConstants.NAME_POST_BUILD_ACTION;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -35,42 +33,37 @@ public final class Tm4jDescriptor extends BuildStepDescriptor<Publisher> {
 		return super.newInstance(reqquest, formData);
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public boolean isApplicable(final Class<? extends AbstractProject> jobType) {
 		return true;
 	}
 
 	@Override
-	public boolean configure(StaplerRequest req, JSONObject formData) throws FormException {
-		req.bindParameters(this);
+	public boolean configure(StaplerRequest request, JSONObject formData) throws FormException {
+		request.bindParameters(this);
 		this.jiraInstances = new ArrayList<Tm4JInstance>();
-		Object object = formData.get("jiraInstances");
-		if (object instanceof JSONArray) {
-			JSONArray jArr = (JSONArray) object;
-			for (Iterator<?> iterator = jArr.iterator(); iterator.hasNext();) {
-				JSONObject jObj = (JSONObject) iterator.next();
-				createAnInstance(jObj);
+		Object jiraInstances = formData.get("jiraInstances");
+		if (jiraInstances instanceof JSONArray) {
+			JSONArray jiraInstancesList = (JSONArray) jiraInstances;
+			for (Object jiraInstance :  jiraInstancesList.toArray()) {
+				createAnInstance((JSONObject)jiraInstance);
 			}
-		} else if (object instanceof JSONObject) {
-			JSONObject jObj = formData.getJSONObject("jiraInstances");
-			createAnInstance(jObj);
+		} else {
+			createAnInstance(formData.getJSONObject("jiraInstances"));
 		}
 		save();
-		return super.configure(req, formData);
+		return super.configure(request, formData);
 	}
 
-	private void createAnInstance(JSONObject jObj) {
-		Tm4JInstance tm4JInstance = new Tm4JInstance();
-		String server = jObj.getString("serverAddress").trim();
-		String user = jObj.getString("username").trim();
-		String pass = jObj.getString("password").trim();
-		server = StringUtils.removeEnd(server, "/");
-		tm4JInstance.setServerAddress(server);
-		tm4JInstance.setUsername(user);
-		tm4JInstance.setPassword(pass);
-		RestClient restClient = new RestClient(server, user, pass);
+	private void createAnInstance(JSONObject jiraInstance) {
+		Tm4JInstance tm4jInstance = new Tm4JInstance();
+		tm4jInstance.setServerAddress(StringUtils.removeEnd(jiraInstance.getString("serverAddress").trim(), "/"));
+		tm4jInstance.setUsername(jiraInstance.getString("username").trim());
+		tm4jInstance.setPassword(jiraInstance.getString("password").trim());
+		RestClientOld restClient = new RestClientOld(tm4jInstance.getServerAddress(), tm4jInstance.getUsername(), tm4jInstance.getPassword());
 		if (ConfigurationValidator.validateTm4JConfiguration(restClient)) {
-			this.jiraInstances.add(tm4JInstance);
+			this.jiraInstances.add(tm4jInstance);
 		}
 		restClient.destroy();
 	}
@@ -81,55 +74,11 @@ public final class Tm4jDescriptor extends BuildStepDescriptor<Publisher> {
 	}
 
 	public FormValidation doTestConnection(@QueryParameter String serverAddress, @QueryParameter String username, @QueryParameter String password) {
-
-		serverAddress = StringUtils.removeEnd(serverAddress, "/");
-
-		if (StringUtils.isBlank(serverAddress)) {
-			return FormValidation.error("Please enter the server name");
-		}
-
-		if (StringUtils.isBlank(username)) {
-			return FormValidation.error("Please enter the username");
-		}
-
-		if (StringUtils.isBlank(password)) {
-			return FormValidation.error("Please enter the password");
-		}
-
-		if (!(serverAddress.trim().startsWith("https://") || serverAddress.trim().startsWith("http://"))) {
-			return FormValidation.error("Incorrect server address format");
-		}
-
-		String jiraURL = URLValidator.validateURL(serverAddress);
-
-		if (!jiraURL.startsWith("http")) {
-			return FormValidation.error(jiraURL);
-		}
-		RestClient restClient = new RestClient(serverAddress, username, password);
-
-		if (!ServerInfo.findServerAddressIsValidTm4JURL(restClient)) {
-			return FormValidation.error("This is not a valid Jira Server");
-		}
-
-		if (!ServerInfo.validateCredentials(restClient)) {
-			return FormValidation.error("Invalid user credentials");
-		}
-		restClient.destroy();
-		return FormValidation.ok("Connection to JIRA has been validated");
+		return new Tm4jForm().testConnection(serverAddress, username, password);
 	}
 
 	public ListBoxModel doFillServerAddressItems(@QueryParameter String serverAddress) {
-		ListBoxModel modelbox = new ListBoxModel();
-		if (this.jiraInstances != null && this.jiraInstances.size() > 0) {
-			for (Tm4JInstance s : this.jiraInstances) {
-				modelbox.add(s.getServerAddress());
-			}
-		} else if (StringUtils.isBlank(serverAddress) || serverAddress.trim().equals(ADD_TM4J_GLOBAL_CONFIG)) {
-			modelbox.add(ADD_TM4J_GLOBAL_CONFIG);
-		} else {
-			modelbox.add(ADD_TM4J_GLOBAL_CONFIG);
-		}
-		return modelbox;
+		return new Tm4jForm().fillServerAddressItens(this.jiraInstances, serverAddress);
 	}
 
 	public List<Tm4JInstance> getJiraInstances() {
@@ -139,5 +88,4 @@ public final class Tm4jDescriptor extends BuildStepDescriptor<Publisher> {
 	public void setJiraInstances(List<Tm4JInstance> jiraInstances) {
 		this.jiraInstances = jiraInstances;
 	}
-
 }
