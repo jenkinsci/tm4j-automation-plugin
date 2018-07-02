@@ -22,7 +22,7 @@ import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 
-public class RestClientOld {
+public class RestClient {
 
 	private CloseableHttpClient httpclient;
 	private HttpClientContext context;
@@ -30,7 +30,7 @@ public class RestClientOld {
 	private String userName;
 	private String password;
 	
-	public RestClientOld(String url, String userName, String password) {
+	public RestClient(String url, String userName, String password) {
 		super();
 
 		this.url = url;
@@ -40,10 +40,6 @@ public class RestClientOld {
 		createClientContext(this.url, this.userName, this.password);
 		createHttpClient();
 	}
-
-//	public RestClient(@Nonnull Tm4JInstance tm4jServer) {
-//		this(tm4jServer.getServerAddress(), tm4jServer.getUsername(), tm4jServer.getPassword());
-//	}
 
 	public void destroy(){
 		if(httpclient != null){

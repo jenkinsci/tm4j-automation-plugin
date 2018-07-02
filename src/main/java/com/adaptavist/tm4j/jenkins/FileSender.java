@@ -8,7 +8,7 @@ import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
-public class SendFiles {
+public class FileSender {
 
 	public int sendFiles(String url, String username, String password, List<File> files) {
 		try {

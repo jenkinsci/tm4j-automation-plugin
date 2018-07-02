@@ -37,7 +37,7 @@ public class Tm4jForm {
 			return FormValidation.error(INCORRECT_SERVER_ADDRESS_FORMAT);
 		}
 
-		RestClientOld restClient = new RestClientOld(serverAddress, username, password);
+		RestClient restClient = new RestClient(serverAddress, username, password);
 
 		if (!ServerInfo.findServerAddressIsValidTm4JURL(restClient)) {
 			return FormValidation.error(THIS_IS_NOT_A_VALID_JIRA_SERVER);

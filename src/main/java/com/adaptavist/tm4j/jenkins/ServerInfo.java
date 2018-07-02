@@ -22,7 +22,7 @@ public class ServerInfo {
 
 
 
-	public static boolean findServerAddressIsValidTm4JURL(RestClientOld restClient) {
+	public static boolean findServerAddressIsValidTm4JURL(RestClient restClient) {
 		boolean status = false;
 		
 		HttpResponse response = null;
@@ -65,7 +65,7 @@ public class ServerInfo {
 		return status;
 	
 	}
-	public static long findTestIssueTypeId(RestClientOld restClient) {
+	public static long findTestIssueTypeId(RestClient restClient) {
 		long status = ISSUE_TYPE_ID;
 		
 		HttpResponse response = null;
@@ -121,7 +121,7 @@ public class ServerInfo {
 	}
 	
 	
-	public static boolean validateCredentials(RestClientOld restClient) {
+	public static boolean validateCredentials(RestClient restClient) {
 		
 
 		boolean status = true;

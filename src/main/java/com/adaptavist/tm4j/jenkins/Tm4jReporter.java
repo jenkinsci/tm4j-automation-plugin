@@ -43,10 +43,10 @@ public class Tm4jReporter extends Notifier {
         logger.printf(String.format("Build result is %s%n", build.getResult().toString()));
         
         Tm4JInstance jiraInstance = this.getTm4jInstance();
-    	ReadFiles read = new ReadFiles();
+    	FileReader read = new FileReader();
     	List<File> files = read.getFiles(build.getWorkspace() + "/" + this.filePath);
 
-    	SendFiles tm4jSendFile = new SendFiles();
+    	FileSender tm4jSendFile = new FileSender();
     	String url = jiraInstance.getServerAddress() + "/rest/kanoahtests/1.0/ci/results/cucumber/" + this.projectKey + "/testruns";
 		tm4jSendFile.sendFiles(url, jiraInstance.getUsername(), jiraInstance.getPassword(), files);
         logger.printf("%s Done.%n", pInfo);

@@ -9,7 +9,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 
 
-public class ReadFiles {
+public class FileReader {
 
 	public List<File> getFiles(String pattern) {
 		String[] splited = pattern.split("\\*.");

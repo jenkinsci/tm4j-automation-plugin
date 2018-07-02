@@ -4,7 +4,7 @@ import org.apache.commons.lang.StringUtils;
 
 public class ConfigurationValidator {
 
-	public static boolean validateTm4JConfiguration(RestClientOld restClient) {
+	public static boolean validateTm4JConfiguration(RestClient restClient) {
 
 		String url = restClient.getUrl();
 		String userName = restClient.getUserName();

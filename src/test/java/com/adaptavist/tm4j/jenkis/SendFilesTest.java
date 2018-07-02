@@ -8,7 +8,7 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.adaptavist.tm4j.jenkins.SendFiles;
+import com.adaptavist.tm4j.jenkins.FileSender;
 
 public class SendFilesTest {
 
@@ -20,7 +20,7 @@ public class SendFilesTest {
 	@Test
 	public void shouldLoadTm4JReporter() throws Exception {
 		files.add(new File("/home/chico/dev/source/adaptavist/tm4j-automation-tests/target/cucumber/atmServerCloneTestCase_result.json"));
-		SendFiles sf = new SendFiles();
+		FileSender sf = new FileSender();
 		int response = sf.sendFiles(URL, username , password, files);
 		assertEquals(201, response);
 	}

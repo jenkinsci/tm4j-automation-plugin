@@ -7,7 +7,7 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.adaptavist.tm4j.jenkins.ReadFiles;
+import com.adaptavist.tm4j.jenkins.FileReader;
 
 public class ReadFilesTest {
 
@@ -15,7 +15,7 @@ public class ReadFilesTest {
 	
 	@Test
 	public void shouldReadFilesFromAFolder() throws Exception {
-		ReadFiles readFiles = new ReadFiles();
+		FileReader readFiles = new FileReader();
 		List<File> files = readFiles.getFiles(pattern);
 		assertEquals(files.size(), 1);
 	}
