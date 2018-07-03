@@ -1,0 +1,75 @@
+[
+  {
+    "line": 1,
+    "elements": [
+      {
+        "line": 3,
+        "name": "Add a number",
+        "description": "",
+        "id": "calculator;add-a-number",
+        "type": "scenario",
+        "keyword": "Scenario",
+        "steps": [
+          {
+            "result": {
+              "duration": 72674679,
+              "status": "passed"
+            },
+            "line": 4,
+            "name": "a calculator I just turned on",
+            "match": {
+              "location": "CucumberSteps.a_calculator_I_just_turned_on()"
+            },
+            "keyword": "Given "
+          },
+          {
+            "result": {
+              "duration": 1275075,
+              "status": "passed"
+            },
+            "line": 5,
+            "name": "I add 4 and 4",
+            "match": {
+              "arguments": [
+                {
+                  "val": "4",
+                  "offset": 6
+                },
+                {
+                  "val": "4",
+                  "offset": 12
+                }
+              ],
+              "location": "CucumberSteps.numbers_are_added(long,long)"
+            },
+            "keyword": "And "
+          },
+          {
+            "result": {
+              "duration": 946864,
+              "status": "passed"
+            },
+            "line": 6,
+            "name": "the result is 8",
+            "match": {
+              "arguments": [
+                {
+                  "val": "8",
+                  "offset": 14
+                }
+              ],
+              "location": "CucumberSteps.the_result_is(long)"
+            },
+            "keyword": "Then "
+          }
+        ]
+      }
+    ],
+    "name": "Calculator",
+    "description": "",
+    "id": "calculator",
+    "keyword": "Feature",
+    "uri": "src/test/resources/features/CalculatorTest.feature",
+    "tags": []
+  }
+]

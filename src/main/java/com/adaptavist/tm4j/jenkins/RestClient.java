@@ -11,7 +11,7 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 public class RestClient {
 
 	private static final String TM4J_TESTRUNS = "{0}/rest/kanoahtests/1.0/ci/results/cucumber/{1}/testruns";
-	private static final String REST_TROUBLESHOOTING_CHECK = "{0}/rest/troubleshooting/1.0/check/";
+	private static final String TM4J_HEALTH_CHECK = "{0}/rest/kanoahtests/1.0/healthcheck/";
 
 	public int sendFiles(String serverAddress, String projectKey, String username, String password, List<File> files) {
 		try {
@@ -31,7 +31,8 @@ public class RestClient {
 
 	public boolean isValidCredentials(String serverAddress, String username, String password) {
 		try {
-			HttpResponse<String> response = Unirest.get(MessageFormat.format(REST_TROUBLESHOOTING_CHECK, serverAddress))
+			String format = MessageFormat.format(TM4J_HEALTH_CHECK, serverAddress);
+			HttpResponse<String> response = Unirest.get(format)
 					  .basicAuth(username, password)
 					  .asString();
 			return response.getStatus() == 200;
