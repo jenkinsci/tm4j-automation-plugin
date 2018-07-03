@@ -12,8 +12,8 @@ import com.adaptavist.tm4j.jenkins.RestClient;
 
 public class RestClientTest {
 
+	private static final String PROJECT_KEY = "DEF";
 	private static final String SERVER_ADDRESS = "http://localhost:2990/jira";
-	String URL = SERVER_ADDRESS + "/rest/kanoahtests/1.0/ci/results/cucumber/DEF/testruns";
 	private String username = "admin";
 	private String password = "admin";
 	private List<File> files = new ArrayList<File>();
@@ -22,7 +22,7 @@ public class RestClientTest {
 	public void shouldLoadTm4JReporter() throws Exception {
 		files.add(new File("/home/chico/dev/source/adaptavist/tm4j-automation-tests/target/cucumber/atmServerCloneTestCase_result.json"));
 		RestClient restClient = new RestClient();
-		int response = restClient.sendFiles(URL, username , password, files);
+		int response = restClient.sendFiles(SERVER_ADDRESS, PROJECT_KEY, username , password, files);
 		assertEquals(201, response);
 	}
 

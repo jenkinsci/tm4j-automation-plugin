@@ -1,10 +1,7 @@
 package com.adaptavist.tm4j.jenkins;
 
-import java.io.File;
 import java.io.PrintStream;
-import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import hudson.Launcher;
@@ -35,16 +32,18 @@ public class Tm4jReporter extends Notifier {
     }
 
     @Override
-    public boolean perform(final AbstractBuild<?, ?> build,
-                           final Launcher launcher,
-                           final BuildListener listener) {
+    public boolean perform(final AbstractBuild<?, ?> build, final Launcher launcher, final BuildListener listener) {
         logger = listener.getLogger();
         logger.printf("%s Examining test results...%n", pInfo);
         logger.printf(String.format("Build result is %s%n", build.getResult().toString()));
-
-        Tm4jIntegrator read = new Tm4jIntegrator();
-    	return read.perform(getDescriptor().getJiraInstances(), build.getWorkspace(), this.serverAddress, this.filePath, this.projectKey);
-//        logger.printf("%s Done.%n", pInfo);
+        Tm4jPlugin plugin = new Tm4jPlugin();
+        if (!plugin.perform(getDescriptor().getJiraInstances(), build.getWorkspace(), this.filePath, this.serverAddress, this.projectKey)) {
+            logger.printf("%s Error.%n", pInfo);
+            logger.printf("%s Cucumber files not found .%n", pInfo);
+        	return false;
+        };
+    	logger.printf("%s Done.%n", pInfo);
+    	return false;
     }
 
     @Override
