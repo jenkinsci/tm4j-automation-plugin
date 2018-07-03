@@ -41,26 +41,10 @@ public class Tm4jReporter extends Notifier {
         logger = listener.getLogger();
         logger.printf("%s Examining test results...%n", pInfo);
         logger.printf(String.format("Build result is %s%n", build.getResult().toString()));
-        
-        Tm4JInstance jiraInstance = this.getTm4jInstance();
-    	FileReader read = new FileReader();
-    	List<File> files = read.getFiles(build.getWorkspace() + "/" + this.filePath);
 
-    	FileSender tm4jSendFile = new FileSender();
-    	String url = jiraInstance.getServerAddress() + "/rest/kanoahtests/1.0/ci/results/cucumber/" + this.projectKey + "/testruns";
-		tm4jSendFile.sendFiles(url, jiraInstance.getUsername(), jiraInstance.getPassword(), files);
-        logger.printf("%s Done.%n", pInfo);
-        return true;
-    }
-
-    private Tm4JInstance getTm4jInstance() {
-        List<Tm4JInstance> jiraInstances = getDescriptor().getJiraInstances();
-        for (Tm4JInstance jiraInstance : jiraInstances) {
-            if (StringUtils.isNotBlank(jiraInstance.getServerAddress()) && jiraInstance.getServerAddress().trim().equals(serverAddress)) {
-                return jiraInstance;
-            }
-        }
-		return null;
+        Tm4jIntegrator read = new Tm4jIntegrator();
+    	return read.perform(getDescriptor().getJiraInstances(), build.getWorkspace(), this.serverAddress, this.filePath, this.projectKey);
+//        logger.printf("%s Done.%n", pInfo);
     }
 
     @Override

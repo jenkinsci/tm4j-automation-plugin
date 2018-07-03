@@ -61,11 +61,10 @@ public final class Tm4jDescriptor extends BuildStepDescriptor<Publisher> {
 		tm4jInstance.setServerAddress(StringUtils.removeEnd(jiraInstance.getString("serverAddress").trim(), "/"));
 		tm4jInstance.setUsername(jiraInstance.getString("username").trim());
 		tm4jInstance.setPassword(jiraInstance.getString("password").trim());
-		RestClient restClient = new RestClient(tm4jInstance.getServerAddress(), tm4jInstance.getUsername(), tm4jInstance.getPassword());
-		if (ConfigurationValidator.validateTm4JConfiguration(restClient)) {
+		RestClient restClient = new RestClient();
+		if (restClient.isValidCredentials(tm4jInstance.getServerAddress(), tm4jInstance.getUsername(), tm4jInstance.getPassword())) {
 			this.jiraInstances.add(tm4jInstance);
 		}
-		restClient.destroy();
 	}
 
 	@Override

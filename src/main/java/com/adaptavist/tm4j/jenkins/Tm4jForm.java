@@ -7,7 +7,6 @@ import static com.adaptavist.tm4j.jenkins.Tm4jConstants.INVALID_USER_CREDENTIALS
 import static com.adaptavist.tm4j.jenkins.Tm4jConstants.PLEASE_ENTER_THE_PASSWORD;
 import static com.adaptavist.tm4j.jenkins.Tm4jConstants.PLEASE_ENTER_THE_SERVER_NAME;
 import static com.adaptavist.tm4j.jenkins.Tm4jConstants.PLEASE_ENTER_THE_USERNAME;
-import static com.adaptavist.tm4j.jenkins.Tm4jConstants.THIS_IS_NOT_A_VALID_JIRA_SERVER;
 
 import java.util.List;
 
@@ -20,35 +19,23 @@ public class Tm4jForm {
 
 	public FormValidation testConnection(String serverAddress, String username, String password) {
 		serverAddress = StringUtils.removeEnd(serverAddress, "/");
-
 		if (StringUtils.isBlank(serverAddress)) {
 			return FormValidation.error(PLEASE_ENTER_THE_SERVER_NAME);
 		}
-
 		if (StringUtils.isBlank(username)) {
 			return FormValidation.error(PLEASE_ENTER_THE_USERNAME);
 		}
-
 		if (StringUtils.isBlank(password)) {
 			return FormValidation.error(PLEASE_ENTER_THE_PASSWORD);
 		}
-
 		if (!(serverAddress.trim().startsWith("https://") || serverAddress.trim().startsWith("http://"))) {
 			return FormValidation.error(INCORRECT_SERVER_ADDRESS_FORMAT);
 		}
-
-		RestClient restClient = new RestClient(serverAddress, username, password);
-
-		if (!ServerInfo.findServerAddressIsValidTm4JURL(restClient)) {
-			return FormValidation.error(THIS_IS_NOT_A_VALID_JIRA_SERVER);
-		}
-
-		if (!ServerInfo.validateCredentials(restClient)) {
+		RestClient restClient = new RestClient();
+		if (!restClient.isValidCredentials(serverAddress, username, password)) {
 			return FormValidation.error(INVALID_USER_CREDENTIALS);
 		}
-		restClient.destroy();
 		return FormValidation.ok(CONNECTION_TO_JIRA_HAS_BEEN_VALIDATED);
-
 	}
 
 	public ListBoxModel fillServerAddressItens(List<Tm4JInstance> jiraInstances, String serverAddress) {

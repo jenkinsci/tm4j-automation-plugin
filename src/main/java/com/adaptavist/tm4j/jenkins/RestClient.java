@@ -1,111 +1,40 @@
 package com.adaptavist.tm4j.jenkins;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.security.KeyManagementException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
+import java.io.File;
+import java.util.List;
 
-import org.apache.http.HttpHost;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.AuthCache;
-import org.apache.http.client.CredentialsProvider;
-import org.apache.http.client.protocol.HttpClientContext;
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apache.http.conn.ssl.SSLContextBuilder;
-import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
-import org.apache.http.impl.auth.BasicScheme;
-import org.apache.http.impl.client.BasicAuthCache;
-import org.apache.http.impl.client.BasicCredentialsProvider;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
+import com.mashape.unirest.http.HttpResponse;
+import com.mashape.unirest.http.Unirest;
+import com.mashape.unirest.http.exceptions.UnirestException;
 
 public class RestClient {
 
-	private CloseableHttpClient httpclient;
-	private HttpClientContext context;
-	private String url;
-	private String userName;
-	private String password;
-	
-	public RestClient(String url, String userName, String password) {
-		super();
+	private static final String REST_TROUBLESHOOTING_1_0_CHECK = "/rest/troubleshooting/1.0/check/";
 
-		this.url = url;
-		this.userName = userName;
-		this.password = password;
-
-		createClientContext(this.url, this.userName, this.password);
-		createHttpClient();
-	}
-
-	public void destroy(){
-		if(httpclient != null){
-			try {
-				httpclient.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
-	private HttpClientContext createClientContext(String hostAddressWithProtocol, String userName, String password) {
-		URL url;
+	public int sendFiles(String url, String username, String password, List<File> files) {
 		try {
-			url = new URL(hostAddressWithProtocol);
-			HttpHost targetHost = new HttpHost(url.getHost(), url.getPort(),url.getProtocol());
-			CredentialsProvider credsProvider = new BasicCredentialsProvider();
-			credsProvider.setCredentials(AuthScope.ANY,	new UsernamePasswordCredentials(userName, password));
-			AuthCache authCache = new BasicAuthCache();
-			authCache.put(targetHost, new BasicScheme());
-			context = HttpClientContext.create();
-			context.setCredentialsProvider(credsProvider);
-			context.setAuthCache(authCache);
-		} catch (MalformedURLException e) {
+			HttpResponse<String> jsonResponse = Unirest.post(url)
+					  .header("accept", "application/json")
+					  .basicAuth(username, password)
+					  .field("parameter", "value")
+					  .field("file", files.get(0))
+					  .asString();
+			return jsonResponse.getStatus();
+		} catch (UnirestException e) {
 			e.printStackTrace();
 		}
-
-		return context;
+		return -1;
 	}
 
-	private void createHttpClient() {
+	public boolean isValidCredentials(String serverAddress, String username, String password) {
 		try {
-			SSLContextBuilder builder = new SSLContextBuilder();
-			builder.loadTrustMaterial(null, new TrustSelfSignedStrategy());
-			SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(
-					builder.build(),
-					SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
-			httpclient = HttpClients.custom().setSSLSocketFactory(sslsf)
-					.build();
-		} catch (KeyManagementException e1) {
-			e1.printStackTrace();
-		} catch (NoSuchAlgorithmException e1) {
-			e1.printStackTrace();
-		} catch (KeyStoreException e1) {
-			e1.printStackTrace();
+			HttpResponse<String> response = Unirest.get(serverAddress + REST_TROUBLESHOOTING_1_0_CHECK)
+					  .basicAuth(username, password)
+					  .asString();
+			return response.getStatus() == 200;
+		} catch (UnirestException e) {
+			e.printStackTrace();
 		}
+		return false;
 	}
-
-	public CloseableHttpClient getHttpclient() {
-		return httpclient;
-	}
-
-	public HttpClientContext getContext() {
-		return context;
-	}
-
-	public String getUrl() {
-		return url;
-	}
-
-	public String getUserName() {
-		return userName;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
 }

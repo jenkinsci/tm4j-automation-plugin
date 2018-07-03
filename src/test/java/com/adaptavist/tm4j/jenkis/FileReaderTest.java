@@ -7,15 +7,15 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.adaptavist.tm4j.jenkins.FileReader;
+import com.adaptavist.tm4j.jenkins.Tm4jIntegrator;
 
-public class ReadFilesTest {
+public class FileReaderTest {
 
 	private String pattern = "src/main/resources/*.jelly";
 	
 	@Test
 	public void shouldReadFilesFromAFolder() throws Exception {
-		FileReader readFiles = new FileReader();
+		Tm4jIntegrator readFiles = new Tm4jIntegrator();
 		List<File> files = readFiles.getFiles(pattern);
 		assertEquals(files.size(), 1);
 	}
