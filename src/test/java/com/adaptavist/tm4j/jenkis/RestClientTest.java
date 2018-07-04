@@ -11,16 +11,16 @@ import org.junit.Test;
 
 import com.adaptavist.tm4j.jenkins.RestClient;
 
+@Ignore
 public class RestClientTest {
 
 	private static final String PROJECT_KEY = "JP";
-	private static final String SERVER_ADDRESS = "https://avst-test1358.adaptavist.cloud";
+	private static final String SERVER_ADDRESS = "http://localhost:2990/jira";
 	private String username = "admin";
-	private String password = "Str0ngp4ss_$";
+	private String password = "admin";
 	private List<File> files = new ArrayList<File>();
 	
 	@Test
-	@Ignore
 	public void shouldLoadTm4JReporter() throws Exception {
 		files.add(new File("src/test/resources/result.json"));
 		RestClient restClient = new RestClient();
@@ -29,7 +29,6 @@ public class RestClientTest {
 	}
 
 	@Test
-	@Ignore
 	public void shouldValidateCredentials() throws Exception {
 		RestClient restClient = new RestClient();
 		assertEquals(true, restClient.isValidCredentials(SERVER_ADDRESS, username, password));

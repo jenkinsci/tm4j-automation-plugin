@@ -31,8 +31,8 @@ public class RestClient {
 
 	public boolean isValidCredentials(String serverAddress, String username, String password) {
 		try {
-			String format = MessageFormat.format(TM4J_HEALTH_CHECK, serverAddress);
-			HttpResponse<String> response = Unirest.get(format)
+			String url = MessageFormat.format(TM4J_HEALTH_CHECK, serverAddress);
+			HttpResponse<String> response = Unirest.get(url)
 					  .basicAuth(username, password)
 					  .asString();
 			return response.getStatus() == 200;
