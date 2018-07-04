@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-wget http://localhost:8080/jenkins/jnlpJars/jenkins-cli.jar
+curl http://localhost:8080/jenkins/jnlpJars/jenkins-cli.jar --output jenkins-cli.jar
 sleep 1
 java -jar jenkins-cli.jar -s http://localhost:8080/jenkins install-plugin git
 java -jar jenkins-cli.jar -s http://localhost:8080/jenkins restart
