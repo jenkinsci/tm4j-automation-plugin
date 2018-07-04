@@ -43,7 +43,7 @@ public class Tm4jReporter extends Notifier {
         	return false;
         };
     	logger.printf("%s Done.%n", pInfo);
-    	return false;
+    	return true;
     }
 
     @Override
