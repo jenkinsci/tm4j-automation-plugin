@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties/>
+  <scm class="hudson.plugins.git.GitSCM" plugin="git@3.9.1">
+    <configVersion>2</configVersion>
+    <userRemoteConfigs>
+      <hudson.plugins.git.UserRemoteConfig>
+        <url>ssh://git@stash.adaptavist.com:7999/~cfaccin/tm4j-cucumber-jenkins-plugin-tests.git</url>
+        <credentialsId>8c9118f4-58f0-42d7-9439-b28dce5df1e4</credentialsId>
+      </hudson.plugins.git.UserRemoteConfig>
+    </userRemoteConfigs>
+    <branches>
+      <hudson.plugins.git.BranchSpec>
+        <name>*/master</name>
+      </hudson.plugins.git.BranchSpec>
+    </branches>
+    <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
+    <submoduleCfg class="list"/>
+    <extensions/>
+  </scm>
+  <canRoam>true</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers/>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <hudson.tasks.Shell>
+      <command>atlas-mvn test</command>
+    </hudson.tasks.Shell>
+  </builders>
+  <publishers>
+    <com.adaptavist.tm4j.jenkins.Tm4jReporter plugin="com.adaptavist.tm4j.jenkins-plugin@1.0-SNAPSHOT">
+      <pInfo>[TM4JTestResultReporter] [INFO]</pInfo>
+      <serverAddress>http://localhost:2990/jira</serverAddress>
+      <projectKey>DEF</projectKey>
+      <filePath>target/cucumber/*.json</filePath>
+    </com.adaptavist.tm4j.jenkins.Tm4jReporter>
+  </publishers>
+  <buildWrappers/>
+</project>
