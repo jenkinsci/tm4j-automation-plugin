@@ -9,7 +9,7 @@ import hudson.FilePath;
 
 public class Tm4jPlugin {
 
-	public boolean perform(List<Tm4JInstance> jiraInstances, FilePath workspace, String filePath, String serverAddress, String projectKey) {
+	public boolean uploadTestResultsFiles(List<Tm4JInstance> jiraInstances, FilePath workspace, String filePath, String serverAddress, String projectKey) {
 		List<File> files = new FileReader().getFiles(workspace + "/" + filePath);
 		if (files.isEmpty()) {
 			return false;
