@@ -3,6 +3,7 @@ package com.adaptavist.tm4j.jenkins;
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.List;
+import java.util.zip.ZipFile;
 
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
@@ -21,6 +22,22 @@ public class RestClient {
 					  .basicAuth(username, password)
 					  .field("parameter", "value")
 					  .field("file", files.get(0))
+					  .asString();
+			return jsonResponse.getStatus();
+		} catch (UnirestException e) {
+			e.printStackTrace();
+		}
+		return -1;
+	}
+	
+	public int sendZip(String serverAddress, String projectKey, String username, String password, ZipFile file) {
+		try {
+			String url = MessageFormat.format(TM4J_TESTRUNS, serverAddress, projectKey);
+			HttpResponse<String> jsonResponse = Unirest.post(url)
+					  .header("accept", "application/json")
+					  .basicAuth(username, password)
+					  .field("parameter", "value")
+					  .field("file", file)
 					  .asString();
 			return jsonResponse.getStatus();
 		} catch (UnirestException e) {
