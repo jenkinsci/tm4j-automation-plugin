@@ -1,66 +1,68 @@
 #!/usr/bin/env bash
 set -e
+server=http://localhost:8080/jenkins
 
-if [ 200 == $(curl -o /dev/null -s -w "%{http_code}\n" http://localhost:8080/jenkins/jnlpJars/jenkins-cli.jar) ]
+is_running() { 
+	if [ 200 == $(curl -o /dev/null -s -w "%{http_code}\n" $server/jnlpJars/jenkins-cli.jar) ] 
+	then
+		true
+	else 
+		false
+	fi
+}
+
+wait_start() { 
+	echo "starting..."
+	while ! is_running 
+	do
+		sleep 1
+	done
+}
+
+wait_stop() { 
+	echo "stoping..."
+	while is_running  
+	do
+		sleep 1
+	done
+}
+
+if is_running
 then
-	curl http://localhost:8080/jenkins/jnlpJars/jenkins-cli.jar --output jenkins-cli.jar
+	curl $server/jnlpJars/jenkins-cli.jar --output jenkins-cli.jar
 	sleep 2
-	java -jar jenkins-cli.jar -s http://localhost:8080/jenkins safe-shutdown
+	java -jar jenkins-cli.jar -s $server safe-shutdown
 	sleep 2
 fi
 
-rm -r work/
+rm -rf work/
 mvn clean
-
 sh ./run.sh &
 
-echo "starting..."
-while [ 200 != $(curl -o /dev/null -s -w "%{http_code}\n" http://localhost:8080/jenkins/jnlpJars/jenkins-cli.jar) ]
-do
-	sleep 1
-done
+wait_start
+curl $server/jnlpJars/jenkins-cli.jar --output jenkins-cli.jar
+java -jar jenkins-cli.jar -s $server safe-restart
+wait_stop
+wait_start
 
-curl http://localhost:8080/jenkins/jnlpJars/jenkins-cli.jar --output jenkins-cli.jar
-echo "wait..."
-java -jar jenkins-cli.jar -s http://localhost:8080/jenkins safe-restart
-
-echo "stoping..."
-while [ 200 == $(curl -o /dev/null -s -w "%{http_code}\n" http://localhost:8080/jenkins/jnlpJars/jenkins-cli.jar) ]
-do
-	sleep 1
-done
-
-echo "starting..."
-while [ 200 != $(curl -o /dev/null -s -w "%{http_code}\n" http://localhost:8080/jenkins/jnlpJars/jenkins-cli.jar) ]
-do
-	sleep 1
-done
-
-java -jar jenkins-cli.jar -s http://localhost:8080/jenkins install-plugin git
+java -jar jenkins-cli.jar -s $server install-plugin git
 sleep 1
-echo "restarting..."
-java -jar jenkins-cli.jar -s http://localhost:8080/jenkins restart
+echo "stoping..."
+java -jar jenkins-cli.jar -s $server restart
+wait_start
 
-while [ 200 != $(curl -o /dev/null -s -w "%{http_code}\n" http://localhost:8080/jenkins/jnlpJars/jenkins-cli.jar) ]
-do
-	sleep 1
-done
-
-java -jar jenkins-cli.jar -s http://localhost:8080/jenkins create-job tm4j-cucumber-jenkins-plugins-test < config.xml
+echo "setting jenkings configurations"
+java -jar jenkins-cli.jar -s $server create-job tm4j-cucumber-jenkins-plugins-test < config.xml
+echo "creating a default job"
 cp com.adaptavist.tm4j.jenkins.Tm4jReporter.xml work/com.adaptavist.tm4j.jenkins.Tm4jReporter.xml
 echo "restarting..."
-java -jar jenkins-cli.jar -s http://localhost:8080/jenkins restart
+java -jar jenkins-cli.jar -s $server restart
+wait_start
 
-while [ 200 != $(curl -o /dev/null -s -w "%{http_code}\n" http://localhost:8080/jenkins/jnlpJars/jenkins-cli.jar) ]
-do
-	sleep 1
-done
-
-echo "Done"
-java -jar jenkins-cli.jar -s http://localhost:8080/jenkins safe-shutdown
-
+echo "Shutdown"
+java -jar jenkins-cli.jar -s $server safe-shutdown
 sleep 2
 echo "Jenkins stoped"
 echo "Setup finished"
 echo "Execute run.sh to run Jenkins";
-#rm jenkins-cli.jar
+rm jenkins-cli.jar
