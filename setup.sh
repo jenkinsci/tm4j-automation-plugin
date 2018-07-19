@@ -1,5 +1,15 @@
 #!/usr/bin/env bash
 
+if [ 200 == $(curl -o /dev/null -s -w "%{http_code}\n" http://localhost:8080/jenkins/jnlpJars/jenkins-cli.jar) ]
+then
+	curl http://localhost:8080/jenkins/jnlpJars/jenkins-cli.jar --output jenkins-cli.jar
+	sleep 2
+	java -jar jenkins-cli.jar -s http://localhost:8080/jenkins safe-shutdown
+	sleep 2
+fi
+
+rm -r work/
+
 sh ./run.sh &
 
 while [ 200 != $(curl -o /dev/null -s -w "%{http_code}\n" http://localhost:8080/jenkins/jnlpJars/jenkins-cli.jar) ]
@@ -31,5 +41,8 @@ do
 done
 
 echo "Done"
+java -jar jenkins-cli.jar -s http://localhost:8080/jenkins safe-shutdown
 
-rm jenkins-cli.jar
+echo "Jenkins Stoped"
+echo "Execute run.sh to run Jenkins";
+#rm jenkins-cli.jar

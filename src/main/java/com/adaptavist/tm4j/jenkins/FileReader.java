@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.io.FileUtils;
@@ -20,12 +19,12 @@ public class FileReader {
 		return new ArrayList<File>(files);
 	}
 
-	public ZipFile getZip(String[] patterns) {
+	public File getZip(String[] patterns) {
 		List<File> files = new ArrayList<File>();
 		for (String pattern : patterns) {
 			files.addAll(getFiles(pattern));
 		}
-		File zip = new File("tm4j.zip");
+		File zip = new File("/tmp/tm4j.zip");
 		try {
 			ZipOutputStream out = new ZipOutputStream(new FileOutputStream(zip));
 			for (File file : files) {
@@ -34,7 +33,7 @@ public class FileReader {
 				out.closeEntry();
 			}
 			out.close();
-			return new ZipFile(zip);
+			return zip;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

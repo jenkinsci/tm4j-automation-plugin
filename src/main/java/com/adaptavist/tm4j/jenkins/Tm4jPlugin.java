@@ -10,12 +10,10 @@ import hudson.FilePath;
 public class Tm4jPlugin {
 
 	public boolean uploadTestResultsFiles(List<Tm4JInstance> jiraInstances, FilePath workspace, String filePath, String serverAddress, String projectKey) {
-		List<File> files = new FileReader().getFiles(workspace + "/" + filePath);
-		if (files.isEmpty()) {
-			return false;
-		}
+		String[] patterns = new String []{workspace + "/" + filePath};
+		File file = new FileReader().getZip(patterns);
 		Tm4JInstance jiraInstance = getTm4jInstance(jiraInstances, serverAddress);
-		new RestClient().sendFiles(jiraInstance.getServerAddress(), projectKey, jiraInstance.getUsername(), jiraInstance.getPassword(), files);
+		new RestClient().sendZip(jiraInstance.getServerAddress(), projectKey, jiraInstance.getUsername(), jiraInstance.getPassword(), file);
 		return true;
 	}
 

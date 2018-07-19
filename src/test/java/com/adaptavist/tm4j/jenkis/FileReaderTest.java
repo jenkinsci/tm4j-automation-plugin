@@ -21,7 +21,7 @@ public class FileReaderTest {
 
 	@AfterClass
 	public static void afterClass() throws IOException {
-		FileUtils.forceDelete(new File("tm4j.zip"));
+		FileUtils.forceDelete(new File("/tmp/tm4j.zip"));
 	}
 	
 	@Test
@@ -32,8 +32,9 @@ public class FileReaderTest {
 	
 	@Test
 	public void shouldCreateAZipFromAPatterm() throws Exception {
-		ZipFile zip = new FileReader().getZip(patterns);
-		assertEquals("tm4j.zip", zip.getName());
+		File file = new FileReader().getZip(patterns);
+		assertEquals("tm4j.zip", file.getName());
+		ZipFile zip = new ZipFile(file);
 		ZipEntry entry = zip.getEntry("src/main/resources/index.jelly");
 		assertEquals(entry.isDirectory(), false);
 	}
