@@ -1,6 +1,7 @@
 package com.adaptavist.tm4j.jenkis;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -32,5 +33,6 @@ public class FileReaderTest {
 		ZipEntry entry = zip.getEntry("src/main/resources/index.jelly");
 		assertEquals(entry.isDirectory(), false);
 		file.delete();
+		assertFalse(file.exists());
 	}
 }
