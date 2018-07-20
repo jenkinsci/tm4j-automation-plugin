@@ -24,8 +24,8 @@ public class FileReader {
 		for (String pattern : patterns) {
 			files.addAll(getFiles(pattern));
 		}
-		File zip = new File("/tmp/tm4j.zip");
 		try {
+			File zip = File.createTempFile("tm4j", "zip");
 			ZipOutputStream out = new ZipOutputStream(new FileOutputStream(zip));
 			for (File file : files) {
 				out.putNextEntry(new ZipEntry(file.getPath()));

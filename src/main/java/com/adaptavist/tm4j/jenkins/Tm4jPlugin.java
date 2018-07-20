@@ -14,6 +14,7 @@ public class Tm4jPlugin {
 		File file = new FileReader().getZip(patterns);
 		Tm4JInstance jiraInstance = getTm4jInstance(jiraInstances, serverAddress);
 		new RestClient().sendZip(jiraInstance.getServerAddress(), projectKey, jiraInstance.getUsername(), jiraInstance.getPassword(), file);
+		file.delete();
 		return true;
 	}
 
