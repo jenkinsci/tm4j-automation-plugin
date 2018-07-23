@@ -1,2 +1,3 @@
 #!/usr/bin/env bash
-atlas-mvn hpi:run
+set -e
+mvn hpi:run

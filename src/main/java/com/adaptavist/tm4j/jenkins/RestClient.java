@@ -2,7 +2,6 @@ package com.adaptavist.tm4j.jenkins;
 
 import java.io.File;
 import java.text.MessageFormat;
-import java.util.List;
 
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
@@ -13,14 +12,13 @@ public class RestClient {
 	private static final String TM4J_TESTRUNS = "{0}/rest/kanoahtests/1.0/ci/results/cucumber/{1}/testruns";
 	private static final String TM4J_HEALTH_CHECK = "{0}/rest/kanoahtests/1.0/healthcheck/";
 
-	public int sendFiles(String serverAddress, String projectKey, String username, String password, List<File> files) {
+	public int sendZip(String serverAddress, String projectKey, String username, String password, File zip)  {
 		try {
 			String url = MessageFormat.format(TM4J_TESTRUNS, serverAddress, projectKey);
 			HttpResponse<String> jsonResponse = Unirest.post(url)
-					  .header("accept", "application/json")
 					  .basicAuth(username, password)
 					  .field("parameter", "value")
-					  .field("file", files.get(0))
+					  .field("file", zip)
 					  .asString();
 			return jsonResponse.getStatus();
 		} catch (UnirestException e) {
