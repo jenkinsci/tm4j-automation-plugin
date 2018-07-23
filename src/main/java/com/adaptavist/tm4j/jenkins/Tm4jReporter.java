@@ -1,9 +1,11 @@
 package com.adaptavist.tm4j.jenkins;
 
 import java.io.PrintStream;
+import java.util.List;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 
+import hudson.FilePath;
 import hudson.Launcher;
 import hudson.model.AbstractBuild;
 import hudson.model.BuildListener;
@@ -37,7 +39,9 @@ public class Tm4jReporter extends Notifier {
         logger.printf("%s Examining test results...%n", pInfo);
         logger.printf(String.format("Build result is %s%n", build.getResult().toString()));
         Tm4jPlugin plugin = new Tm4jPlugin();
-        if (!plugin.uploadTestResultsFiles(getDescriptor().getJiraInstances(), build.getWorkspace(), this.filePath, this.serverAddress, this.projectKey)) {
+        List<Tm4JInstance> jiraInstances = getDescriptor().getJiraInstances();
+		FilePath workspace = build.getWorkspace();
+		if (!plugin.uploadTestResultsFiles(jiraInstances, workspace, this.filePath, this.serverAddress, this.projectKey)) {
             logger.printf("%s Error.%n", pInfo);
             logger.printf("%s Cucumber files not found .%n", pInfo);
         	return false;
