@@ -13,5 +13,8 @@
     <f:textbox field="filePath"/>
   </f:entry>
 
+  <f:entry title="Create test cases automatically if they do not exist" field="autoCreateTestCases">
+    <f:checkbox field="autoCreateTestCases"/>
+  </f:entry>
 
 </j:jelly>

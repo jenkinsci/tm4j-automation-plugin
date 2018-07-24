@@ -7,3 +7,4 @@ run_docker.sh
 .classpath
 .project
 jenkins-cli.jar
+com.adaptavist.tm4j.jenkins-plugin.iml
