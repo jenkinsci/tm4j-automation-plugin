@@ -38,7 +38,7 @@ public class RestClientTest {
 		FileReader fileReader = new FileReader();
 		RestClient restClient = new RestClient();
 		File zip = fileReader.getZip(new String[] { RESULT_JSON });
-		int response = restClient.sendZip(SERVER_ADDRESS, PROJECT_KEY, username , password, zip, false);
+		int response = restClient.sendCucumberFiles(SERVER_ADDRESS, PROJECT_KEY, username , password, zip, false);
 		assertEquals(201, response);
 	}
 }
