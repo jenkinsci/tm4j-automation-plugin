@@ -34,12 +34,14 @@ public class Tm4jReporter extends Notifier {
     private String serverAddress;
     private String projectKey;
 	private String filePath;
+	private Boolean autoCreateTestCases;
 
     @DataBoundConstructor
-    public Tm4jReporter(String serverAddress, String projectKey, String filePath ) {
+    public Tm4jReporter(String serverAddress, String projectKey, String filePath, Boolean autoCreateTestCases) {
         this.serverAddress = serverAddress;
         this.projectKey = projectKey;
         this.filePath = filePath;
+        this.autoCreateTestCases = autoCreateTestCases;
     }
 
     @Override
@@ -55,7 +57,7 @@ public class Tm4jReporter extends Notifier {
         Tm4jPlugin plugin = new Tm4jPlugin();
         List<Tm4JInstance> jiraInstances = getDescriptor().getJiraInstances();
 		FilePath workspace = build.getWorkspace();
-		if (!plugin.uploadTestResultsFiles(jiraInstances, workspace, this.filePath, this.serverAddress, this.projectKey)) {
+		if (!plugin.uploadTestResultsFiles(jiraInstances, workspace, this.filePath, this.serverAddress, this.projectKey, this.autoCreateTestCases)) {
             logger.printf("%s Error.%n", pInfo);
             logger.printf("%s Cucumber files not found .%n", pInfo);
         	return false;
