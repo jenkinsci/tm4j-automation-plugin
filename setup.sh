@@ -36,7 +36,6 @@ then
 fi
 
 rm -rf work/
-mvn clean
 sh ./run.sh &
 
 wait_start
