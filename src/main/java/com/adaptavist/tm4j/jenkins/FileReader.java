@@ -2,6 +2,7 @@ package com.adaptavist.tm4j.jenkins;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -38,5 +39,18 @@ public class FileReader {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	public File getZip(String filePath) throws IOException {
+		File zip = File.createTempFile("tm4j_junit_results", "zip");
+
+		File file = new File(filePath);
+		ZipOutputStream out = new ZipOutputStream(new FileOutputStream(zip));
+		out.putNextEntry(new ZipEntry(file.getPath()));
+		out.write(FileUtils.readFileToByteArray(file));
+		out.closeEntry();
+		out.close();
+
+		return zip;
 	}
 }

@@ -1,7 +1,7 @@
 package com.adaptavist.tm4j.jenkins;
 
+import java.io.IOException;
 import static com.adaptavist.tm4j.jenkins.Tm4jConstants.NAME_POST_BUILD_ACTION;
-
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -57,13 +57,29 @@ public class Tm4jReporter extends Notifier {
         Tm4jPlugin plugin = new Tm4jPlugin();
         List<Tm4JInstance> jiraInstances = getDescriptor().getJiraInstances();
 		FilePath workspace = build.getWorkspace();
-		if (!plugin.uploadTestResultsFiles(jiraInstances, workspace, this.filePath, this.serverAddress, this.projectKey, this.autoCreateTestCases)) {
+
+		if (cucumberFilesPath()) {
+            if (!plugin.uploadTestResultsFiles(jiraInstances, workspace, this.filePath, this.serverAddress, this.projectKey, this.autoCreateTestCases)) {
+                logger.printf("%s Error.%n", pInfo);
+                logger.printf("%s Cucumber files not found .%n", pInfo);
+                return false;
+            }
+        }
+
+        try {
+            plugin.uploadTM4JExecutionResultsFile(jiraInstances, workspace, this.serverAddress, this.projectKey, this.autoCreateTestCases);
+        } catch (IOException e) {
             logger.printf("%s Error.%n", pInfo);
-            logger.printf("%s Cucumber files not found .%n", pInfo);
-        	return false;
-        };
+            logger.printf("%s Stack trace: %n", e);
+            return false;
+        }
+
     	logger.printf("%s Done.%n", pInfo);
     	return true;
+    }
+
+    private boolean cucumberFilesPath() {
+        return !StringUtils.isEmpty(this.filePath);
     }
 
     @Override

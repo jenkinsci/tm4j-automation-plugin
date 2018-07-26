@@ -9,12 +9,21 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 
 public class RestClient {
 
-	private static final String TM4J_TESTRUNS = "{0}/rest/kanoahtests/1.0/ci/results/cucumber/{1}/testruns";
+	private static final String CUCUMBER_FILES_ENDPOINT = "{0}/rest/kanoahtests/1.0/ci/results/cucumber/{1}/testruns";
+	private static final String TM4J_FILES_ENDPOINT = "{0}/rest/kanoahtests/1.0/ci/results/tm4j/{1}/testruns";
 	private static final String TM4J_HEALTH_CHECK = "{0}/rest/kanoahtests/1.0/healthcheck/";
 
-	public int sendZip(String serverAddress, String projectKey, String username, String password, File zip, Boolean autoCreateTestCases)  {
+	public int sendCucumberFiles(String serverAddress, String projectKey, String username, String password, File zip, Boolean autoCreateTestCases) {
+		return sendZip(CUCUMBER_FILES_ENDPOINT, serverAddress, projectKey, username, password, zip, autoCreateTestCases);
+	}
+
+	public int sendTm4jFiles(String serverAddress, String projectKey, String username, String password, File zip, Boolean autoCreateTestCases) {
+		return sendZip(TM4J_FILES_ENDPOINT, serverAddress, projectKey, username, password, zip, autoCreateTestCases);
+	}
+
+	public int sendZip(String endpoint, String serverAddress, String projectKey, String username, String password, File zip, Boolean autoCreateTestCases)  {
 		try {
-			String url = MessageFormat.format(TM4J_TESTRUNS, serverAddress, projectKey);
+			String url = MessageFormat.format(endpoint, serverAddress, projectKey);
 			HttpResponse<String> jsonResponse = Unirest.post(url)
 					  .basicAuth(username, password)
                       .queryString("autoCreateTestCases", autoCreateTestCases)
