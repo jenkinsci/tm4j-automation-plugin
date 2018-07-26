@@ -2,8 +2,6 @@
 set -e
 server=http://localhost:8080/jenkins
 
-mvn clean
-
 is_running() { 
 	if [ 200 == $(curl -o /dev/null -s -w "%{http_code}\n" $server/jnlpJars/jenkins-cli.jar) ] 
 	then
@@ -38,7 +36,6 @@ then
 fi
 
 rm -rf work/
-mvn clean
 sh ./run.sh &
 
 wait_start
