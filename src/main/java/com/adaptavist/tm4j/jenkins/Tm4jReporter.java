@@ -59,7 +59,7 @@ public class Tm4jReporter extends Notifier {
 		FilePath workspace = build.getWorkspace();
 
 		if (cucumberFilesPath()) {
-            if (!plugin.uploadTestResultsFiles(jiraInstances, workspace, this.filePath, this.serverAddress, this.projectKey, this.autoCreateTestCases)) {
+            if (!plugin.uploadCucumberFile(jiraInstances, workspace, this.filePath, this.serverAddress, this.projectKey, this.autoCreateTestCases)) {
                 logger.printf("%s Error.%n", pInfo);
                 logger.printf("%s Cucumber files not found .%n", pInfo);
                 return false;
@@ -67,7 +67,7 @@ public class Tm4jReporter extends Notifier {
         }
 
         try {
-            plugin.uploadTM4JExecutionResultsFile(jiraInstances, workspace, this.serverAddress, this.projectKey, this.autoCreateTestCases);
+            plugin.uploadCustomFormatFile(jiraInstances, workspace, this.serverAddress, this.projectKey, this.autoCreateTestCases);
         } catch (IOException e) {
             logger.printf("%s Error.%n", pInfo);
             logger.printf("%s Stack trace: %n", e);
