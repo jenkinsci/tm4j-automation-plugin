@@ -51,8 +51,10 @@ java -jar jenkins-cli.jar -s $server restart
 wait_start
 
 echo "setting jenkings configurations"
-java -jar jenkins-cli.jar -s $server create-job tm4j-cucumber-jenkins-plugins-test < config.xml
-echo "creating a default job"
+java -jar jenkins-cli.jar -s $server create-job tm4j-cucumber < config_cucumber.xml
+echo "creating a cucumber job"
+java -jar jenkins-cli.jar -s $server create-job tm4j-junit < config_junit.xml
+echo "creating a junit job"
 cp com.adaptavist.tm4j.jenkins.Tm4jReporter.xml work/com.adaptavist.tm4j.jenkins.Tm4jReporter.xml
 echo "restarting..."
 java -jar jenkins-cli.jar -s $server restart

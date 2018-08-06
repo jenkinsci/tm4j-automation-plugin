@@ -2,11 +2,13 @@ package com.adaptavist.tm4j.jenkins;
 
 import static com.adaptavist.tm4j.jenkins.Tm4jConstants.ADD_TM4J_GLOBAL_CONFIG;
 import static com.adaptavist.tm4j.jenkins.Tm4jConstants.CONNECTION_TO_JIRA_HAS_BEEN_VALIDATED;
+import static com.adaptavist.tm4j.jenkins.Tm4jConstants.CUCUMBER;
 import static com.adaptavist.tm4j.jenkins.Tm4jConstants.INCORRECT_SERVER_ADDRESS_FORMAT;
 import static com.adaptavist.tm4j.jenkins.Tm4jConstants.INVALID_USER_CREDENTIALS;
 import static com.adaptavist.tm4j.jenkins.Tm4jConstants.PLEASE_ENTER_THE_PASSWORD;
 import static com.adaptavist.tm4j.jenkins.Tm4jConstants.PLEASE_ENTER_THE_SERVER_NAME;
 import static com.adaptavist.tm4j.jenkins.Tm4jConstants.PLEASE_ENTER_THE_USERNAME;
+import static com.adaptavist.tm4j.jenkins.Tm4jConstants.TM4J_OUTPUT_RESULT_FOR_JUNIT;
 
 import java.util.List;
 
@@ -38,7 +40,7 @@ public class Tm4jForm {
 		return FormValidation.ok(CONNECTION_TO_JIRA_HAS_BEEN_VALIDATED);
 	}
 
-	public ListBoxModel fillServerAddressItens(List<Tm4JInstance> jiraInstances, String serverAddress) {
+	public ListBoxModel fillServerAddressItens(List<Tm4JInstance> jiraInstances) {
 		ListBoxModel modelbox = new ListBoxModel();
 		if (jiraInstances == null || jiraInstances.isEmpty()) {
 			modelbox.add(ADD_TM4J_GLOBAL_CONFIG);
@@ -50,4 +52,10 @@ public class Tm4jForm {
 		return modelbox;
 	}
 
+	public ListBoxModel fillFormat() {
+		ListBoxModel modelbox = new ListBoxModel();
+		modelbox.add(CUCUMBER);
+		modelbox.add(TM4J_OUTPUT_RESULT_FOR_JUNIT);
+		return modelbox;
+	}
 }

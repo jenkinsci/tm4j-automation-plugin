@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
+<?xml version='1.1' encoding='UTF-8'?>
 <project>
   <actions/>
   <description></description>
@@ -8,7 +8,7 @@
     <configVersion>2</configVersion>
     <userRemoteConfigs>
       <hudson.plugins.git.UserRemoteConfig>
-        <url>https://cfaccin@stash.adaptavist.com/scm/~cfaccin/tm4j-cucumber-jenkins-plugin-tests.git</url>
+        <url>https://bitbucket.org/Adaptavist/tm4j-junit-integration-example.git</url>
       </hudson.plugins.git.UserRemoteConfig>
     </userRemoteConfigs>
     <branches>
@@ -39,8 +39,10 @@
     <com.adaptavist.tm4j.jenkins.Tm4jReporter plugin="com.adaptavist.tm4j.jenkins-plugin@1.0-SNAPSHOT">
       <pInfo>[TM4JTestResultReporter] [INFO]</pInfo>
       <serverAddress>http://localhost:2990/jira</serverAddress>
-      <projectKey>JP</projectKey>
-      <filePath>target/cucumber/*.json</filePath>
+      <projectKey>JQA</projectKey>
+      <filePath>tm4j_result.json</filePath>
+      <format>TM4J Output Result For JUnit</format>
+      <autoCreateTestCases>true</autoCreateTestCases>
     </com.adaptavist.tm4j.jenkins.Tm4jReporter>
   </publishers>
   <buildWrappers/>
