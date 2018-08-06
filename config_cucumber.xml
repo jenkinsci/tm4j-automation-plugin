@@ -1,4 +1,4 @@
-<?xml version='1.1' encoding='UTF-8'?>
+<?xml version='1.1' encoding='UTF-8'?>JP
 <project>
   <actions/>
   <description></description>
@@ -39,7 +39,7 @@
     <com.adaptavist.tm4j.jenkins.Tm4jReporter plugin="com.adaptavist.tm4j.jenkins-plugin@1.0-SNAPSHOT">
       <pInfo>[TM4JTestResultReporter] [INFO]</pInfo>
       <serverAddress>http://localhost:2990/jira</serverAddress>
-      <projectKey>JP</projectKey>
+      <projectKey>JQA</projectKey>
       <filePath>target/cucumber/*.json</filePath>
       <format>Cucumber</format>
       <autoCreateTestCases>false</autoCreateTestCases>

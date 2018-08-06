@@ -60,7 +60,7 @@ public class Tm4jReporter extends Notifier {
         List<Tm4JInstance> jiraInstances = getDescriptor().getJiraInstances();
 		FilePath workspace = build.getWorkspace();
         try { 
-        	if (this.format == "Cucumber") {
+        	if (this.format == Tm4jConstants.CUCUMBER) {
         		plugin.uploadCucumberFile(jiraInstances, workspace, this.filePath, this.serverAddress, this.projectKey, this.autoCreateTestCases);
         	} else {
         		plugin.uploadCustomFormatFile(jiraInstances, workspace, this.serverAddress, this.projectKey, this.autoCreateTestCases);
