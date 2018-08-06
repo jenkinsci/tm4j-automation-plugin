@@ -1,19 +1,51 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
-  <f:entry title="JIRA URL" field="serverAddress">
-          <f:select />
-  </f:entry>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" 
+		 xmlns:d="jelly:define" xmlns:l="/lib/layout"
+         xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+         
+    <script>
+	    document.addEventListener('DOMContentLoaded',function() {
+	    	var formatSelect = document.querySelector('#formatSelect');
+	    	formatSelect.onchange=changeEventHandler;
+	    	checkFormat(formatSelect);
+	    },false);
+	
+	    function changeEventHandler(event) {
+	        checkFormat(event.target)
+	    }
+	    
+	    function checkFormat(target){
+	        if  (target.value === 'Cucumber') {
+	            document.querySelector('#filePath').value = 'target/cucumber/*.json';
+	            document.querySelector('#filePath').disabled = false;
+	        }
+	        else {
+	            document.querySelector('#filePath').value = 'tm4j_result.json';
+	            document.querySelector('#filePath').disabled = true;
+	        } 
+	    }
+    </script>
+         
+    <f:entry title="JIRA URL" field="serverAddress">
+        <f:select/>
+    </f:entry>
 
-  <f:entry title="Project key" field="projectKey">
-    <f:textbox field="projectKey"/>
-  </f:entry>
+    <f:entry title="Project key" field="projectKey">
+        <f:textbox field="projectKey"/>
+    </f:entry>
+    
+    <f:entry title="Choose Framework Test" field="format">
+        <f:select id="formatSelect"/>
+    </f:entry>
 
-  <f:entry title="File path" field="filePath">
-    <f:textbox field="filePath"/>
-  </f:entry>
 
-  <f:entry title="Create test cases automatically if they do not exist" field="autoCreateTestCases">
-    <f:checkbox field="autoCreateTestCases"/>
-  </f:entry>
+	<f:entry title="File path" field="filePath" >
+		<f:textbox field="filePath" id="filePath" />
+	</f:entry>
+
+
+	<f:entry title="Create test cases automatically if they do not exist" field="autoCreateTestCases">
+        <f:checkbox field="autoCreateTestCases"/>
+    </f:entry>
 
 </j:jelly>

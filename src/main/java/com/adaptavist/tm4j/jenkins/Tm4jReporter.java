@@ -34,14 +34,16 @@ public class Tm4jReporter extends Notifier {
     private String serverAddress;
     private String projectKey;
 	private String filePath;
+	private String format;
 	private Boolean autoCreateTestCases;
 
     @DataBoundConstructor
-    public Tm4jReporter(String serverAddress, String projectKey, String filePath, Boolean autoCreateTestCases) {
+    public Tm4jReporter(String serverAddress, String projectKey, String filePath, Boolean autoCreateTestCases, String format) {
         this.serverAddress = serverAddress;
         this.projectKey = projectKey;
         this.filePath = filePath;
         this.autoCreateTestCases = autoCreateTestCases;
+        this.format = format;
     }
 
     @Override
@@ -57,29 +59,19 @@ public class Tm4jReporter extends Notifier {
         Tm4jPlugin plugin = new Tm4jPlugin();
         List<Tm4JInstance> jiraInstances = getDescriptor().getJiraInstances();
 		FilePath workspace = build.getWorkspace();
-
-		if (cucumberFilesPath()) {
-            if (!plugin.uploadTestResultsFiles(jiraInstances, workspace, this.filePath, this.serverAddress, this.projectKey, this.autoCreateTestCases)) {
-                logger.printf("%s Error.%n", pInfo);
-                logger.printf("%s Cucumber files not found .%n", pInfo);
-                return false;
-            }
-        }
-
-        try {
-            plugin.uploadTM4JExecutionResultsFile(jiraInstances, workspace, this.serverAddress, this.projectKey, this.autoCreateTestCases);
+        try { 
+        	if (this.format == "Cucumber") {
+        		plugin.uploadTestResultsFiles(jiraInstances, workspace, this.filePath, this.serverAddress, this.projectKey, this.autoCreateTestCases);
+        	} else {
+        		plugin.uploadTM4JExecutionResultsFile(jiraInstances, workspace, this.serverAddress, this.projectKey, this.autoCreateTestCases);
+        	}
         } catch (IOException e) {
             logger.printf("%s Error.%n", pInfo);
             logger.printf("%s Stack trace: %n", e);
             return false;
         }
-
     	logger.printf("%s Done.%n", pInfo);
     	return true;
-    }
-
-    private boolean cucumberFilesPath() {
-        return !StringUtils.isEmpty(this.filePath);
     }
 
     @Override
@@ -93,6 +85,10 @@ public class Tm4jReporter extends Notifier {
     public void setProjectKey(String projectKey) {this.projectKey = projectKey;}
     public String getFilePath() {return  this.filePath;}
     public void setFilePath ( String filePath) {this.filePath = filePath;}
+	public String getFormat() {return format;}
+	public void setFormat(String format) {this.format = format;}
+	public Boolean getAutoCreateTestCases() {return autoCreateTestCases;}
+	public void setAutoCreateTestCases(Boolean autoCreateTestCases) {this.autoCreateTestCases = autoCreateTestCases;}
 
 	@Extension
 	public static final class Tm4jDescriptor extends BuildStepDescriptor<Publisher> {
@@ -151,11 +147,15 @@ public class Tm4jReporter extends Notifier {
 		public FormValidation doTestConnection(@QueryParameter String serverAddress, @QueryParameter String username, @QueryParameter String password) {
 			return new Tm4jForm().testConnection(serverAddress, username, password);
 		}
-	
-		public ListBoxModel doFillServerAddressItems(@QueryParameter String serverAddress) {
-			return new Tm4jForm().fillServerAddressItens(this.jiraInstances, serverAddress);
+		
+		public ListBoxModel doFillServerAddressItems() {
+			return new Tm4jForm().fillServerAddressItens(this.jiraInstances);
 		}
-	
+		
+		public ListBoxModel doFillFormatItems() {
+			return new Tm4jForm().fillFormat();
+		}
+
 		public List<Tm4JInstance> getJiraInstances() {
 			return jiraInstances;
 		}
