@@ -61,9 +61,9 @@ public class Tm4jReporter extends Notifier {
 		FilePath workspace = build.getWorkspace();
         try { 
         	if (this.format == "Cucumber") {
-        		plugin.uploadTestResultsFiles(jiraInstances, workspace, this.filePath, this.serverAddress, this.projectKey, this.autoCreateTestCases);
+        		plugin.uploadCucumberFile(jiraInstances, workspace, this.filePath, this.serverAddress, this.projectKey, this.autoCreateTestCases);
         	} else {
-        		plugin.uploadTM4JExecutionResultsFile(jiraInstances, workspace, this.serverAddress, this.projectKey, this.autoCreateTestCases);
+        		plugin.uploadCustomFormatFile(jiraInstances, workspace, this.serverAddress, this.projectKey, this.autoCreateTestCases);
         	}
         } catch (IOException e) {
             logger.printf("%s Error.%n", pInfo);
