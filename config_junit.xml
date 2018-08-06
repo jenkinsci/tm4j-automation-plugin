@@ -39,7 +39,7 @@
     <com.adaptavist.tm4j.jenkins.Tm4jReporter plugin="com.adaptavist.tm4j.jenkins-plugin@1.0-SNAPSHOT">
       <pInfo>[TM4JTestResultReporter] [INFO]</pInfo>
       <serverAddress>http://localhost:2990/jira</serverAddress>
-      <projectKey>JP</projectKey>
+      <projectKey>JQA</projectKey>
       <filePath>tm4j_result.json</filePath>
       <format>TM4J Output Result For JUnit</format>
       <autoCreateTestCases>true</autoCreateTestCases>
