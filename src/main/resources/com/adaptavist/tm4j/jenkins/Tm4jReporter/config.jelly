@@ -28,11 +28,9 @@
     <script>
     (function(){
     	setTimeout(function(){
-            document.addEventListener('DOMContentLoaded',function() {
-                var formatSelect = document.querySelector('#formatSelect');
-                formatSelect.onchange=changeEventHandler;
-                checkFormat(formatSelect);
-            },false);
+            var formatSelect = document.querySelector('#formatSelect');
+            formatSelect.onchange=changeEventHandler;
+            checkFormat(formatSelect);
         
             function changeEventHandler(event) {
                 checkFormat(event.target)
