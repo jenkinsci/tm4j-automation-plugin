@@ -155,6 +155,14 @@ public class Tm4jReporter extends Notifier {
 		public ListBoxModel doFillFormatItems() {
 			return new Tm4jForm().fillFormat();
 		}
+		
+		public FormValidation doCheckProjectKey(@QueryParameter String projectKey) {
+			return new Tm4jForm().doCheckProjectKey(projectKey);
+		}
+
+		public FormValidation doCheckFilePath(@QueryParameter String filePath) {
+			return new Tm4jForm().doCheckFilePath(filePath);
+		}
 
 		public List<Tm4JInstance> getJiraInstances() {
 			return jiraInstances;

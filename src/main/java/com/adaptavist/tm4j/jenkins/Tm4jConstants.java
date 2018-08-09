@@ -12,4 +12,6 @@ public class Tm4jConstants {
 	public static final String TM4J_OUTPUT_RESULT_FOR_JUNIT = "TM4J Output Result For JUnit";
 	public static final String CUCUMBER = "Cucumber";
 	public static final String CUSTOM_FORMAT_FILE_NAME = "tm4j_result.json";
+	public static final String PROJECT_KEY_IS_REQUIRED = "Project key is required.";
+	public static final String FILE_PATH_IS_REQUIRED = "File path is required.";
 }

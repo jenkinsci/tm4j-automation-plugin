@@ -58,4 +58,12 @@ public class Tm4jForm {
 		modelbox.add(TM4J_OUTPUT_RESULT_FOR_JUNIT);
 		return modelbox;
 	}
+
+	public FormValidation doCheckProjectKey(String projectKey) {
+		return StringUtils.isBlank(projectKey) ? FormValidation.error(Tm4jConstants.PROJECT_KEY_IS_REQUIRED) : FormValidation.ok() ;
+	}
+
+	public FormValidation doCheckFilePath(String filePath) {
+		return StringUtils.isBlank(filePath) ? FormValidation.error(Tm4jConstants.PROJECT_KEY_IS_REQUIRED) : FormValidation.ok() ;
+	}
 }
