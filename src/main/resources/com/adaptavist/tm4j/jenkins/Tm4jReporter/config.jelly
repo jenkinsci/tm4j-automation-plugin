@@ -12,7 +12,7 @@
     </f:entry>
     
     <f:entry title="Choose Framework Test" field="format">
-        <f:select id="formatSelect"/>
+        <f:select id="tm4jAutomationPostBuildActionFormatSelect"/>
     </f:entry>
 
 
@@ -28,7 +28,7 @@
     <script>
     (function(){
     	setTimeout(function(){
-            var formatSelect = document.querySelector('#formatSelect');
+            var formatSelect = document.querySelector('#tm4jAutomationPostBuildActionFormatSelect');
             var filePath = document.querySelector('#tm4jAutomationPostBuildActionFilePath');
             var currentPath;
             if (filePath) {
