@@ -143,7 +143,7 @@ public class Tm4jReporter extends Notifier {
 		public String getDisplayName() {
 			return NAME_POST_BUILD_ACTION;
 		}
-	
+		
 		public FormValidation doTestConnection(@QueryParameter String serverAddress, @QueryParameter String username, @QueryParameter String password) {
 			return new Tm4jForm().testConnection(serverAddress, username, password);
 		}
@@ -163,7 +163,7 @@ public class Tm4jReporter extends Notifier {
 		public FormValidation doCheckFilePath(@QueryParameter String filePath) {
 			return new Tm4jForm().doCheckFilePath(filePath);
 		}
-
+		
 		public List<Tm4JInstance> getJiraInstances() {
 			return jiraInstances;
 		}
