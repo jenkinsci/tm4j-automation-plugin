@@ -12,12 +12,12 @@
     </f:entry>
     
     <f:entry title="Choose Framework Test" field="format">
-        <f:select id="formatSelect"/>
+        <f:select id="tm4jAutomationPostBuildActionFormatSelect"/>
     </f:entry>
 
 
 	<f:entry title="File path" field="filePath" >
-		<f:textbox field="filePath" id="filePath" required="true" />
+		<f:textbox field="filePath" id="tm4jAutomationPostBuildActionFilePath" />
 	</f:entry>
 
 
@@ -28,8 +28,8 @@
     <script>
 	    (function(){
 	    	setTimeout(function(){
-	            var formatSelect = document.querySelector('#formatSelect');
-	            var filePath = document.querySelector('#filePath');
+	            var formatSelect = document.querySelector('#tm4jAutomationPostBuildActionFormatSelect');
+	            var filePath = document.querySelector('#tm4jAutomationPostBuildActionFilePath');
 	            var currentPath;
 	            if (filePath) {
 	            	currentPath = formatSelect.value == 'Cucumber' ? filePath.value : null;
@@ -43,12 +43,12 @@
 	            
 	            function checkFormat(target){
 	                if  (target.value === 'Cucumber') {
-	                    document.querySelector('#filePath').value = currentPath ? currentPath : 'target/cucumber/*.json';
-	                    document.querySelector('#filePath').disabled = false;
+	                    document.querySelector('#tm4jAutomationPostBuildActionFilePath').value = currentPath ? currentPath : 'target/cucumber/*.json';
+	                    document.querySelector('#tm4jAutomationPostBuildActionFilePath').disabled = false;
 	                }
 	                else {
-	                    document.querySelector('#filePath').value = 'tm4j_result.json';
-	                    document.querySelector('#filePath').disabled = true;
+	                    document.querySelector('#tm4jAutomationPostBuildActionFilePath').value = 'tm4j_result.json';
+	                    document.querySelector('#tm4jAutomationPostBuildActionFilePath').disabled = true;
 	                } 
 	            }
 	        },)
