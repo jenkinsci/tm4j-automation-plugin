@@ -17,7 +17,7 @@
 
 
 	<f:entry title="File path" field="filePath" >
-		<f:textbox field="filePath" id="filePath" />
+		<f:textbox field="filePath" id="tm4jAutomationPostBuildActionFilePath" />
 	</f:entry>
 
 
@@ -29,7 +29,7 @@
     (function(){
     	setTimeout(function(){
             var formatSelect = document.querySelector('#formatSelect');
-            var filePath = document.querySelector('#filePath');
+            var filePath = document.querySelector('#tm4jAutomationPostBuildActionFilePath');
             var currentPath;
             if (filePath) {
             	currentPath = formatSelect.value == 'Cucumber' ? filePath.value : null;
@@ -43,12 +43,12 @@
             
             function checkFormat(target){
                 if  (target.value === 'Cucumber') {
-                    document.querySelector('#filePath').value = currentPath ? currentPath : 'target/cucumber/*.json';
-                    document.querySelector('#filePath').disabled = false;
+                    document.querySelector('#tm4jAutomationPostBuildActionFilePath').value = currentPath ? currentPath : 'target/cucumber/*.json';
+                    document.querySelector('#tm4jAutomationPostBuildActionFilePath').disabled = false;
                 }
                 else {
-                    document.querySelector('#filePath').value = 'tm4j_result.json';
-                    document.querySelector('#filePath').disabled = true;
+                    document.querySelector('#tm4jAutomationPostBuildActionFilePath').value = 'tm4j_result.json';
+                    document.querySelector('#tm4jAutomationPostBuildActionFilePath').disabled = true;
                 } 
             }
         },)
