@@ -11,4 +11,5 @@ public class Tm4jConstants {
 	public static final String PLEASE_ENTER_THE_USERNAME = "Please enter the username";
 	public static final String TM4J_OUTPUT_RESULT_FOR_JUNIT = "TM4J Output Result For JUnit";
 	public static final String CUCUMBER = "Cucumber";
+	public static final String CUSTOM_FORMAT_FILE_NAME = "tm4j_result.json";
 }

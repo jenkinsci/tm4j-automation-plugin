@@ -17,7 +17,7 @@
 
 
 	<f:entry title="File path" field="filePath" >
-		<f:textbox field="filePath" id="filePath" />
+		<f:textbox field="filePath" id="filePath" required="true" />
 	</f:entry>
 
 

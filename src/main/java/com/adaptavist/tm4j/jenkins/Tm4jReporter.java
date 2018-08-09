@@ -1,7 +1,7 @@
 package com.adaptavist.tm4j.jenkins;
 
-import java.io.IOException;
 import static com.adaptavist.tm4j.jenkins.Tm4jConstants.NAME_POST_BUILD_ACTION;
+
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,8 +29,9 @@ import net.sf.json.JSONObject;
 public class Tm4jReporter extends Notifier {
 
     public static PrintStream logger;
-    private static final String PluginName = new String("[TM4JTestResultReporter]");
-    private final String pInfo = String.format("%s [INFO]", PluginName);
+    private static final String PLUGIN_NAME = new String("[TM4J-Automation]");
+    private static String INFO = String.format("%s [INFO]", PLUGIN_NAME);
+    private static String ERROR = String.format("%s [ERROR]", PLUGIN_NAME);
     private String serverAddress;
     private String projectKey;
 	private String filePath;
@@ -54,23 +55,22 @@ public class Tm4jReporter extends Notifier {
     @Override
     public boolean perform(final AbstractBuild<?, ?> build, final Launcher launcher, final BuildListener listener) {
         logger = listener.getLogger();
-        logger.printf("%s Examining test results...%n", pInfo);
-        logger.printf(String.format("Build result is %s%n", build.getResult().toString()));
-        Tm4jPlugin plugin = new Tm4jPlugin();
+        logger.printf("%s Examining test results...%n", INFO);
         List<Tm4JInstance> jiraInstances = getDescriptor().getJiraInstances();
 		FilePath workspace = build.getWorkspace();
         try {
         	if (Tm4jConstants.CUCUMBER.equals(this.format)) {
-        		plugin.uploadCucumberFile(jiraInstances, workspace, this.filePath, this.serverAddress, this.projectKey, this.autoCreateTestCases);
+        		new Tm4jPlugin().uploadCucumberFile(jiraInstances, workspace, this.filePath, this.serverAddress, this.projectKey, this.autoCreateTestCases);
         	} else {
-        		plugin.uploadCustomFormatFile(jiraInstances, workspace, this.serverAddress, this.projectKey, this.autoCreateTestCases);
+        		new Tm4jPlugin().uploadCustomFormatFile(jiraInstances, workspace, Tm4jConstants.CUSTOM_FORMAT_FILE_NAME, this.serverAddress, this.projectKey, this.autoCreateTestCases);
         	}
-        } catch (IOException e) {
-            logger.printf("%s Error.%n", pInfo);
-            logger.printf("%s Stack trace: %n", e);
+        } catch (Exception e) {
+            logger.printf(ERROR);
+            logger.printf(" %s  %n", e.getMessage());
+        	logger.printf("%s Tests results didn't send to TM4J %n", ERROR);
             return false;
         }
-    	logger.printf("%s Done.%n", pInfo);
+    	logger.printf("%s Done.%n", INFO);
     	return true;
     }
 

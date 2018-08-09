@@ -13,6 +13,8 @@ import org.junit.Test;
 
 import com.adaptavist.tm4j.jenkins.FileReader;
 
+import hudson.FilePath;
+
 public class FileReaderTest {
 	
 	private String pattern = "src/main/resources/*.jelly";
@@ -20,14 +22,14 @@ public class FileReaderTest {
 
 	@Test
 	public void shouldReadFilesFromAFolder() throws Exception {
-		List<File> files = new FileReader().getFiles(pattern);
+		List<File> files = new FileReader().getFiles(new FilePath(new File("")), pattern);
 		assertEquals(files.size(), 1);
 	}
 	
 	@SuppressWarnings("resource")
 	@Test
 	public void shouldCreateAZipFromAPatterm() throws Exception {
-		File file = new FileReader().getZip(patterns);
+		File file = new FileReader().getZip(new FilePath(new File("")), pattern);
 		assertTrue(file.exists());
 		ZipFile zip = new ZipFile(file);
 		ZipEntry entry = zip.getEntry("src/main/resources/index.jelly");
