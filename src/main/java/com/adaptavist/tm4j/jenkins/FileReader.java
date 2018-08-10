@@ -28,7 +28,7 @@ public class FileReader {
 		String[] splited = pattern.split("\\*.");
 		File directory = new File( workpace + "/" + splited[0]);
 		if (!directory.isDirectory()) {
-			throw new Exception(MessageFormat.format("Path not found : {0}", splited[0]));
+			throw new Exception(MessageFormat.format("Path not found : {0}",  directory.getPath()));
 		}
 		Collection<File> files = FileUtils.listFiles(directory, new WildcardFileFilter("*." + splited[1]), null);
 		if (files.isEmpty()) {

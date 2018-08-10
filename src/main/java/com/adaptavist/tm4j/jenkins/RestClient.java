@@ -13,15 +13,15 @@ public class RestClient {
 	private static final String CUSTOM_FORMAT_ENDPOINT = "{0}/rest/atm/1.0/automation/execution/{1}";
 	private static final String TM4J_HEALTH_CHECK = "{0}/rest/atm/1.0/healthcheck/";
 
-	public void sendCucumberFiles(String serverAddress, String projectKey, String username, String password, File zip, Boolean autoCreateTestCases) throws Exception {
-		sendZip(CUCUMBER_ENDPOINT, serverAddress, projectKey, username, password, zip, autoCreateTestCases);
+	public int sendCucumberFiles(String serverAddress, String projectKey, String username, String password, File zip, Boolean autoCreateTestCases) throws Exception {
+		return sendZip(CUCUMBER_ENDPOINT, serverAddress, projectKey, username, password, zip, autoCreateTestCases);
 	}
 
-	public void sendCustomFormatFiles(String serverAddress, String projectKey, String username, String password, File zip, Boolean autoCreateTestCases) throws Exception {
-		 sendZip(CUSTOM_FORMAT_ENDPOINT, serverAddress, projectKey, username, password, zip, autoCreateTestCases);
+	public int sendCustomFormatFiles(String serverAddress, String projectKey, String username, String password, File zip, Boolean autoCreateTestCases) throws Exception {
+		 return sendZip(CUSTOM_FORMAT_ENDPOINT, serverAddress, projectKey, username, password, zip, autoCreateTestCases);
 	}
 
-	public void sendZip(String endpoint, String serverAddress, String projectKey, String username, String password, File zip, Boolean autoCreateTestCases) throws Exception  {
+	public int sendZip(String endpoint, String serverAddress, String projectKey, String username, String password, File zip, Boolean autoCreateTestCases) throws Exception  {
 		try {
 			String url = MessageFormat.format(endpoint, serverAddress, projectKey);
 			HttpResponse<String> jsonResponse = Unirest.post(url)
@@ -30,7 +30,7 @@ public class RestClient {
 					  .field("parameter", "value")
 					  .field("file", zip)
 					  .asString();
-			jsonResponse.getStatus();
+			return jsonResponse.getStatus();
 		} catch (UnirestException e) {
 			throw new Exception(e.getMessage());
 		}
