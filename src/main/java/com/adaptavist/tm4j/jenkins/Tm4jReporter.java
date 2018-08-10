@@ -114,29 +114,44 @@ public class Tm4jReporter extends Notifier {
 		@Override
 		public boolean configure(StaplerRequest request, JSONObject formData) throws FormException {
 			request.bindParameters(this);
-			this.jiraInstances = new ArrayList<Tm4JInstance>();
-			Object jiraInstances = formData.get("jiraInstances");
-			if (jiraInstances instanceof JSONArray) {
-				JSONArray jiraInstancesList = (JSONArray) jiraInstances;
-				for (Object jiraInstance :  jiraInstancesList.toArray()) {
-					createAnInstance((JSONObject)jiraInstance);
-				}
-			} else {
-				createAnInstance(formData.getJSONObject("jiraInstances"));
-			}
+			Object formJiraInstances = formData.get("jiraInstances");
+			this.jiraInstances = crateJiraInstances(formJiraInstances);
 			save();
 			return super.configure(request, formData);
 		}
+
+		private List<Tm4JInstance> crateJiraInstances(Object formJiraInstances) {
+			if (formJiraInstances == null) {
+				return null;
+			}
+			List<Tm4JInstance> newJiraInstances = new ArrayList<>();
+			if (formJiraInstances instanceof JSONArray) {
+				JSONArray jiraInstancesList = (JSONArray) formJiraInstances;
+				for (Object jiraInstance :  jiraInstancesList.toArray()) {
+					newJiraInstances.add(createAnInstance((JSONObject) jiraInstance));
+				}
+			} else {
+				newJiraInstances.add(createAnInstance((JSONObject) formJiraInstances));
+			}
+			return newJiraInstances;
+		}
 	
-		private void createAnInstance(JSONObject jiraInstance) {
+		private Tm4JInstance createAnInstance(JSONObject formJiraInstance) {
 			Tm4JInstance tm4jInstance = new Tm4JInstance();
-			tm4jInstance.setServerAddress(StringUtils.removeEnd(jiraInstance.getString("serverAddress").trim(), "/"));
-			tm4jInstance.setUsername(jiraInstance.getString("username").trim());
-			tm4jInstance.setPassword(jiraInstance.getString("password").trim());
+			String serverAddres = formJiraInstance.getString("serverAddress");
+			String username = formJiraInstance.getString("username");
+			String password = formJiraInstance.getString("password");
+			if (StringUtils.isBlank(serverAddres) || StringUtils.isBlank(username) || StringUtils.isBlank(password)) {
+				return null;
+			}
+			tm4jInstance.setServerAddress(StringUtils.removeEnd(serverAddres.trim(), "/"));
+			tm4jInstance.setUsername(username.trim());
+			tm4jInstance.setPassword(password.trim());
 			RestClient restClient = new RestClient();
 			if (restClient.isValidCredentials(tm4jInstance.getServerAddress(), tm4jInstance.getUsername(), tm4jInstance.getPassword())) {
-				this.jiraInstances.add(tm4jInstance);
+				return tm4jInstance;
 			}
+			return null;
 		}
 	
 		@Override
