@@ -10,8 +10,6 @@ import org.junit.Test;
 
 import com.adaptavist.tm4j.jenkins.FileReader;
 
-import hudson.FilePath;
-
 public class FileReaderTest {
 
 	private static final String FILE_PATH = "src/test/resources/";
@@ -22,6 +20,18 @@ public class FileReaderTest {
 	public void shouldReadAllFilesFromAFolder() throws Exception {
 		List<File> files = new FileReader().getFiles(FILE_PATH, ALL);
 		assertEquals(files.size(), 8);
+	}
+	
+	@Test
+	public void shouldReadAllFilesFromAFolderPath() throws Exception {
+		List<File> files = new FileReader().getFiles(FILE_PATH, "**/*");
+		assertEquals(files.size(), 8);
+	}
+
+	@Test
+	public void shouldReadAllFilesFromAFolderPathWhitHyphen() throws Exception {
+		List<File> files = new FileReader().getFiles(FILE_PATH, "result*");
+		assertEquals(files.size(), 2);
 	}
 
 	@Test
