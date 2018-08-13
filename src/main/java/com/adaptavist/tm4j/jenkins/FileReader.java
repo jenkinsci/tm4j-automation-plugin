@@ -1,43 +1,52 @@
 package com.adaptavist.tm4j.jenkins;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.filefilter.WildcardFileFilter;
-
-import hudson.FilePath;
+import org.apache.tools.ant.DirectoryScanner;
 
 public class FileReader {
 
-	public List<File> getFiles(FilePath workpace, String pattern) throws Exception {
-		if (!pattern.contains("*.")) {
-			File file = new File(workpace + "/"+ pattern);
+	public List<File> getFiles(String workpace, String pattern) throws Exception {
+		if (!new File(workpace).isDirectory()) {
+			throw new Exception(MessageFormat.format("Path not found : {0}",  workpace));
+		}
+		if (!pattern.contains("*")) {
+			File file = new File(workpace +  pattern);
 			if (!file.exists()) {
-				throw new Exception(MessageFormat.format("File not found: {0}", pattern));
+				throw new FileNotFoundException(MessageFormat.format("File not found: {0}", pattern));
 			}
 			return Arrays.asList(file);
 		}
-		String[] splited = pattern.split("\\*.");
-		File directory = new File( workpace + "/" + splited[0]);
-		if (!directory.isDirectory()) {
-			throw new Exception(MessageFormat.format("Path not found : {0}",  directory.getPath()));
+		DirectoryScanner scanner = new DirectoryScanner();
+		scanner.setIncludes(new String[]{pattern});
+		scanner.setBasedir(workpace);
+		scanner.setCaseSensitive(false);
+		scanner.scan();
+		String[] paths = scanner.getIncludedFiles();
+		List<File> files = new ArrayList<>();
+		for (String path : paths) {
+			File file = new File(workpace + path);
+			if (!file.exists()) {
+				throw new FileNotFoundException(MessageFormat.format("File not found : {0}", file.getPath()));
+			}
+			files.add(file);
 		}
-		Collection<File> files = FileUtils.listFiles(directory, new WildcardFileFilter("*." + splited[1]), null);
 		if (files.isEmpty()) {
-			throw new Exception(MessageFormat.format("File not found : {0}", pattern));
+			throw new FileNotFoundException(MessageFormat.format("File not found : {0}", pattern));
 		}
-		return new ArrayList<File>(files);
+		return files;
 	}
 
-	public File getZip(FilePath workspace, String pattern) throws Exception {
+	public File getZip(String workspace, String pattern) throws Exception {
 		List<File> files = getFiles(workspace, pattern);
 		File zip = File.createTempFile("tm4j", "zip");
 		ZipOutputStream out = new ZipOutputStream(new FileOutputStream(zip));

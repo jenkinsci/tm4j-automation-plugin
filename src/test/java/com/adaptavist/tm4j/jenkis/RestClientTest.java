@@ -39,7 +39,7 @@ public class RestClientTest {
 	public void shouldLoadTm4JReporterCompressed() throws Exception {
 		FileReader fileReader = new FileReader();
 		RestClient restClient = new RestClient();
-		File zip = fileReader.getZip(new FilePath(new File("")), RESULT_JSON);
+		File zip = fileReader.getZip("", RESULT_JSON);
 		int response = restClient.sendCucumberFiles(SERVER_ADDRESS, PROJECT_KEY, username , password, zip, false);
 		assertEquals(201, response);
 	}

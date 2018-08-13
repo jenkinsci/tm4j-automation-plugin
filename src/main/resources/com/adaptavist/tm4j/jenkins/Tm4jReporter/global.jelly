@@ -10,7 +10,7 @@
 					<f:entry title="Jira Server" description="JIRA Server IP address or hostname" field="serverAddress">
 						<f:textbox value="${tm4jInstancesList.serverAddress}" default="" />
 					</f:entry>
-					<f:entry title="User Name" description="JIRA User Name" field="username">
+					<f:entry title="Username" description="JIRA User Name" field="username">
 						<f:textbox value="${tm4jInstancesList.username}" default="" />
 					</f:entry>
 

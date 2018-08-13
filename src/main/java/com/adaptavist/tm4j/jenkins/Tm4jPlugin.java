@@ -11,14 +11,14 @@ import hudson.FilePath;
 public class Tm4jPlugin {
 
 
-	public void uploadCucumberFile(List<Tm4JInstance> jiraInstances, FilePath workspace, String filePath, String serverAddress, String projectKey, Boolean autoCreateTestCases) throws Exception {
+	public void uploadCucumberFile(List<Tm4JInstance> jiraInstances, String workspace, String filePath, String serverAddress, String projectKey, Boolean autoCreateTestCases) throws Exception {
 		File file = new FileReader().getZip(workspace, filePath);
 		Tm4JInstance jiraInstance = getTm4jInstance(jiraInstances, serverAddress);
 		new RestClient().sendCucumberFiles(jiraInstance.getServerAddress(), projectKey, jiraInstance.getUsername(), jiraInstance.getPassword(), file, autoCreateTestCases);
 		file.delete();
 	}
 
-	public void uploadCustomFormatFile(List<Tm4JInstance> jiraInstances, FilePath workspace, String filePath, String serverAddress, String projectKey, Boolean autoCreateTestCases) throws Exception {
+	public void uploadCustomFormatFile(List<Tm4JInstance> jiraInstances, String workspace, String filePath, String serverAddress, String projectKey, Boolean autoCreateTestCases) throws Exception {
 		File file = new FileReader().getZip(workspace, filePath);
 		Tm4JInstance jiraInstance = getTm4jInstance(jiraInstances, serverAddress);
 		new RestClient().sendCustomFormatFiles(jiraInstance.getServerAddress(), projectKey, jiraInstance.getUsername(), jiraInstance.getPassword(), file, autoCreateTestCases);
@@ -27,7 +27,7 @@ public class Tm4jPlugin {
 
 	private Tm4JInstance getTm4jInstance(List<Tm4JInstance> jiraInstances, String serverAddress ) throws Exception {
 		if (jiraInstances == null) 
-			throw new Exception(Tm4jConstants.THERE_ARENT_JIRA_INSTANCES_CONFIGURED);
+			throw new IllegalStateException(Tm4jConstants.THERE_ARE_NO_JIRA_INSTANCES_CONFIGURED);
 		for (Tm4JInstance jiraInstance : jiraInstances) {
 			if (StringUtils.isNotBlank(jiraInstance.getServerAddress()) && jiraInstance.getServerAddress().trim().equals(serverAddress)) {
 				return jiraInstance;

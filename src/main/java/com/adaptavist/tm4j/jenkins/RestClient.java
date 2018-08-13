@@ -32,7 +32,7 @@ public class RestClient {
 					  .asString();
 			return jsonResponse.getStatus();
 		} catch (UnirestException e) {
-			throw new Exception(e.getMessage());
+			throw new Exception("Error trying to communicate with Jira", e.getCause());
 		}
 	}
 

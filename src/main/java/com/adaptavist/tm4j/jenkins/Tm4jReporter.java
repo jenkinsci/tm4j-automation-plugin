@@ -29,7 +29,7 @@ import net.sf.json.JSONObject;
 public class Tm4jReporter extends Notifier {
 
     public static PrintStream logger;
-    private static final String PLUGIN_NAME = new String("[TM4J-Automation]");
+    private static final String PLUGIN_NAME = new String("[Test Management for Jira]");
     private static String INFO = String.format("%s [INFO]", PLUGIN_NAME);
     private static String ERROR = String.format("%s [ERROR]", PLUGIN_NAME);
     private String serverAddress;
@@ -57,7 +57,7 @@ public class Tm4jReporter extends Notifier {
         logger = listener.getLogger();
         logger.printf("%s Examining test results...%n", INFO);
         List<Tm4JInstance> jiraInstances = getDescriptor().getJiraInstances();
-		FilePath workspace = build.getWorkspace();
+		String workspace = build.getWorkspace().getRemote() + "/";
         try {
         	if (Tm4jConstants.CUCUMBER.equals(this.format)) {
         		new Tm4jPlugin().uploadCucumberFile(jiraInstances, workspace, this.filePath, this.serverAddress, this.projectKey, this.autoCreateTestCases);
@@ -65,12 +65,13 @@ public class Tm4jReporter extends Notifier {
         		new Tm4jPlugin().uploadCustomFormatFile(jiraInstances, workspace, Tm4jConstants.CUSTOM_FORMAT_FILE_NAME, this.serverAddress, this.projectKey, this.autoCreateTestCases);
         	}
         } catch (Exception e) {
+        	logger.printf("%s There was an error trying to send the test results to Test Management for Jira. Error details: %n", ERROR);
             logger.printf(ERROR);
             logger.printf(" %s  %n", e.getMessage());
         	logger.printf("%s Tests results didn't send to TM4J %n", ERROR);
             return false;
         }
-    	logger.printf("%s Done.%n", INFO);
+    	logger.printf("%s  Test results sent to Test Management for Jira successfully.%n", INFO);
     	return true;
     }
 

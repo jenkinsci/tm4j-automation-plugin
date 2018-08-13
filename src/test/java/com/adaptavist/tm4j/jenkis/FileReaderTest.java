@@ -14,12 +14,19 @@ import hudson.FilePath;
 
 public class FileReaderTest {
 
-	private static final FilePath FILE_PATH = new FilePath(new File("src/test/resources/"));
-	private String pattern = "*.json";
+	private static final String FILE_PATH = "src/test/resources/";
+	private static final String ALL = "**/*.json";
+	private static final String JSON_ONLY = "*.json";
+
+	@Test
+	public void shouldReadAllFilesFromAFolder() throws Exception {
+		List<File> files = new FileReader().getFiles(FILE_PATH, ALL);
+		assertEquals(files.size(), 8);
+	}
 
 	@Test
 	public void shouldReadFilesFromAFolder() throws Exception {
-		List<File> files = new FileReader().getFiles(FILE_PATH, pattern);
+		List<File> files = new FileReader().getFiles(FILE_PATH, JSON_ONLY);
 		assertEquals(files.size(), 2);
 	}
 
@@ -31,7 +38,7 @@ public class FileReaderTest {
 	
 	@Test
 	public void shouldCreateAZipFromAPatterm() throws Exception {
-		File file = new FileReader().getZip(FILE_PATH, pattern);
+		File file = new FileReader().getZip(FILE_PATH, JSON_ONLY);
 		assertTrue(file.exists());
 	}
 
@@ -58,7 +65,7 @@ public class FileReaderTest {
 	@Test(expected = Exception.class)
 	public void shouldThrowAnExceptionWhenPathIsWrong() throws Exception {
 		try {
-			new FileReader().getZip(new FilePath(new File("/abc/xyz")), pattern);
+			new FileReader().getZip("/abc/xyz", JSON_ONLY);
 		} catch(Exception e) {
 			assertEquals(e.getMessage(), "Path not found : /abc/xyz");
 			throw e;

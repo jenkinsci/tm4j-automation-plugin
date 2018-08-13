@@ -14,6 +14,6 @@ public class Tm4jConstants {
 	public static final String CUSTOM_FORMAT_FILE_NAME = "tm4j_result.json";
 	public static final String PROJECT_KEY_IS_REQUIRED = "Project key is required.";
 	public static final String FILE_PATH_IS_REQUIRED = "File path is required.";
-	public static final String THERE_ARENT_JIRA_INSTANCES_CONFIGURED = "There aren't Jira Instances configured. Please, go to Jenkins global configurations and set your Jira Instances";
+	public static final String THERE_ARE_NO_JIRA_INSTANCES_CONFIGURED = "There are no Jira instances configured. Please, go to Jenkins global configurations and add some Jira instances.";
 	public static final String JIRA_INSTANCE_NOT_FOUND = "Jira instance not found for this server address {0}";
 }
