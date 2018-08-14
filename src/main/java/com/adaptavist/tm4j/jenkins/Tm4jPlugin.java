@@ -1,6 +1,7 @@
 package com.adaptavist.tm4j.jenkins;
 
 import java.io.File;
+import java.io.PrintStream;
 import java.text.MessageFormat;
 import java.util.List;
 
@@ -11,17 +12,17 @@ import hudson.FilePath;
 public class Tm4jPlugin {
 
 
-	public void uploadCucumberFile(List<Tm4JInstance> jiraInstances, String workspace, String filePath, String serverAddress, String projectKey, Boolean autoCreateTestCases) throws Exception {
+	public void uploadCucumberFile(List<Tm4JInstance> jiraInstances, String workspace, String filePath, String serverAddress, String projectKey, Boolean autoCreateTestCases, PrintStream logger) throws Exception {
 		File file = new FileReader().getZip(workspace, filePath);
 		Tm4JInstance jiraInstance = getTm4jInstance(jiraInstances, serverAddress);
-		new RestClient().sendCucumberFiles(jiraInstance.getServerAddress(), projectKey, jiraInstance.getUsername(), jiraInstance.getPassword(), file, autoCreateTestCases);
+		new RestClient().sendCucumberFiles(jiraInstance.getServerAddress(), projectKey, jiraInstance.getUsername(), jiraInstance.getPassword(), file, autoCreateTestCases, logger);
 		file.delete();
 	}
 
-	public void uploadCustomFormatFile(List<Tm4JInstance> jiraInstances, String workspace, String filePath, String serverAddress, String projectKey, Boolean autoCreateTestCases) throws Exception {
+	public void uploadCustomFormatFile(List<Tm4JInstance> jiraInstances, String workspace, String filePath, String serverAddress, String projectKey, Boolean autoCreateTestCases, PrintStream logger) throws Exception {
 		File file = new FileReader().getZip(workspace, filePath);
 		Tm4JInstance jiraInstance = getTm4jInstance(jiraInstances, serverAddress);
-		new RestClient().sendCustomFormatFiles(jiraInstance.getServerAddress(), projectKey, jiraInstance.getUsername(), jiraInstance.getPassword(), file, autoCreateTestCases);
+		new RestClient().sendCustomFormatFiles(jiraInstance.getServerAddress(), projectKey, jiraInstance.getUsername(), jiraInstance.getPassword(), file, autoCreateTestCases, logger);
 		file.delete();
 	}
 
