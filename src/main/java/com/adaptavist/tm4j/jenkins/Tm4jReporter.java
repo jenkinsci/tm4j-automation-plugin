@@ -1,7 +1,7 @@
 package com.adaptavist.tm4j.jenkins;
 
-import java.io.IOException;
 import static com.adaptavist.tm4j.jenkins.Tm4jConstants.NAME_POST_BUILD_ACTION;
+
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,8 +29,9 @@ import net.sf.json.JSONObject;
 public class Tm4jReporter extends Notifier {
 
     public static PrintStream logger;
-    private static final String PluginName = new String("[TM4JTestResultReporter]");
-    private final String pInfo = String.format("%s [INFO]", PluginName);
+    private static final String PLUGIN_NAME = new String("[Test Management for Jira]");
+    private static String INFO = String.format("%s [INFO]", PLUGIN_NAME);
+    private static String ERROR = String.format("%s [ERROR]", PLUGIN_NAME);
     private String serverAddress;
     private String projectKey;
 	private String filePath;
@@ -54,23 +55,23 @@ public class Tm4jReporter extends Notifier {
     @Override
     public boolean perform(final AbstractBuild<?, ?> build, final Launcher launcher, final BuildListener listener) {
         logger = listener.getLogger();
-        logger.printf("%s Examining test results...%n", pInfo);
-        logger.printf(String.format("Build result is %s%n", build.getResult().toString()));
-        Tm4jPlugin plugin = new Tm4jPlugin();
+        logger.printf("%s Examining test results...%n", INFO);
         List<Tm4JInstance> jiraInstances = getDescriptor().getJiraInstances();
-		FilePath workspace = build.getWorkspace();
+		String workspace = build.getWorkspace().getRemote() + "/";
         try {
         	if (Tm4jConstants.CUCUMBER.equals(this.format)) {
-        		plugin.uploadCucumberFile(jiraInstances, workspace, this.filePath, this.serverAddress, this.projectKey, this.autoCreateTestCases);
+        		new Tm4jPlugin().uploadCucumberFile(jiraInstances, workspace, this.filePath, this.serverAddress, this.projectKey, this.autoCreateTestCases);
         	} else {
-        		plugin.uploadCustomFormatFile(jiraInstances, workspace, this.serverAddress, this.projectKey, this.autoCreateTestCases);
+        		new Tm4jPlugin().uploadCustomFormatFile(jiraInstances, workspace, Tm4jConstants.CUSTOM_FORMAT_FILE_NAME, this.serverAddress, this.projectKey, this.autoCreateTestCases);
         	}
-        } catch (IOException e) {
-            logger.printf("%s Error.%n", pInfo);
-            logger.printf("%s Stack trace: %n", e);
+        } catch (Exception e) {
+        	logger.printf("%s There was an error trying to send the test results to Test Management for Jira. Error details: %n", ERROR);
+            logger.printf(ERROR);
+            logger.printf(" %s  %n", e.getMessage());
+        	logger.printf("%s Tests results didn't send to TM4J %n", ERROR);
             return false;
         }
-    	logger.printf("%s Done.%n", pInfo);
+    	logger.printf("%s  Test results sent to Test Management for Jira successfully.%n", INFO);
     	return true;
     }
 
@@ -114,36 +115,51 @@ public class Tm4jReporter extends Notifier {
 		@Override
 		public boolean configure(StaplerRequest request, JSONObject formData) throws FormException {
 			request.bindParameters(this);
-			this.jiraInstances = new ArrayList<Tm4JInstance>();
-			Object jiraInstances = formData.get("jiraInstances");
-			if (jiraInstances instanceof JSONArray) {
-				JSONArray jiraInstancesList = (JSONArray) jiraInstances;
-				for (Object jiraInstance :  jiraInstancesList.toArray()) {
-					createAnInstance((JSONObject)jiraInstance);
-				}
-			} else {
-				createAnInstance(formData.getJSONObject("jiraInstances"));
-			}
+			Object formJiraInstances = formData.get("jiraInstances");
+			this.jiraInstances = crateJiraInstances(formJiraInstances);
 			save();
 			return super.configure(request, formData);
 		}
+
+		private List<Tm4JInstance> crateJiraInstances(Object formJiraInstances) {
+			if (formJiraInstances == null) {
+				return null;
+			}
+			List<Tm4JInstance> newJiraInstances = new ArrayList<>();
+			if (formJiraInstances instanceof JSONArray) {
+				JSONArray jiraInstancesList = (JSONArray) formJiraInstances;
+				for (Object jiraInstance :  jiraInstancesList.toArray()) {
+					newJiraInstances.add(createAnInstance((JSONObject) jiraInstance));
+				}
+			} else {
+				newJiraInstances.add(createAnInstance((JSONObject) formJiraInstances));
+			}
+			return newJiraInstances;
+		}
 	
-		private void createAnInstance(JSONObject jiraInstance) {
+		private Tm4JInstance createAnInstance(JSONObject formJiraInstance) {
 			Tm4JInstance tm4jInstance = new Tm4JInstance();
-			tm4jInstance.setServerAddress(StringUtils.removeEnd(jiraInstance.getString("serverAddress").trim(), "/"));
-			tm4jInstance.setUsername(jiraInstance.getString("username").trim());
-			tm4jInstance.setPassword(jiraInstance.getString("password").trim());
+			String serverAddres = formJiraInstance.getString("serverAddress");
+			String username = formJiraInstance.getString("username");
+			String password = formJiraInstance.getString("password");
+			if (StringUtils.isBlank(serverAddres) || StringUtils.isBlank(username) || StringUtils.isBlank(password)) {
+				return null;
+			}
+			tm4jInstance.setServerAddress(StringUtils.removeEnd(serverAddres.trim(), "/"));
+			tm4jInstance.setUsername(username.trim());
+			tm4jInstance.setPassword(password.trim());
 			RestClient restClient = new RestClient();
 			if (restClient.isValidCredentials(tm4jInstance.getServerAddress(), tm4jInstance.getUsername(), tm4jInstance.getPassword())) {
-				this.jiraInstances.add(tm4jInstance);
+				return tm4jInstance;
 			}
+			return null;
 		}
 	
 		@Override
 		public String getDisplayName() {
 			return NAME_POST_BUILD_ACTION;
 		}
-	
+		
 		public FormValidation doTestConnection(@QueryParameter String serverAddress, @QueryParameter String username, @QueryParameter String password) {
 			return new Tm4jForm().testConnection(serverAddress, username, password);
 		}
@@ -155,7 +171,15 @@ public class Tm4jReporter extends Notifier {
 		public ListBoxModel doFillFormatItems() {
 			return new Tm4jForm().fillFormat();
 		}
+		
+		public FormValidation doCheckProjectKey(@QueryParameter String projectKey) {
+			return new Tm4jForm().doCheckProjectKey(projectKey);
+		}
 
+		public FormValidation doCheckFilePath(@QueryParameter String filePath) {
+			return new Tm4jForm().doCheckFilePath(filePath);
+		}
+		
 		public List<Tm4JInstance> getJiraInstances() {
 			return jiraInstances;
 		}

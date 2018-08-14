@@ -13,6 +13,7 @@ import static com.adaptavist.tm4j.jenkins.Tm4jConstants.TM4J_OUTPUT_RESULT_FOR_J
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.jfree.text.TextBox;
 
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
@@ -57,5 +58,13 @@ public class Tm4jForm {
 		modelbox.add(CUCUMBER);
 		modelbox.add(TM4J_OUTPUT_RESULT_FOR_JUNIT);
 		return modelbox;
+	}
+
+	public FormValidation doCheckProjectKey(String projectKey) {
+		return StringUtils.isBlank(projectKey) ? FormValidation.error(Tm4jConstants.PROJECT_KEY_IS_REQUIRED) : FormValidation.ok() ;
+	}
+
+	public FormValidation doCheckFilePath(String filePath) {
+		return StringUtils.isBlank(filePath) ? FormValidation.error(Tm4jConstants.FILE_PATH_IS_REQUIRED) : FormValidation.ok() ;
 	}
 }

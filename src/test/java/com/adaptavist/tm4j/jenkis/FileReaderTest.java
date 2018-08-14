@@ -1,38 +1,84 @@
 package com.adaptavist.tm4j.jenkis;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 import org.junit.Test;
 
 import com.adaptavist.tm4j.jenkins.FileReader;
 
 public class FileReaderTest {
+
+	private static final String FILE_PATH = "src/test/resources/";
+	private static final String ALL = "**/*.json";
+	private static final String JSON_ONLY = "*.json";
+
+	@Test
+	public void shouldReadAllFilesFromAFolder() throws Exception {
+		List<File> files = new FileReader().getFiles(FILE_PATH, ALL);
+		assertEquals(files.size(), 8);
+	}
 	
-	private String pattern = "src/main/resources/*.jelly";
-	private String[] patterns = {pattern, "src/main/resources/com/adaptavist/tm4j/jenkins/Tm4jReporter/*.jelly"};
+	@Test
+	public void shouldReadAllFilesFromAFolderPath() throws Exception {
+		List<File> files = new FileReader().getFiles(FILE_PATH, "**/*");
+		assertEquals(files.size(), 8);
+	}
+
+	@Test
+	public void shouldReadAllFilesFromAFolderPathWhitHyphen() throws Exception {
+		List<File> files = new FileReader().getFiles(FILE_PATH, "result*");
+		assertEquals(files.size(), 2);
+	}
 
 	@Test
 	public void shouldReadFilesFromAFolder() throws Exception {
-		List<File> files = new FileReader().getFiles(pattern);
+		List<File> files = new FileReader().getFiles(FILE_PATH, JSON_ONLY);
+		assertEquals(files.size(), 2);
+	}
+
+	@Test
+	public void shouldReadAFileFromAFolder() throws Exception {
+		List<File> files = new FileReader().getFiles(FILE_PATH, "result_1.json");
 		assertEquals(files.size(), 1);
 	}
 	
-	@SuppressWarnings("resource")
 	@Test
 	public void shouldCreateAZipFromAPatterm() throws Exception {
-		File file = new FileReader().getZip(patterns);
+		File file = new FileReader().getZip(FILE_PATH, JSON_ONLY);
 		assertTrue(file.exists());
-		ZipFile zip = new ZipFile(file);
-		ZipEntry entry = zip.getEntry("src/main/resources/index.jelly");
-		assertEquals(entry.isDirectory(), false);
-		file.delete();
-		assertFalse(file.exists());
+	}
+
+	@Test(expected = Exception.class)
+	public void shouldThrowAnExceptionWhenFileNotFound() throws Exception {
+		try {
+			new FileReader().getZip(FILE_PATH, "abc.xyz");
+		} catch(Exception e) {
+			assertEquals(e.getMessage(), "File not found: abc.xyz");
+			throw e;
+		}
+	}
+
+	@Test(expected = Exception.class)
+	public void shouldThrowAnExceptionWhenFileNotFoundForPattern() throws Exception {
+		try {
+			new FileReader().getZip(FILE_PATH, "*.xyz");
+		} catch(Exception e) {
+			assertEquals(e.getMessage(), "File not found : *.xyz");
+			throw e;
+		}
+	}
+	
+	@Test(expected = Exception.class)
+	public void shouldThrowAnExceptionWhenPathIsWrong() throws Exception {
+		try {
+			new FileReader().getZip("/abc/xyz", JSON_ONLY);
+		} catch(Exception e) {
+			assertEquals(e.getMessage(), "Path not found : /abc/xyz");
+			throw e;
+		}
 	}
 }
