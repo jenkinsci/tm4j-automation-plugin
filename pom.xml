@@ -17,8 +17,9 @@
 		<jenkins.version>2.121.2</jenkins.version>
 		<java.level>8</java.level>
 	</properties>
-	<name>TM4J Automation</name>
-	<description>Automation Jenkins Plugin for Test Management for JIRA</description>
+	<name>Test Management for Jira</name>
+	<description>Integration with Test Management for Jira, for automatic publishing of test results.</description>
+	<url></url>
 	<dependencies>
 		<dependency>
 			<groupId>com.mashape.unirest</groupId>
