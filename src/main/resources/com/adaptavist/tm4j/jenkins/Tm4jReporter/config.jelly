@@ -3,7 +3,7 @@
 		 xmlns:d="jelly:define" xmlns:l="/lib/layout"
          xmlns:t="/lib/hudson" xmlns:f="/lib/form">
          
-    <f:entry title="JIRA URL" field="serverAddress">
+    <f:entry title="Jira instance" field="serverAddress" help="/descriptor/com.adaptavist.tm4j.jenkins.Tm4jReporter/help/serverAddressPostBuildAction">
         <f:select/>
     </f:entry>
 
@@ -11,7 +11,7 @@
         <f:textbox field="projectKey"/>
     </f:entry>
     
-    <f:entry title="Choose Framework Test" field="format">
+    <f:entry title="Test framework" field="format">
         <f:select id="tm4jAutomationPostBuildActionFormatSelect"/>
     </f:entry>
 
@@ -21,7 +21,7 @@
 	</f:entry>
 
 
-	<f:entry title="Create test cases automatically if they do not exist" field="autoCreateTestCases">
+	<f:entry title="Automatically create non-existing test cases" field="autoCreateTestCases">
         <f:checkbox field="autoCreateTestCases"/>
     </f:entry>
     

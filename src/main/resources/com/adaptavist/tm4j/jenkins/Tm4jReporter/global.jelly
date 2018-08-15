@@ -1,35 +1,39 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler"
-	xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson"
-	xmlns:f="/lib/form">
-	<f:section title="TM4J Configuration">
+         xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson"
+         xmlns:f="/lib/form">
+    <f:section title="Test Management for Jira Configuration">
 
-		<f:entry title="JIRA Server(s)">
-			<f:repeatable var="tm4jInstancesList" name="jiraInstances" items="${instance.jiraInstances}" noAddButton="false" minimum="0">
-				<table>
-					<f:entry title="Jira Server" description="JIRA Server IP address or hostname" field="serverAddress">
-						<f:textbox value="${tm4jInstancesList.serverAddress}" default="" />
-					</f:entry>
-					<f:entry title="Username" description="JIRA User Name" field="username">
-						<f:textbox value="${tm4jInstancesList.username}" default="" />
-					</f:entry>
+        <f:entry title="Jira server(s)">
+            <f:repeatable var="tm4jInstancesList" name="jiraInstances" items="${instance.jiraInstances}"
+                          noAddButton="false" minimum="0">
+                <table>
+                    <f:entry title="Jira URL" description="Jira IP address or hostname"
+                             field="serverAddress">
+                        <f:textbox value="${tm4jInstancesList.serverAddress}" default=""/>
+                    </f:entry>
+                    <f:entry title="Username" description="Jira user name" field="username">
+                        <f:textbox value="${tm4jInstancesList.username}" default=""/>
+                    </f:entry>
 
-					<f:entry title="Password" description="JIRA User Password" field="password">
-						<f:password value="${tm4jInstancesList.password}" default="" />
-					</f:entry>
-					<f:validateButton title="Test Configuration&#160;" progress="Please wait .. We are validating the connection and credentials"
-						method="testConnection" with="serverAddress,username,password" />
-					<tr>
-						<td></td>
-						<td></td>
-						<td>
-							<div style="float: right;">
-								<input type="button" value="Delete Jira URL" class="repeatable-delete" style="margin-left: 1em;" />
-							</div>
-						</td>
-					</tr>
-				</table>
-			</f:repeatable>
-		</f:entry>
-	</f:section>
+                    <f:entry title="Password" description="Jira user password" field="password">
+                        <f:password value="${tm4jInstancesList.password}" default=""/>
+                    </f:entry>
+                    <f:validateButton title="Test Configuration&#160;"
+                                      progress="Please wait .. We are validating the connection and credentials"
+                                      method="testConnection" with="serverAddress,username,password"/>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td>
+                            <div style="float: right;">
+                                <input type="button" value="Delete Jira URL" class="repeatable-delete"
+                                       style="margin-left: 1em;"/>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </f:repeatable>
+        </f:entry>
+    </f:section>
 </j:jelly>
