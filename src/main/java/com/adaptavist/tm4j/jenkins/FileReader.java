@@ -20,7 +20,7 @@ public class FileReader {
 			throw new Exception(MessageFormat.format("Path not found : {0}",  workpace));
 		}
 		if (!pattern.contains("*")) {
-			File file = new File(workpace +  pattern);
+			File file = new File(workpace + pattern);
 			if (!file.exists()) {
 				throw new FileNotFoundException(MessageFormat.format("File not found: {0}", pattern));
 			}

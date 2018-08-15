@@ -8,8 +8,7 @@
             <f:repeatable var="tm4jInstancesList" name="jiraInstances" items="${instance.jiraInstances}"
                           noAddButton="false" minimum="0">
                 <table>
-                    <f:entry title="Jira URL" description="Jira IP address or hostname"
-                             field="serverAddress">
+                    <f:entry title="Jira URL" description="Jira IP address or hostname" field="serverAddress">
                         <f:textbox value="${tm4jInstancesList.serverAddress}" default=""/>
                     </f:entry>
                     <f:entry title="Username" description="Jira user name" field="username">

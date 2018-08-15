@@ -10,6 +10,12 @@ import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
+
+import org.apache.http.client.CookieStore;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -51,7 +57,6 @@ public class RestClient {
                 logger.printf("%s Test Cycle created with the following KEY: %s. %s %n", INFO, testCycleKey, testCycleUrl);
                 logger.printf("%s Test results published to Test Management for Jira successfully.%n", INFO);
             }
-
             return jsonResponse.getStatus();
 		} catch (UnirestException e) {
 			throw new Exception("Error trying to communicate with Jira", e.getCause());
@@ -61,6 +66,8 @@ public class RestClient {
 	public boolean isValidCredentials(String serverAddress, String username, String password) {
 		try {
 			String url = MessageFormat.format(TM4J_HEALTH_CHECK, serverAddress);
+			HttpClient httpClient = HttpClientBuilder.create().disableCookieManagement().build();
+			Unirest.setHttpClient(httpClient);
 			HttpResponse<String> response = Unirest.get(url)
 					  .basicAuth(username, password)
 					  .asString();
