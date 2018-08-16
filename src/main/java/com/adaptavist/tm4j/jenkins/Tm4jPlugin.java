@@ -7,8 +7,6 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
-import hudson.FilePath;
-
 public class Tm4jPlugin {
 
 
