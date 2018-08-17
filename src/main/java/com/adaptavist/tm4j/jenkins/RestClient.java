@@ -1,20 +1,21 @@
 package com.adaptavist.tm4j.jenkins;
 
+import static com.adaptavist.tm4j.jenkins.Tm4jReporter.ERROR;
+import static com.adaptavist.tm4j.jenkins.Tm4jReporter.INFO;
+
 import java.io.File;
 import java.io.PrintStream;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.List;
+
+import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import static com.adaptavist.tm4j.jenkins.Tm4jReporter.ERROR;
-import static com.adaptavist.tm4j.jenkins.Tm4jReporter.INFO;
 
 public class RestClient {
 
@@ -33,6 +34,8 @@ public class RestClient {
 	public int sendZip(String endpoint, String serverAddress, String projectKey, String username, String password, File zip, Boolean autoCreateTestCases, PrintStream logger) throws Exception  {
 		try {
 			String url = MessageFormat.format(endpoint, serverAddress, projectKey);
+			HttpClient httpClient = HttpClientBuilder.create().disableCookieManagement().build();
+			Unirest.setHttpClient(httpClient);
             HttpResponse<JsonNode> jsonResponse = Unirest.post(url)
                     .basicAuth(username, password)
                     .queryString("autoCreateTestCases", autoCreateTestCases)
@@ -45,13 +48,12 @@ public class RestClient {
                 errorMessages.forEach(errorMessage -> logger.printf("%s %s %n", ERROR, errorMessage));
                 logger.printf("%s Test Cycle was not created %n", ERROR);
             } else {
-                JSONObject testRun = (JSONObject) jsonResponse.getBody().getObject().get("testRun");
+                JSONObject testRun = (JSONObject) jsonResponse.getBody().getObject().get("testCycle");
                 String testCycleKey = (String) testRun.get("key");
                 String testCycleUrl = (String) testRun.get("url");
                 logger.printf("%s Test Cycle created with the following KEY: %s. %s %n", INFO, testCycleKey, testCycleUrl);
                 logger.printf("%s Test results published to Test Management for Jira successfully.%n", INFO);
             }
-
             return jsonResponse.getStatus();
 		} catch (UnirestException e) {
 			throw new Exception("Error trying to communicate with Jira", e.getCause());
@@ -61,6 +63,8 @@ public class RestClient {
 	public boolean isValidCredentials(String serverAddress, String username, String password) {
 		try {
 			String url = MessageFormat.format(TM4J_HEALTH_CHECK, serverAddress);
+			HttpClient httpClient = HttpClientBuilder.create().disableCookieManagement().build();
+			Unirest.setHttpClient(httpClient);
 			HttpResponse<String> response = Unirest.get(url)
 					  .basicAuth(username, password)
 					  .asString();

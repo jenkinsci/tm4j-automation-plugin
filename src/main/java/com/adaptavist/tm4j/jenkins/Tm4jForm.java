@@ -13,7 +13,6 @@ import static com.adaptavist.tm4j.jenkins.Tm4jConstants.TM4J_OUTPUT_RESULT_FOR_J
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.jfree.text.TextBox;
 
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
@@ -66,5 +65,17 @@ public class Tm4jForm {
 
 	public FormValidation doCheckFilePath(String filePath) {
 		return StringUtils.isBlank(filePath) ? FormValidation.error(Tm4jConstants.FILE_PATH_IS_REQUIRED) : FormValidation.ok() ;
+	}
+
+	public FormValidation doCheckServerAddress(String serverAddress) {
+		return StringUtils.isBlank(serverAddress) ? FormValidation.error(PLEASE_ENTER_THE_SERVER_NAME) : FormValidation.ok();
+	}
+	
+	public FormValidation doCheckUsername(String userName) {
+		return StringUtils.isBlank(userName) ? FormValidation.error(PLEASE_ENTER_THE_USERNAME) : FormValidation.ok();
+	}
+
+	public FormValidation doCheckPassword(String password) {
+		return StringUtils.isBlank(password) ? FormValidation.error(PLEASE_ENTER_THE_PASSWORD) : FormValidation.ok();
 	}
 }

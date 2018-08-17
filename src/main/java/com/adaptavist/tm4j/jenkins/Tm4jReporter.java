@@ -1,8 +1,10 @@
 package com.adaptavist.tm4j.jenkins;
 
+import static com.adaptavist.tm4j.jenkins.Tm4jConstants.ERROR_AT_GLOBAL_CONFIGURATIONS_OF_TEST_MANAGEMENT_FOR_JIRA;
 import static com.adaptavist.tm4j.jenkins.Tm4jConstants.NAME_POST_BUILD_ACTION;
 
 import java.io.PrintStream;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,7 +14,6 @@ import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 
 import hudson.Extension;
-import hudson.FilePath;
 import hudson.Launcher;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
@@ -115,14 +116,18 @@ public class Tm4jReporter extends Notifier {
 		public boolean configure(StaplerRequest request, JSONObject formData) throws FormException {
 			request.bindParameters(this);
 			Object formJiraInstances = formData.get("jiraInstances");
-			this.jiraInstances = crateJiraInstances(formJiraInstances);
+			try {
+				this.jiraInstances = crateJiraInstances(formJiraInstances);
+			} catch (Exception e) {
+				throw new FormException(MessageFormat.format(Tm4jConstants.ERROR_AT_GLOBAL_CONFIGURATIONS_OF_TEST_MANAGEMENT_FOR_JIRA, e.getMessage()), "testManagementForJira");
+			}
 			save();
 			return super.configure(request, formData);
 		}
 
-		private List<Tm4JInstance> crateJiraInstances(Object formJiraInstances) {
+		private List<Tm4JInstance> crateJiraInstances(Object formJiraInstances) throws Exception {
 			if (formJiraInstances == null) {
-				return null;
+				throw new Exception(Tm4jConstants.JIRA_INSTANCES_CAN_NOT_BE_NULL_OR_EMPTY);
 			}
 			List<Tm4JInstance> newJiraInstances = new ArrayList<>();
 			if (formJiraInstances instanceof JSONArray) {
@@ -136,13 +141,19 @@ public class Tm4jReporter extends Notifier {
 			return newJiraInstances;
 		}
 	
-		private Tm4JInstance createAnInstance(JSONObject formJiraInstance) {
+		private Tm4JInstance createAnInstance(JSONObject formJiraInstance) throws Exception {
 			Tm4JInstance tm4jInstance = new Tm4JInstance();
 			String serverAddres = formJiraInstance.getString("serverAddress");
 			String username = formJiraInstance.getString("username");
 			String password = formJiraInstance.getString("password");
-			if (StringUtils.isBlank(serverAddres) || StringUtils.isBlank(username) || StringUtils.isBlank(password)) {
-				return null;
+			if (StringUtils.isBlank(serverAddres)) {
+				throw new Exception(Tm4jConstants.PLEASE_ENTER_THE_SERVER_NAME);
+			}
+			if (StringUtils.isBlank(username)) {
+				throw new Exception(Tm4jConstants.PLEASE_ENTER_THE_USERNAME);
+			} 
+			if (StringUtils.isBlank(password)){
+				throw new Exception(Tm4jConstants.PLEASE_ENTER_THE_PASSWORD);
 			}
 			tm4jInstance.setServerAddress(StringUtils.removeEnd(serverAddres.trim(), "/"));
 			tm4jInstance.setUsername(username.trim());
@@ -151,7 +162,7 @@ public class Tm4jReporter extends Notifier {
 			if (restClient.isValidCredentials(tm4jInstance.getServerAddress(), tm4jInstance.getUsername(), tm4jInstance.getPassword())) {
 				return tm4jInstance;
 			}
-			return null;
+			throw new Exception(Tm4jConstants.INVALID_USER_CREDENTIALS);
 		}
 	
 		@Override
@@ -169,6 +180,18 @@ public class Tm4jReporter extends Notifier {
 		
 		public ListBoxModel doFillFormatItems() {
 			return new Tm4jForm().fillFormat();
+		}
+		
+		public FormValidation doCheckServerAddress(@QueryParameter String serverAddress) {
+			return new Tm4jForm().doCheckServerAddress(serverAddress);
+		}
+		
+		public FormValidation doCheckUsername(@QueryParameter String username) {
+			return new Tm4jForm().doCheckUsername(username);
+		}
+
+		public FormValidation doCheckPassword(@QueryParameter String password) {
+			return new Tm4jForm().doCheckPassword(password);
 		}
 		
 		public FormValidation doCheckProjectKey(@QueryParameter String projectKey) {
