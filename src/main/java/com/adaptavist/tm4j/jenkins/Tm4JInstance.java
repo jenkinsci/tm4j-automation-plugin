@@ -1,11 +1,23 @@
 package com.adaptavist.tm4j.jenkins;
 
+import org.kohsuke.stapler.DataBoundConstructor;
+
 public class Tm4JInstance {
 
 	private String serverAddress;
 	private String username;
 	private String password;
-	
+
+	public Tm4JInstance() {
+	}
+
+	@DataBoundConstructor
+	public Tm4JInstance(String serverAddress, String username, String password) {
+		this.serverAddress = serverAddress;
+		this.username = username;
+		this.password = password;
+	}
+
 	public String getServerAddress() {
 		return serverAddress;
 	}
