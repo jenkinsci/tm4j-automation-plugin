@@ -24,8 +24,13 @@ public class Tm4jPlugin {
 		file.delete();
 	}
 
+	public void exportFeatureFiles(List<Tm4JInstance> jiraInstances, String workspace, String serverAddress, String tql) throws Exception {
+		Tm4JInstance jiraInstance = getTm4jInstance(jiraInstances, serverAddress);
+		new RestClient().downloadFeatureFiles(jiraInstance.getServerAddress(), workspace, jiraInstance.getUsername(), jiraInstance.getPassword(), tql);
+	}
+
 	private Tm4JInstance getTm4jInstance(List<Tm4JInstance> jiraInstances, String serverAddress ) throws Exception {
-		if (jiraInstances == null) 
+		if (jiraInstances == null)
 			throw new IllegalStateException(Tm4jConstants.THERE_ARE_NO_JIRA_INSTANCES_CONFIGURED);
 		for (Tm4JInstance jiraInstance : jiraInstances) {
 			if (StringUtils.isNotBlank(jiraInstance.getServerAddress()) && jiraInstance.getServerAddress().trim().equals(serverAddress)) {

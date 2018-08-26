@@ -1,5 +1,11 @@
 <j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
-  <f:entry title="Build step field" field="task">
-        <f:textbox/>
+
+  <f:entry title="Jira instance" field="serverAddress" help="/descriptor/com.adaptavist.tm4j.jenkins.Tm4jReporter/help/serverAddressPostBuildAction">
+      <f:select/>
   </f:entry>
+
+  <f:entry title="TQL" field="tql">
+      <f:textbox field="tql"/>
+  </f:entry>
+
 </j:jelly>

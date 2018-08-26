@@ -3,10 +3,13 @@ package com.adaptavist.tm4j.jenkins;
 import static com.adaptavist.tm4j.jenkins.Tm4jReporter.ERROR;
 import static com.adaptavist.tm4j.jenkins.Tm4jReporter.INFO;
 
-import java.io.File;
-import java.io.PrintStream;
+import java.io.*;
 import java.text.MessageFormat;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.json.JSONArray;
@@ -21,6 +24,7 @@ public class RestClient {
 
 	private static final String CUCUMBER_ENDPOINT = "{0}/rest/atm/1.0/automation/execution/cucumber/{1}";
 	private static final String CUSTOM_FORMAT_ENDPOINT = "{0}/rest/atm/1.0/automation/execution/{1}";
+	private static final String FEATURE_FILES_ENDPOINT = "{0}/rest/atm/1.0/automation/testcases";
 	private static final String TM4J_HEALTH_CHECK = "{0}/rest/atm/1.0/healthcheck/";
 
     public int sendCucumberFiles(String serverAddress, String projectKey, String username, String password, File zip, Boolean autoCreateTestCases, PrintStream logger) throws Exception {
@@ -73,5 +77,28 @@ public class RestClient {
 			e.printStackTrace();
 		}
 		return false;
+	}
+
+	public void downloadFeatureFiles(String serverAddress, String workspace, String username, String password, String tql) throws UnirestException, IOException {
+		String url = MessageFormat.format(FEATURE_FILES_ENDPOINT, serverAddress);
+		HttpClient httpClient = HttpClientBuilder.create().disableCookieManagement().build();
+		Unirest.setHttpClient(httpClient);
+
+		HttpResponse<InputStream> featureFiles = Unirest.get(url)
+				.basicAuth(username, password)
+				.queryString("tql", tql)
+				.asBinary();
+
+
+		ZipInputStream zipInputStream = new ZipInputStream(featureFiles.getRawBody());
+
+		ZipEntry entry = zipInputStream.getNextEntry();
+		while (entry != null) {
+			File featureFile = new File(workspace + entry.getName());
+			FileWriter fileWriter = new FileWriter(featureFile);
+			fileWriter.write("content");
+
+			entry = zipInputStream.getNextEntry();
+		}
 	}
 }
