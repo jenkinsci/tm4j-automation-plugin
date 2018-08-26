@@ -1,5 +1,9 @@
-package com.adaptavist.tm4j.jenkins;
+package com.adaptavist.tm4j.jenkins.extensions.buildsteps;
 
+import com.adaptavist.tm4j.jenkins.extensions.Tm4JInstance;
+import com.adaptavist.tm4j.jenkins.extensions.Tm4jForm;
+import com.adaptavist.tm4j.jenkins.io.Tm4jPlugin;
+import com.adaptavist.tm4j.jenkins.extensions.configuration.Tm4jGlobalConfiguration;
 import hudson.Extension;
 import hudson.Launcher;
 import hudson.model.AbstractBuild;
@@ -15,13 +19,13 @@ import javax.inject.Inject;
 import java.io.IOException;
 import java.util.List;
 
-public class Tm4jBuildStep extends Builder {
+public class Tm4jFeatureFilesExporter extends Builder {
 
     private String serverAddress;
     private String tql;
 
     @DataBoundConstructor
-    public Tm4jBuildStep(String serverAddress, String tql) {
+    public Tm4jFeatureFilesExporter(String serverAddress, String tql) {
         this.serverAddress = serverAddress;
         this.tql = tql;
     }
@@ -69,7 +73,7 @@ public class Tm4jBuildStep extends Builder {
         @Nonnull
         @Override
         public String getDisplayName() {
-            return "TM4J Build Step";
+            return "Export feature files from Test Management for Jira";
         }
 
         public ListBoxModel doFillServerAddressItems() {

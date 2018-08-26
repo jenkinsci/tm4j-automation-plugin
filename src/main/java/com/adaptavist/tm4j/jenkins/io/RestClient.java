@@ -1,15 +1,13 @@
-package com.adaptavist.tm4j.jenkins;
+package com.adaptavist.tm4j.jenkins.io;
 
-import static com.adaptavist.tm4j.jenkins.Tm4jReporter.ERROR;
-import static com.adaptavist.tm4j.jenkins.Tm4jReporter.INFO;
+import static com.adaptavist.tm4j.jenkins.extensions.postbuildactions.Tm4jBuildResultReporter.ERROR;
+import static com.adaptavist.tm4j.jenkins.extensions.postbuildactions.Tm4jBuildResultReporter.INFO;
 
 import java.io.*;
 import java.text.MessageFormat;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.json.JSONArray;

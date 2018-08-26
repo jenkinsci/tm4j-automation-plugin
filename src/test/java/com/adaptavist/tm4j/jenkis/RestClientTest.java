@@ -10,10 +10,8 @@ import org.junit.AfterClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.adaptavist.tm4j.jenkins.FileReader;
-import com.adaptavist.tm4j.jenkins.RestClient;
-
-import hudson.FilePath;
+import com.adaptavist.tm4j.jenkins.io.FileReader;
+import com.adaptavist.tm4j.jenkins.io.RestClient;
 
 @Ignore
 public class RestClientTest {

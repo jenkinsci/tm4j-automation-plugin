@@ -8,7 +8,7 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.adaptavist.tm4j.jenkins.FileReader;
+import com.adaptavist.tm4j.jenkins.io.FileReader;
 
 public class FileReaderTest {
 

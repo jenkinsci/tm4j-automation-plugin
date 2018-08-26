@@ -1,5 +1,9 @@
-package com.adaptavist.tm4j.jenkins;
+package com.adaptavist.tm4j.jenkins.extensions.configuration;
 
+import com.adaptavist.tm4j.jenkins.extensions.Tm4JInstance;
+import com.adaptavist.tm4j.jenkins.Tm4jConstants;
+import com.adaptavist.tm4j.jenkins.io.RestClient;
+import com.adaptavist.tm4j.jenkins.extensions.Tm4jForm;
 import hudson.Extension;
 import hudson.util.FormValidation;
 import jenkins.model.GlobalConfiguration;

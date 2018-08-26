@@ -1,4 +1,4 @@
-package com.adaptavist.tm4j.jenkins;
+package com.adaptavist.tm4j.jenkins.extensions;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 

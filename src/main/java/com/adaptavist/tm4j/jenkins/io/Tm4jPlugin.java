@@ -1,10 +1,14 @@
-package com.adaptavist.tm4j.jenkins;
+package com.adaptavist.tm4j.jenkins.io;
 
 import java.io.File;
 import java.io.PrintStream;
 import java.text.MessageFormat;
 import java.util.List;
 
+import com.adaptavist.tm4j.jenkins.Tm4jConstants;
+import com.adaptavist.tm4j.jenkins.extensions.Tm4JInstance;
+import com.adaptavist.tm4j.jenkins.io.FileReader;
+import com.adaptavist.tm4j.jenkins.io.RestClient;
 import org.apache.commons.lang.StringUtils;
 
 public class Tm4jPlugin {

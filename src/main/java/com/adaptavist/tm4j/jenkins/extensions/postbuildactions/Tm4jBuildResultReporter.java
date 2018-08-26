@@ -1,10 +1,15 @@
-package com.adaptavist.tm4j.jenkins;
+package com.adaptavist.tm4j.jenkins.extensions.postbuildactions;
 
 import static com.adaptavist.tm4j.jenkins.Tm4jConstants.NAME_POST_BUILD_ACTION;
 
 import java.io.PrintStream;
 import java.util.List;
 
+import com.adaptavist.tm4j.jenkins.extensions.Tm4JInstance;
+import com.adaptavist.tm4j.jenkins.Tm4jConstants;
+import com.adaptavist.tm4j.jenkins.extensions.Tm4jForm;
+import com.adaptavist.tm4j.jenkins.io.Tm4jPlugin;
+import com.adaptavist.tm4j.jenkins.extensions.configuration.Tm4jGlobalConfiguration;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
@@ -24,7 +29,7 @@ import net.sf.json.JSONObject;
 
 import javax.inject.Inject;
 
-public class Tm4jReporter extends Notifier {
+public class Tm4jBuildResultReporter extends Notifier {
 
     public static PrintStream logger;
     private static final String PLUGIN_NAME = new String("[Test Management for Jira]");
@@ -37,7 +42,7 @@ public class Tm4jReporter extends Notifier {
 	private Boolean autoCreateTestCases;
 
     @DataBoundConstructor
-    public Tm4jReporter(String serverAddress, String projectKey, String filePath, Boolean autoCreateTestCases, String format) {
+    public Tm4jBuildResultReporter(String serverAddress, String projectKey, String filePath, Boolean autoCreateTestCases, String format) {
         this.serverAddress = serverAddress;
         this.projectKey = projectKey;
         this.filePath = filePath;
@@ -95,7 +100,7 @@ public class Tm4jReporter extends Notifier {
 		private Tm4jGlobalConfiguration tm4jGlobalConfiguration;
 	
 		public Tm4jDescriptor() {
-			super(Tm4jReporter.class);
+			super(Tm4jBuildResultReporter.class);
 			load();
 		}
 	
