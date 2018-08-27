@@ -7,8 +7,11 @@
       <f:select/>
   </f:entry>
 
-  <f:entry title="TQL" field="tql">
-      <f:textbox field="tql"/>
+  <f:entry title="Project key" field="projectKey">
+      <f:textbox field="projectKey"/>
   </f:entry>
 
+   <f:entry title="File path" field="filePath" >
+      <f:textbox field="filePath" />
+   </f:entry>
 </j:jelly>

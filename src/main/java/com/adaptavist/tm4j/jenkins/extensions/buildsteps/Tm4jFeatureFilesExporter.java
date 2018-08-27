@@ -16,26 +16,33 @@ import org.kohsuke.stapler.DataBoundConstructor;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
-import java.io.IOException;
 import java.util.List;
+
+import static java.lang.String.format;
+import static org.apache.commons.lang.StringUtils.isEmpty;
 
 public class Tm4jFeatureFilesExporter extends Builder {
 
+    public static final String DEFAULT_FEATURE_FILES_PATH = "target/cucumber/features";
     private String serverAddress;
-    private String tql;
+    private String projectKey;
+    private String filePath;
 
     @DataBoundConstructor
-    public Tm4jFeatureFilesExporter(String serverAddress, String tql) {
+    public Tm4jFeatureFilesExporter(String serverAddress, String projectKey, String filePath) {
         this.serverAddress = serverAddress;
-        this.tql = tql;
+        this.projectKey = projectKey;
+        this.filePath = filePath;
     }
 
     @Override
-    public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) throws InterruptedException, IOException {
+    public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) {
         List<Tm4JInstance> jiraInstances = getDescriptor().getJiraInstances();
         String workspace = build.getWorkspace().getRemote() + "/";
         try {
-            new Tm4jJiraRestClient().exportFeatureFiles(jiraInstances, workspace, serverAddress, tql);
+            String tql = format("testCase.projectKey = '%s'", this.projectKey);
+            String featureFilesPath = workspace + filePath;
+            new Tm4jJiraRestClient().exportFeatureFiles(jiraInstances, featureFilesPath, serverAddress, tql);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -43,24 +50,33 @@ public class Tm4jFeatureFilesExporter extends Builder {
     }
 
     @Override
-    public Tm4jBuildStepDescriptor getDescriptor() {
-        return (Tm4jBuildStepDescriptor) super.getDescriptor();
+    public DescriptorImpl getDescriptor() {
+        return (DescriptorImpl) super.getDescriptor();
     }
 
     public String getServerAddress() {return serverAddress;}
 
     public void setServerAddress(String serverAddress) {this.serverAddress = serverAddress;}
 
-    public String getTql() {
-        return tql;
+    public String getProjectKey() {
+        return projectKey;
     }
 
-    public void setTql(String tql) {
-        this.tql = tql;
+    public void setProjectKey(String projectKey) {
+        this.projectKey = projectKey;
     }
+
+    public String getFilePath() {
+        return isEmpty(filePath)? DEFAULT_FEATURE_FILES_PATH : filePath;
+    }
+
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
+    }
+
 
     @Extension
-    public static class Tm4jBuildStepDescriptor extends BuildStepDescriptor<Builder> {
+    public static class DescriptorImpl extends BuildStepDescriptor<Builder> {
 
         @Inject
         private Tm4jGlobalConfiguration tm4jGlobalConfiguration;

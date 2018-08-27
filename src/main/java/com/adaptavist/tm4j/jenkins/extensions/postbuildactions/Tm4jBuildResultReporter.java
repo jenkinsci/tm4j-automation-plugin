@@ -78,8 +78,8 @@ public class Tm4jBuildResultReporter extends Notifier {
     }
 
     @Override
-    public Tm4jDescriptor getDescriptor() {
-        return (Tm4jDescriptor) super.getDescriptor();
+    public DescriptorImpl getDescriptor() {
+        return (DescriptorImpl) super.getDescriptor();
     }
     
     public String getServerAddress() {return serverAddress;}
@@ -94,12 +94,12 @@ public class Tm4jBuildResultReporter extends Notifier {
 	public void setAutoCreateTestCases(Boolean autoCreateTestCases) {this.autoCreateTestCases = autoCreateTestCases;}
 
 	@Extension
-	public static final class Tm4jDescriptor extends BuildStepDescriptor<Publisher> {
+	public static final class DescriptorImpl extends BuildStepDescriptor<Publisher> {
 	
 		@Inject
 		private Tm4jGlobalConfiguration tm4jGlobalConfiguration;
 	
-		public Tm4jDescriptor() {
+		public DescriptorImpl() {
 			super(Tm4jBuildResultReporter.class);
 			load();
 		}

@@ -4,6 +4,9 @@ import static com.adaptavist.tm4j.jenkins.extensions.postbuildactions.Tm4jBuildR
 import static com.adaptavist.tm4j.jenkins.extensions.postbuildactions.Tm4jBuildResultReporter.INFO;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -77,7 +80,7 @@ public class RestClient {
 		return false;
 	}
 
-	public void downloadFeatureFiles(String serverAddress, String workspace, String username, String password, String tql) throws UnirestException, IOException {
+	public void downloadFeatureFiles(String serverAddress, String targetFeatureFilesPath, String username, String password, String tql) throws UnirestException, IOException {
 		String url = MessageFormat.format(FEATURE_FILES_ENDPOINT, serverAddress);
 		HttpClient httpClient = HttpClientBuilder.create().disableCookieManagement().build();
 		Unirest.setHttpClient(httpClient);
@@ -87,24 +90,28 @@ public class RestClient {
 				.queryString("tql", tql)
 				.asBinary();
 
+		Path path = Paths.get(targetFeatureFilesPath);
+		if (Files.notExists(path)) {
+			Files.createDirectories(path);
+		}
+
 		ZipInputStream zipInputStream = new ZipInputStream(featureFiles.getRawBody());
 
 		ZipEntry entry;
 		while ((entry = zipInputStream.getNextEntry()) != null) {
-			saveFeatureFile(zipInputStream, workspace, entry);
+			saveFeatureFile(zipInputStream, targetFeatureFilesPath, entry);
 			zipInputStream.closeEntry();
 		}
 	}
 
-	private void saveFeatureFile(InputStream zipInputStream, String workspace, ZipEntry zipEntry) throws IOException {
+	private void saveFeatureFile(InputStream zipInputStream, String targetFeatureFilesPath, ZipEntry zipEntry) throws IOException {
 		byte[] buffer = new byte[2048];
-		FileOutputStream fileOutputStream = new FileOutputStream(workspace + zipEntry.getName());
+		FileOutputStream fileOutputStream = new FileOutputStream(targetFeatureFilesPath + "/" + zipEntry.getName());
 		BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(fileOutputStream, buffer.length);
 
 		int length;
 
 		while ((length = zipInputStream.read(buffer, 0, buffer.length)) >= 0) {
-			System.out.println("Read " + length + "bytes content.");
 			bufferedOutputStream.write(buffer, 0, length);
 		}
 
