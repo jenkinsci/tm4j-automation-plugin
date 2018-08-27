@@ -2,7 +2,7 @@ package com.adaptavist.tm4j.jenkins.extensions.buildsteps;
 
 import com.adaptavist.tm4j.jenkins.extensions.Tm4JInstance;
 import com.adaptavist.tm4j.jenkins.extensions.Tm4jForm;
-import com.adaptavist.tm4j.jenkins.io.Tm4jPlugin;
+import com.adaptavist.tm4j.jenkins.io.Tm4jJiraRestClient;
 import com.adaptavist.tm4j.jenkins.extensions.configuration.Tm4jGlobalConfiguration;
 import hudson.Extension;
 import hudson.Launcher;
@@ -35,7 +35,7 @@ public class Tm4jFeatureFilesExporter extends Builder {
         List<Tm4JInstance> jiraInstances = getDescriptor().getJiraInstances();
         String workspace = build.getWorkspace().getRemote() + "/";
         try {
-            new Tm4jPlugin().exportFeatureFiles(jiraInstances, workspace, serverAddress, tql);
+            new Tm4jJiraRestClient().exportFeatureFiles(jiraInstances, workspace, serverAddress, tql);
         } catch (Exception e) {
             e.printStackTrace();
         }

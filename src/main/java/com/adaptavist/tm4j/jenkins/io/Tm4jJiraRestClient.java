@@ -7,11 +7,9 @@ import java.util.List;
 
 import com.adaptavist.tm4j.jenkins.Tm4jConstants;
 import com.adaptavist.tm4j.jenkins.extensions.Tm4JInstance;
-import com.adaptavist.tm4j.jenkins.io.FileReader;
-import com.adaptavist.tm4j.jenkins.io.RestClient;
 import org.apache.commons.lang.StringUtils;
 
-public class Tm4jPlugin {
+public class Tm4jJiraRestClient {
 
 
 	public void uploadCucumberFile(List<Tm4JInstance> jiraInstances, String workspace, String filePath, String serverAddress, String projectKey, Boolean autoCreateTestCases, PrintStream logger) throws Exception {

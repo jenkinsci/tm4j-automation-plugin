@@ -87,16 +87,28 @@ public class RestClient {
 				.queryString("tql", tql)
 				.asBinary();
 
-
 		ZipInputStream zipInputStream = new ZipInputStream(featureFiles.getRawBody());
 
-		ZipEntry entry = zipInputStream.getNextEntry();
-		while (entry != null) {
-			File featureFile = new File(workspace + entry.getName());
-			FileWriter fileWriter = new FileWriter(featureFile);
-			fileWriter.write("content");
-
-			entry = zipInputStream.getNextEntry();
+		ZipEntry entry;
+		while ((entry = zipInputStream.getNextEntry()) != null) {
+			saveFeatureFile(zipInputStream, workspace, entry);
+			zipInputStream.closeEntry();
 		}
+	}
+
+	private void saveFeatureFile(InputStream zipInputStream, String workspace, ZipEntry zipEntry) throws IOException {
+		byte[] buffer = new byte[2048];
+		FileOutputStream fileOutputStream = new FileOutputStream(workspace + zipEntry.getName());
+		BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(fileOutputStream, buffer.length);
+
+		int length;
+
+		while ((length = zipInputStream.read(buffer, 0, buffer.length)) >= 0) {
+			System.out.println("Read " + length + "bytes content.");
+			bufferedOutputStream.write(buffer, 0, length);
+		}
+
+		bufferedOutputStream.close();
+		fileOutputStream.close();
 	}
 }

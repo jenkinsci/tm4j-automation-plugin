@@ -8,7 +8,7 @@ import java.util.List;
 import com.adaptavist.tm4j.jenkins.extensions.Tm4JInstance;
 import com.adaptavist.tm4j.jenkins.Tm4jConstants;
 import com.adaptavist.tm4j.jenkins.extensions.Tm4jForm;
-import com.adaptavist.tm4j.jenkins.io.Tm4jPlugin;
+import com.adaptavist.tm4j.jenkins.io.Tm4jJiraRestClient;
 import com.adaptavist.tm4j.jenkins.extensions.configuration.Tm4jGlobalConfiguration;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
@@ -63,9 +63,9 @@ public class Tm4jBuildResultReporter extends Notifier {
 		String workspace = build.getWorkspace().getRemote() + "/";
         try {
         	if (Tm4jConstants.CUCUMBER.equals(this.format)) {
-        		new Tm4jPlugin().uploadCucumberFile(jiraInstances, workspace, this.filePath, this.serverAddress, this.projectKey, this.autoCreateTestCases, logger);
+        		new Tm4jJiraRestClient().uploadCucumberFile(jiraInstances, workspace, this.filePath, this.serverAddress, this.projectKey, this.autoCreateTestCases, logger);
         	} else {
-        		new Tm4jPlugin().uploadCustomFormatFile(jiraInstances, workspace, Tm4jConstants.CUSTOM_FORMAT_FILE_NAME, this.serverAddress, this.projectKey, this.autoCreateTestCases, logger);
+        		new Tm4jJiraRestClient().uploadCustomFormatFile(jiraInstances, workspace, Tm4jConstants.CUSTOM_FORMAT_FILE_NAME, this.serverAddress, this.projectKey, this.autoCreateTestCases, logger);
         	}
         } catch (Exception e) {
         	logger.printf("%s There was an error trying to send the test results to Test Management for Jira. Error details: %n", ERROR);
