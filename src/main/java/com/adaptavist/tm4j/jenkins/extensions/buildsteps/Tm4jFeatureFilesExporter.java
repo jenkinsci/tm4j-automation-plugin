@@ -11,19 +11,19 @@ import hudson.model.AbstractProject;
 import hudson.model.BuildListener;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
+import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.QueryParameter;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import java.util.List;
 
 import static java.lang.String.format;
-import static org.apache.commons.lang.StringUtils.isEmpty;
 
 public class Tm4jFeatureFilesExporter extends Builder {
 
-    public static final String DEFAULT_FEATURE_FILES_PATH = "target/cucumber/features";
     private String serverAddress;
     private String projectKey;
     private String filePath;
@@ -67,7 +67,7 @@ public class Tm4jFeatureFilesExporter extends Builder {
     }
 
     public String getFilePath() {
-        return isEmpty(filePath)? DEFAULT_FEATURE_FILES_PATH : filePath;
+        return filePath;
     }
 
     public void setFilePath(String filePath) {
@@ -98,6 +98,14 @@ public class Tm4jFeatureFilesExporter extends Builder {
 
         public List<Tm4JInstance> getJiraInstances() {
             return tm4jGlobalConfiguration.getJiraInstances();
+        }
+
+        public FormValidation doCheckProjectKey(@QueryParameter String projectKey) {
+            return new Tm4jForm().doCheckProjectKey(projectKey);
+        }
+
+        public FormValidation doCheckFilePath(@QueryParameter String filePath) {
+            return new Tm4jForm().doCheckFilePath(filePath);
         }
     }
 }
