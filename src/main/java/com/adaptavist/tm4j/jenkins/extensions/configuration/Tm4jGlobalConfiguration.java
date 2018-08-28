@@ -3,7 +3,7 @@ package com.adaptavist.tm4j.jenkins.extensions.configuration;
 import com.adaptavist.tm4j.jenkins.extensions.Tm4JInstance;
 import com.adaptavist.tm4j.jenkins.Tm4jConstants;
 import com.adaptavist.tm4j.jenkins.io.RestClient;
-import com.adaptavist.tm4j.jenkins.extensions.Tm4jForm;
+import com.adaptavist.tm4j.jenkins.extensions.Tm4jFormHelper;
 import hudson.Extension;
 import hudson.util.FormValidation;
 import jenkins.model.GlobalConfiguration;
@@ -87,19 +87,19 @@ public class Tm4jGlobalConfiguration extends GlobalConfiguration {
     }
 
     public FormValidation doTestConnection(@QueryParameter String serverAddress, @QueryParameter String username, @QueryParameter String password) {
-        return new Tm4jForm().testConnection(serverAddress, username, password);
+        return new Tm4jFormHelper().testConnection(serverAddress, username, password);
     }
 
     public FormValidation doCheckServerAddress(@QueryParameter String serverAddress) {
-        return new Tm4jForm().doCheckServerAddress(serverAddress);
+        return new Tm4jFormHelper().doCheckServerAddress(serverAddress);
     }
 
     public FormValidation doCheckUsername(@QueryParameter String username) {
-        return new Tm4jForm().doCheckUsername(username);
+        return new Tm4jFormHelper().doCheckUsername(username);
     }
 
     public FormValidation doCheckPassword(@QueryParameter String password) {
-        return new Tm4jForm().doCheckPassword(password);
+        return new Tm4jFormHelper().doCheckPassword(password);
     }
 
     public List<Tm4JInstance> getJiraInstances() {

@@ -19,7 +19,8 @@ import org.apache.commons.lang.StringUtils;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
 
-public class Tm4jForm {
+public class Tm4jFormHelper
+{
 
 	public FormValidation testConnection(String serverAddress, String username, String password) {
 		serverAddress = StringUtils.removeEnd(serverAddress, "/");

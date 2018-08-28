@@ -1,7 +1,7 @@
 package com.adaptavist.tm4j.jenkins.extensions.buildsteps;
 
 import com.adaptavist.tm4j.jenkins.extensions.Tm4JInstance;
-import com.adaptavist.tm4j.jenkins.extensions.Tm4jForm;
+import com.adaptavist.tm4j.jenkins.extensions.Tm4jFormHelper;
 import com.adaptavist.tm4j.jenkins.io.Tm4jJiraRestClient;
 import com.adaptavist.tm4j.jenkins.extensions.configuration.Tm4jGlobalConfiguration;
 import hudson.Extension;
@@ -20,6 +20,7 @@ import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import java.util.List;
 
+import static com.adaptavist.tm4j.jenkins.Tm4jConstants.NAME_EXPORT_BUILD_STEP;
 import static java.lang.String.format;
 
 public class Tm4jFeatureFilesExporter extends Builder {
@@ -89,11 +90,11 @@ public class Tm4jFeatureFilesExporter extends Builder {
         @Nonnull
         @Override
         public String getDisplayName() {
-            return "Export feature files from Test Management for Jira";
+            return NAME_EXPORT_BUILD_STEP;
         }
 
         public ListBoxModel doFillServerAddressItems() {
-            return new Tm4jForm().fillServerAddressItens(getJiraInstances());
+            return new Tm4jFormHelper().fillServerAddressItens(getJiraInstances());
         }
 
         public List<Tm4JInstance> getJiraInstances() {
@@ -101,11 +102,11 @@ public class Tm4jFeatureFilesExporter extends Builder {
         }
 
         public FormValidation doCheckProjectKey(@QueryParameter String projectKey) {
-            return new Tm4jForm().doCheckProjectKey(projectKey);
+            return new Tm4jFormHelper().doCheckProjectKey(projectKey);
         }
 
         public FormValidation doCheckFilePath(@QueryParameter String filePath) {
-            return new Tm4jForm().doCheckFilePath(filePath);
+            return new Tm4jFormHelper().doCheckFilePath(filePath);
         }
     }
 }

@@ -1,5 +1,7 @@
 package com.adaptavist.tm4j.jenkins.extensions.postbuildactions;
 
+import static com.adaptavist.tm4j.jenkins.Tm4jConstants.ERROR;
+import static com.adaptavist.tm4j.jenkins.Tm4jConstants.INFO;
 import static com.adaptavist.tm4j.jenkins.Tm4jConstants.NAME_POST_BUILD_ACTION;
 
 import java.io.PrintStream;
@@ -7,7 +9,7 @@ import java.util.List;
 
 import com.adaptavist.tm4j.jenkins.extensions.Tm4JInstance;
 import com.adaptavist.tm4j.jenkins.Tm4jConstants;
-import com.adaptavist.tm4j.jenkins.extensions.Tm4jForm;
+import com.adaptavist.tm4j.jenkins.extensions.Tm4jFormHelper;
 import com.adaptavist.tm4j.jenkins.io.Tm4jJiraRestClient;
 import com.adaptavist.tm4j.jenkins.extensions.configuration.Tm4jGlobalConfiguration;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -31,10 +33,8 @@ import javax.inject.Inject;
 
 public class Tm4jBuildResultReporter extends Notifier {
 
-    public static PrintStream logger;
-    private static final String PLUGIN_NAME = new String("[Test Management for Jira]");
-    public static String INFO = String.format("%s [INFO]", PLUGIN_NAME);
-    public static String ERROR = String.format("%s [ERROR]", PLUGIN_NAME);
+	public static PrintStream logger;
+
     private String serverAddress;
     private String projectKey;
 	private String filePath;
@@ -121,19 +121,19 @@ public class Tm4jBuildResultReporter extends Notifier {
 		}
 		
 		public ListBoxModel doFillServerAddressItems() {
-			return new Tm4jForm().fillServerAddressItens(getJiraInstances());
+			return new Tm4jFormHelper().fillServerAddressItens(getJiraInstances());
 		}
 
 		public ListBoxModel doFillFormatItems() {
-			return new Tm4jForm().fillFormat();
+			return new Tm4jFormHelper().fillFormat();
 		}
 
 		public FormValidation doCheckProjectKey(@QueryParameter String projectKey) {
-			return new Tm4jForm().doCheckProjectKey(projectKey);
+			return new Tm4jFormHelper().doCheckProjectKey(projectKey);
 		}
 
 		public FormValidation doCheckFilePath(@QueryParameter String filePath) {
-			return new Tm4jForm().doCheckFilePath(filePath);
+			return new Tm4jFormHelper().doCheckFilePath(filePath);
 		}
 
 		public List<Tm4JInstance> getJiraInstances() {
