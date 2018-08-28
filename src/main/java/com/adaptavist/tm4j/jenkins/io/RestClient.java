@@ -1,8 +1,5 @@
 package com.adaptavist.tm4j.jenkins.io;
 
-import static com.adaptavist.tm4j.jenkins.extensions.postbuildactions.Tm4jBuildResultReporter.ERROR;
-import static com.adaptavist.tm4j.jenkins.extensions.postbuildactions.Tm4jBuildResultReporter.INFO;
-
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -20,6 +17,9 @@ import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
+
+import static com.adaptavist.tm4j.jenkins.Tm4jConstants.ERROR;
+import static com.adaptavist.tm4j.jenkins.Tm4jConstants.INFO;
 
 public class RestClient {
 
