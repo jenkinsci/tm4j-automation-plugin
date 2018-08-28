@@ -21,6 +21,7 @@ public class Tm4jConstants {
 	public static final String JIRA_INSTANCE_NOT_FOUND = "Jira instance not found for this server address {0}";
 	public static final String JIRA_INSTANCES_CAN_NOT_BE_NULL_OR_EMPTY = "Jira instances are not properly configured. Please check if the URL, username and password are valid and not empty.";
 	public static final String ERROR_AT_GLOBAL_CONFIGURATIONS_OF_TEST_MANAGEMENT_FOR_JIRA = "Error at global configurations of Test Management for Jira: {0}";
+	public static final String DEFAULT_FEATURE_FILES_PATH = "target/features";
 
 	public static PrintStream logger;
 	private static final String PLUGIN_NAME = new String("[Test Management for Jira]");

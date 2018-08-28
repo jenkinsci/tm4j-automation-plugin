@@ -80,27 +80,35 @@ public class RestClient {
 		return false;
 	}
 
-	public void downloadFeatureFiles(String serverAddress, String targetFeatureFilesPath, String username, String password, String tql) throws UnirestException, IOException {
-		String url = MessageFormat.format(FEATURE_FILES_ENDPOINT, serverAddress);
-		HttpClient httpClient = HttpClientBuilder.create().disableCookieManagement().build();
-		Unirest.setHttpClient(httpClient);
+	public void downloadFeatureFiles(String serverAddress, String targetFeatureFilesPath, String username, String password, String tql, PrintStream logger) throws Exception {
+    	try {
+			String url = MessageFormat.format(FEATURE_FILES_ENDPOINT, serverAddress);
+			HttpClient httpClient = HttpClientBuilder.create().disableCookieManagement().build();
+			Unirest.setHttpClient(httpClient);
 
-		HttpResponse<InputStream> featureFiles = Unirest.get(url)
-				.basicAuth(username, password)
-				.queryString("tql", tql)
-				.asBinary();
+			HttpResponse<InputStream> featureFiles = Unirest.get(url)
+					.basicAuth(username, password)
+					.queryString("tql", tql)
+					.asBinary();
 
-		Path path = Paths.get(targetFeatureFilesPath);
-		if (Files.notExists(path)) {
-			Files.createDirectories(path);
-		}
+			Path path = Paths.get(targetFeatureFilesPath);
+			if (Files.notExists(path)) {
+				Files.createDirectories(path);
+			}
 
-		ZipInputStream zipInputStream = new ZipInputStream(featureFiles.getRawBody());
+			ZipInputStream zipInputStream = new ZipInputStream(featureFiles.getRawBody());
 
-		ZipEntry entry;
-		while ((entry = zipInputStream.getNextEntry()) != null) {
-			saveFeatureFile(zipInputStream, targetFeatureFilesPath, entry);
-			zipInputStream.closeEntry();
+			ZipEntry entry;
+			int filesCount = 0;
+			while ((entry = zipInputStream.getNextEntry()) != null) {
+				saveFeatureFile(zipInputStream, targetFeatureFilesPath, entry);
+				zipInputStream.closeEntry();
+				filesCount++;
+			}
+
+			logger.printf("%s %s feature files downloaded to %s %n", INFO, filesCount, targetFeatureFilesPath);
+		} catch (UnirestException e) {
+			throw new Exception("Error trying to communicate with Jira", e.getCause());
 		}
 	}
 

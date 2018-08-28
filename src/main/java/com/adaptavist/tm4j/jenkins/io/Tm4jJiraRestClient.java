@@ -26,9 +26,9 @@ public class Tm4jJiraRestClient {
 		file.delete();
 	}
 
-	public void exportFeatureFiles(List<Tm4JInstance> jiraInstances, String featureFilesPath, String serverAddress, String tql) throws Exception {
+	public void exportFeatureFiles(List<Tm4JInstance> jiraInstances, String featureFilesPath, String serverAddress, String tql, PrintStream logger) throws Exception {
 		Tm4JInstance jiraInstance = getTm4jInstance(jiraInstances, serverAddress);
-		new RestClient().downloadFeatureFiles(jiraInstance.getServerAddress(), featureFilesPath, jiraInstance.getUsername(), jiraInstance.getPassword(), tql);
+		new RestClient().downloadFeatureFiles(jiraInstance.getServerAddress(), featureFilesPath, jiraInstance.getUsername(), jiraInstance.getPassword(), tql, logger);
 	}
 
 	private Tm4JInstance getTm4jInstance(List<Tm4JInstance> jiraInstances, String serverAddress ) throws Exception {

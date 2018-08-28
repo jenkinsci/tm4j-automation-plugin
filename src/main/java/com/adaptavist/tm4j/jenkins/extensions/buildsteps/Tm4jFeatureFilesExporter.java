@@ -18,12 +18,16 @@ import org.kohsuke.stapler.QueryParameter;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
+import java.io.PrintStream;
 import java.util.List;
 
-import static com.adaptavist.tm4j.jenkins.Tm4jConstants.NAME_EXPORT_BUILD_STEP;
+import static com.adaptavist.tm4j.jenkins.Tm4jConstants.*;
 import static java.lang.String.format;
+import static org.apache.commons.lang.StringUtils.isEmpty;
 
 public class Tm4jFeatureFilesExporter extends Builder {
+
+    public static PrintStream logger;
 
     private String serverAddress;
     private String projectKey;
@@ -38,15 +42,26 @@ public class Tm4jFeatureFilesExporter extends Builder {
 
     @Override
     public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) {
+        logger = listener.getLogger();
+        logger.printf("%s Downloading feature files...%n", INFO);
+
         List<Tm4JInstance> jiraInstances = getDescriptor().getJiraInstances();
         String workspace = build.getWorkspace().getRemote() + "/";
         try {
+            if (isEmpty(this.projectKey)) {
+                throw new RuntimeException(PROJECT_KEY_IS_REQUIRED);
+            }
+
             String tql = format("testCase.projectKey = '%s'", this.projectKey);
-            String featureFilesPath = workspace + filePath;
-            new Tm4jJiraRestClient().exportFeatureFiles(jiraInstances, featureFilesPath, serverAddress, tql);
+            String featureFilesPath = workspace + (isEmpty(filePath) ? DEFAULT_FEATURE_FILES_PATH : filePath);
+            new Tm4jJiraRestClient().exportFeatureFiles(jiraInstances, featureFilesPath, serverAddress, tql, logger);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.printf("%s There was an error while trying to download feature files from Test Management for Jira. Error details: %n", ERROR);
+            logger.printf(ERROR);
+            logger.printf(" %s  %n", e.getMessage());
+            return false;
         }
+
         return true;
     }
 
