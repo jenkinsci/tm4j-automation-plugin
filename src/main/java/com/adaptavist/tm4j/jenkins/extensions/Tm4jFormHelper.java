@@ -13,7 +13,6 @@ import static com.adaptavist.tm4j.jenkins.Tm4jConstants.TM4J_OUTPUT_RESULT_FOR_J
 import java.util.List;
 
 import com.adaptavist.tm4j.jenkins.Tm4jConstants;
-import com.adaptavist.tm4j.jenkins.io.RestClient;
 import org.apache.commons.lang.StringUtils;
 
 import hudson.util.FormValidation;
@@ -36,8 +35,7 @@ public class Tm4jFormHelper
 		if (!(serverAddress.trim().startsWith("https://") || serverAddress.trim().startsWith("http://"))) {
 			return FormValidation.error(INCORRECT_SERVER_ADDRESS_FORMAT);
 		}
-		RestClient restClient = new RestClient();
-		if (!restClient.isValidCredentials(serverAddress, username, password)) {
+		if (!new Tm4JInstance(serverAddress, username, password).isValidCredentials()) {
 			return FormValidation.error(INVALID_USER_CREDENTIALS);
 		}
 		return FormValidation.ok(CONNECTION_TO_JIRA_HAS_BEEN_VALIDATED);

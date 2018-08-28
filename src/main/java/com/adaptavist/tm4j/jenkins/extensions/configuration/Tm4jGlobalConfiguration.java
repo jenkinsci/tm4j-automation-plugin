@@ -2,8 +2,8 @@ package com.adaptavist.tm4j.jenkins.extensions.configuration;
 
 import com.adaptavist.tm4j.jenkins.extensions.Tm4JInstance;
 import com.adaptavist.tm4j.jenkins.Tm4jConstants;
-import com.adaptavist.tm4j.jenkins.io.RestClient;
 import com.adaptavist.tm4j.jenkins.extensions.Tm4jFormHelper;
+import com.adaptavist.tm4j.jenkins.http.Tm4jJiraRestClient;
 import hudson.Extension;
 import hudson.util.FormValidation;
 import jenkins.model.GlobalConfiguration;
@@ -18,6 +18,8 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.adaptavist.tm4j.jenkins.Tm4jConstants.TM4J_GLOBAL_CONFIGURATION;
+
 @Extension
 public class Tm4jGlobalConfiguration extends GlobalConfiguration {
 
@@ -30,7 +32,7 @@ public class Tm4jGlobalConfiguration extends GlobalConfiguration {
     @Nonnull
     @Override
     public String getDisplayName() {
-        return "TM4J configuration";
+        return TM4J_GLOBAL_CONFIGURATION;
     }
 
     @Override
@@ -79,8 +81,8 @@ public class Tm4jGlobalConfiguration extends GlobalConfiguration {
         tm4jInstance.setServerAddress(StringUtils.removeEnd(serverAddres.trim(), "/"));
         tm4jInstance.setUsername(username.trim());
         tm4jInstance.setPassword(password.trim());
-        RestClient restClient = new RestClient();
-        if (restClient.isValidCredentials(tm4jInstance.getServerAddress(), tm4jInstance.getUsername(), tm4jInstance.getPassword())) {
+
+        if (tm4jInstance.isValidCredentials()) {
             return tm4jInstance;
         }
         throw new Exception(Tm4jConstants.INVALID_USER_CREDENTIALS);

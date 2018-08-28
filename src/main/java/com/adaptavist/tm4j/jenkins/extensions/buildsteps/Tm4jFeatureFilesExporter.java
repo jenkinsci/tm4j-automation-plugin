@@ -2,7 +2,7 @@ package com.adaptavist.tm4j.jenkins.extensions.buildsteps;
 
 import com.adaptavist.tm4j.jenkins.extensions.Tm4JInstance;
 import com.adaptavist.tm4j.jenkins.extensions.Tm4jFormHelper;
-import com.adaptavist.tm4j.jenkins.io.Tm4jJiraRestClient;
+import com.adaptavist.tm4j.jenkins.http.Tm4jJiraRestClient;
 import com.adaptavist.tm4j.jenkins.extensions.configuration.Tm4jGlobalConfiguration;
 import hudson.Extension;
 import hudson.Launcher;
@@ -54,7 +54,8 @@ public class Tm4jFeatureFilesExporter extends Builder {
 
             String tql = format("testCase.projectKey = '%s'", this.projectKey);
             String featureFilesPath = workspace + (isEmpty(filePath) ? DEFAULT_FEATURE_FILES_PATH : filePath);
-            new Tm4jJiraRestClient().exportFeatureFiles(jiraInstances, featureFilesPath, serverAddress, tql, logger);
+            Tm4jJiraRestClient tm4jJiraRestClient = new Tm4jJiraRestClient(jiraInstances, serverAddress);
+            tm4jJiraRestClient.exportFeatureFiles(featureFilesPath, tql, logger);
         } catch (Exception e) {
             logger.printf("%s There was an error while trying to download feature files from Test Management for Jira. Error details: %n", ERROR);
             logger.printf(ERROR);
