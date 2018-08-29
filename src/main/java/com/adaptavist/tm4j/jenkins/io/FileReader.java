@@ -1,4 +1,4 @@
-package com.adaptavist.tm4j.jenkins;
+package com.adaptavist.tm4j.jenkins.io;
 
 import java.io.File;
 import java.io.FileNotFoundException;

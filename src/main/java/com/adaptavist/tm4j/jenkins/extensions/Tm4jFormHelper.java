@@ -1,4 +1,4 @@
-package com.adaptavist.tm4j.jenkins;
+package com.adaptavist.tm4j.jenkins.extensions;
 
 import static com.adaptavist.tm4j.jenkins.Tm4jConstants.ADD_TM4J_GLOBAL_CONFIG;
 import static com.adaptavist.tm4j.jenkins.Tm4jConstants.CONNECTION_TO_JIRA_HAS_BEEN_VALIDATED;
@@ -12,12 +12,14 @@ import static com.adaptavist.tm4j.jenkins.Tm4jConstants.TM4J_OUTPUT_RESULT_FOR_J
 
 import java.util.List;
 
+import com.adaptavist.tm4j.jenkins.Tm4jConstants;
 import org.apache.commons.lang.StringUtils;
 
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
 
-public class Tm4jForm {
+public class Tm4jFormHelper
+{
 
 	public FormValidation testConnection(String serverAddress, String username, String password) {
 		serverAddress = StringUtils.removeEnd(serverAddress, "/");
@@ -33,8 +35,7 @@ public class Tm4jForm {
 		if (!(serverAddress.trim().startsWith("https://") || serverAddress.trim().startsWith("http://"))) {
 			return FormValidation.error(INCORRECT_SERVER_ADDRESS_FORMAT);
 		}
-		RestClient restClient = new RestClient();
-		if (!restClient.isValidCredentials(serverAddress, username, password)) {
+		if (!new Tm4JInstance(serverAddress, username, password).isValidCredentials()) {
 			return FormValidation.error(INVALID_USER_CREDENTIALS);
 		}
 		return FormValidation.ok(CONNECTION_TO_JIRA_HAS_BEEN_VALIDATED);
