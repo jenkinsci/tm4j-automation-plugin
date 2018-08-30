@@ -12,7 +12,7 @@ is_running() {
 }
 
 wait_start() { 
-	echo "starting..."
+	echo "Starting..."
 	while ! is_running 
 	do
 		sleep 1
@@ -20,7 +20,7 @@ wait_start() {
 }
 
 wait_stop() { 
-	echo "stoping..."
+	echo "Stoping..."
 	while is_running  
 	do
 		sleep 1
@@ -46,17 +46,17 @@ wait_start
 
 java -jar jenkins-cli.jar -s $server install-plugin git
 sleep 1
-echo "stoping..."
+echo "Stoping..."
 java -jar jenkins-cli.jar -s $server restart
 wait_start
 
-echo "setting jenkings configurations"
+echo "Setting Jenkins configurations"
 java -jar jenkins-cli.jar -s $server create-job tm4j-cucumber < config_cucumber.xml
-echo "creating a cucumber job"
+echo "Creating a cucumber job"
 java -jar jenkins-cli.jar -s $server create-job tm4j-junit < config_junit.xml
-echo "creating a junit job"
+echo "Creating a junit job"
 cp com.adaptavist.tm4j.jenkins.extensions.postbuildactions.Tm4jBuildResultReporter.xml work/com.adaptavist.tm4j.jenkins.extensions.postbuildactions.Tm4jBuildResultReporter.xml
-echo "restarting..."
+echo "Restarting..."
 java -jar jenkins-cli.jar -s $server restart
 wait_start
 
