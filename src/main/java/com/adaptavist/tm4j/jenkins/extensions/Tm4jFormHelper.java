@@ -41,7 +41,7 @@ public class Tm4jFormHelper
 		return FormValidation.ok(CONNECTION_TO_JIRA_HAS_BEEN_VALIDATED);
 	}
 
-	public ListBoxModel fillServerAddressItens(List<Tm4JInstance> jiraInstances) {
+	public ListBoxModel fillServerAddressItems(List<Tm4JInstance> jiraInstances) {
 		ListBoxModel modelbox = new ListBoxModel();
 		if (jiraInstances == null || jiraInstances.isEmpty()) {
 			modelbox.add(ADD_TM4J_GLOBAL_CONFIG);

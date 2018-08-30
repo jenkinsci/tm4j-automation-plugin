@@ -1,4 +1,4 @@
 <?jelly escape-by-default='true'?>
 <div>
-This plugin creates test cases in Test Management for Jira for the project unit tests.
+    Integration with Test Management for Jira, for automatic publishing of test results.
 </div>

@@ -11,7 +11,7 @@
       <f:textbox field="projectKey"/>
   </f:entry>
 
-   <f:entry title="File path" field="filePath" >
-      <f:textbox field="filePath" />
+   <f:entry title="Target path" field="targetPath" >
+      <f:textbox field="targetPath" />
    </f:entry>
 </j:jelly>

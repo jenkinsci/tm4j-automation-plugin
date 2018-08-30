@@ -31,13 +31,13 @@ public class Tm4jFeatureFilesExporter extends Builder {
 
     private String serverAddress;
     private String projectKey;
-    private String filePath;
+    private String targetPath;
 
     @DataBoundConstructor
-    public Tm4jFeatureFilesExporter(String serverAddress, String projectKey, String filePath) {
+    public Tm4jFeatureFilesExporter(String serverAddress, String projectKey, String targetPath) {
         this.serverAddress = serverAddress;
         this.projectKey = projectKey;
-        this.filePath = filePath;
+        this.targetPath = targetPath;
     }
 
     @Override
@@ -53,7 +53,7 @@ public class Tm4jFeatureFilesExporter extends Builder {
             }
 
             String tql = format("testCase.projectKey = '%s'", this.projectKey);
-            String featureFilesPath = workspace + (isEmpty(filePath) ? DEFAULT_FEATURE_FILES_PATH : filePath);
+            String featureFilesPath = workspace + (isEmpty(targetPath) ? DEFAULT_FEATURE_FILES_PATH : targetPath);
             Tm4jJiraRestClient tm4jJiraRestClient = new Tm4jJiraRestClient(jiraInstances, serverAddress);
             tm4jJiraRestClient.exportFeatureFiles(featureFilesPath, tql, logger);
         } catch (Exception e) {
@@ -83,12 +83,12 @@ public class Tm4jFeatureFilesExporter extends Builder {
         this.projectKey = projectKey;
     }
 
-    public String getFilePath() {
-        return filePath;
+    public String getTargetPath() {
+        return targetPath;
     }
 
-    public void setFilePath(String filePath) {
-        this.filePath = filePath;
+    public void setTargetPath(String targetPath) {
+        this.targetPath = targetPath;
     }
 
 
@@ -110,7 +110,7 @@ public class Tm4jFeatureFilesExporter extends Builder {
         }
 
         public ListBoxModel doFillServerAddressItems() {
-            return new Tm4jFormHelper().fillServerAddressItens(getJiraInstances());
+            return new Tm4jFormHelper().fillServerAddressItems(getJiraInstances());
         }
 
         public List<Tm4JInstance> getJiraInstances() {

@@ -122,7 +122,7 @@ public class Tm4jBuildResultReporter extends Notifier {
 		}
 		
 		public ListBoxModel doFillServerAddressItems() {
-			return new Tm4jFormHelper().fillServerAddressItens(getJiraInstances());
+			return new Tm4jFormHelper().fillServerAddressItems(getJiraInstances());
 		}
 
 		public ListBoxModel doFillFormatItems() {
