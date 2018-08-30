@@ -69,10 +69,10 @@ public class Tm4jBuildResultReporter extends Notifier {
 				tm4jJiraRestClient.uploadCustomFormatFile(workspace, Tm4jConstants.CUSTOM_FORMAT_FILE_NAME, this.projectKey, this.autoCreateTestCases, logger);
         	}
         } catch (Exception e) {
-        	logger.printf("%s There was an error trying to send the test results to Test Management for Jira. Error details: %n", ERROR);
+        	logger.printf("%s There was an error trying to publish test results to Test Management for Jira. Error details: %n", ERROR);
             logger.printf(ERROR);
             logger.printf(" %s  %n", e.getMessage());
-        	logger.printf("%s Tests results didn't send to TM4J %n", ERROR);
+        	logger.printf("%s Tests results have not been sent to Test Management for Jira %n", ERROR);
             return false;
         }
     	return true;
