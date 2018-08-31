@@ -6,6 +6,7 @@ import java.io.PrintStream;
 import java.text.MessageFormat;
 import java.util.List;
 
+import com.adaptavist.tm4j.jenkins.exception.NoTestCasesFoundException;
 import com.adaptavist.tm4j.jenkins.utils.Constants;
 import com.adaptavist.tm4j.jenkins.extensions.JiraInstance;
 import com.adaptavist.tm4j.jenkins.io.FileReader;
@@ -45,6 +46,10 @@ public class Tm4jJiraRestClient {
 	public void exportFeatureFiles(String featureFilesPath, String tql, PrintStream logger) throws Exception {
 		try {
 			HttpResponse<InputStream> featureFiles = jiraInstance.exportFeatureFiles(tql);
+
+			if (featureFiles.getStatus() == 204) {
+				throw new NoTestCasesFoundException();
+			}
 
 			FileWriter fileWriter = new FileWriter(featureFiles.getRawBody());
 			fileWriter.extractFeatureFilesFromZipAndSave(featureFilesPath);
