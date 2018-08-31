@@ -1,4 +1,4 @@
-package com.adaptavist.tm4j.jenkis;
+package com.adaptavist.tm4j.jenkins.io;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -8,11 +8,9 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.adaptavist.tm4j.jenkins.io.FileReader;
-
 public class FileReaderTest {
 
-	private static final String FILE_PATH = "src/test/resources/";
+	private static final String FILE_PATH = "src/test/resources/outputFiles/";
 	private static final String ALL = "**/*.json";
 	private static final String JSON_ONLY = "*.json";
 
