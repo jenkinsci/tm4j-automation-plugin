@@ -1,9 +1,8 @@
 package com.adaptavist.tm4j.jenkins.extensions.configuration;
 
-import com.adaptavist.tm4j.jenkins.extensions.Tm4JInstance;
-import com.adaptavist.tm4j.jenkins.Tm4jConstants;
-import com.adaptavist.tm4j.jenkins.extensions.Tm4jFormHelper;
-import com.adaptavist.tm4j.jenkins.http.Tm4jJiraRestClient;
+import com.adaptavist.tm4j.jenkins.extensions.JiraInstance;
+import com.adaptavist.tm4j.jenkins.utils.Constants;
+import com.adaptavist.tm4j.jenkins.utils.FormHelper;
 import hudson.Extension;
 import hudson.util.FormValidation;
 import jenkins.model.GlobalConfiguration;
@@ -18,12 +17,12 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.adaptavist.tm4j.jenkins.Tm4jConstants.TM4J_GLOBAL_CONFIGURATION;
+import static com.adaptavist.tm4j.jenkins.utils.Constants.TM4J_GLOBAL_CONFIGURATION;
 
 @Extension
 public class Tm4jGlobalConfiguration extends GlobalConfiguration {
 
-    private List<Tm4JInstance> jiraInstances;
+    private List<JiraInstance> jiraInstances;
 
     public Tm4jGlobalConfiguration() {
         load();
@@ -42,17 +41,17 @@ public class Tm4jGlobalConfiguration extends GlobalConfiguration {
         try {
             this.jiraInstances = crateJiraInstances(formJiraInstances);
         } catch (Exception e) {
-            throw new FormException(MessageFormat.format(Tm4jConstants.ERROR_AT_GLOBAL_CONFIGURATIONS_OF_TEST_MANAGEMENT_FOR_JIRA, e.getMessage()), "testManagementForJira");
+            throw new FormException(MessageFormat.format(Constants.ERROR_AT_GLOBAL_CONFIGURATIONS_OF_TEST_MANAGEMENT_FOR_JIRA, e.getMessage()), "testManagementForJira");
         }
         save();
         return super.configure(request, formData);
     }
 
-    private List<Tm4JInstance> crateJiraInstances(Object formJiraInstances) throws Exception {
+    private List<JiraInstance> crateJiraInstances(Object formJiraInstances) throws Exception {
         if (formJiraInstances == null) {
-            throw new Exception(Tm4jConstants.JIRA_INSTANCES_CAN_NOT_BE_NULL_OR_EMPTY);
+            throw new Exception(Constants.JIRA_INSTANCES_CAN_NOT_BE_NULL_OR_EMPTY);
         }
-        List<Tm4JInstance> newJiraInstances = new ArrayList<>();
+        List<JiraInstance> newJiraInstances = new ArrayList<>();
         if (formJiraInstances instanceof JSONArray) {
             JSONArray jiraInstancesList = (JSONArray) formJiraInstances;
             for (Object jiraInstance :  jiraInstancesList.toArray()) {
@@ -64,51 +63,51 @@ public class Tm4jGlobalConfiguration extends GlobalConfiguration {
         return newJiraInstances;
     }
 
-    private Tm4JInstance createAnInstance(JSONObject formJiraInstance) throws Exception {
-        Tm4JInstance tm4jInstance = new Tm4JInstance();
+    private JiraInstance createAnInstance(JSONObject formJiraInstance) throws Exception {
+        JiraInstance jiraInstance = new JiraInstance();
         String serverAddres = formJiraInstance.getString("serverAddress");
         String username = formJiraInstance.getString("username");
         String password = formJiraInstance.getString("password");
         if (StringUtils.isBlank(serverAddres)) {
-            throw new Exception(Tm4jConstants.PLEASE_ENTER_THE_SERVER_NAME);
+            throw new Exception(Constants.PLEASE_ENTER_THE_SERVER_NAME);
         }
         if (StringUtils.isBlank(username)) {
-            throw new Exception(Tm4jConstants.PLEASE_ENTER_THE_USERNAME);
+            throw new Exception(Constants.PLEASE_ENTER_THE_USERNAME);
         }
         if (StringUtils.isBlank(password)){
-            throw new Exception(Tm4jConstants.PLEASE_ENTER_THE_PASSWORD);
+            throw new Exception(Constants.PLEASE_ENTER_THE_PASSWORD);
         }
-        tm4jInstance.setServerAddress(StringUtils.removeEnd(serverAddres.trim(), "/"));
-        tm4jInstance.setUsername(username.trim());
-        tm4jInstance.setPassword(password.trim());
+        jiraInstance.setServerAddress(StringUtils.removeEnd(serverAddres.trim(), "/"));
+        jiraInstance.setUsername(username.trim());
+        jiraInstance.setPassword(password.trim());
 
-        if (tm4jInstance.isValidCredentials()) {
-            return tm4jInstance;
+        if (jiraInstance.isValidCredentials()) {
+            return jiraInstance;
         }
-        throw new Exception(Tm4jConstants.INVALID_USER_CREDENTIALS);
+        throw new Exception(Constants.INVALID_USER_CREDENTIALS);
     }
 
     public FormValidation doTestConnection(@QueryParameter String serverAddress, @QueryParameter String username, @QueryParameter String password) {
-        return new Tm4jFormHelper().testConnection(serverAddress, username, password);
+        return new FormHelper().testConnection(serverAddress, username, password);
     }
 
     public FormValidation doCheckServerAddress(@QueryParameter String serverAddress) {
-        return new Tm4jFormHelper().doCheckServerAddress(serverAddress);
+        return new FormHelper().doCheckServerAddress(serverAddress);
     }
 
     public FormValidation doCheckUsername(@QueryParameter String username) {
-        return new Tm4jFormHelper().doCheckUsername(username);
+        return new FormHelper().doCheckUsername(username);
     }
 
     public FormValidation doCheckPassword(@QueryParameter String password) {
-        return new Tm4jFormHelper().doCheckPassword(password);
+        return new FormHelper().doCheckPassword(password);
     }
 
-    public List<Tm4JInstance> getJiraInstances() {
+    public List<JiraInstance> getJiraInstances() {
         return jiraInstances;
     }
 
-    public void setJiraInstances(List<Tm4JInstance> jiraInstances) {
+    public void setJiraInstances(List<JiraInstance> jiraInstances) {
         this.jiraInstances = jiraInstances;
     }
 }

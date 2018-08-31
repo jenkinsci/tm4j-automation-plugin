@@ -6,8 +6,8 @@ import java.io.PrintStream;
 import java.text.MessageFormat;
 import java.util.List;
 
-import com.adaptavist.tm4j.jenkins.Tm4jConstants;
-import com.adaptavist.tm4j.jenkins.extensions.Tm4JInstance;
+import com.adaptavist.tm4j.jenkins.utils.Constants;
+import com.adaptavist.tm4j.jenkins.extensions.JiraInstance;
 import com.adaptavist.tm4j.jenkins.io.FileReader;
 import com.adaptavist.tm4j.jenkins.io.FileWriter;
 import com.mashape.unirest.http.HttpResponse;
@@ -17,14 +17,14 @@ import org.apache.commons.lang.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import static com.adaptavist.tm4j.jenkins.Tm4jConstants.ERROR;
-import static com.adaptavist.tm4j.jenkins.Tm4jConstants.INFO;
+import static com.adaptavist.tm4j.jenkins.utils.Constants.ERROR;
+import static com.adaptavist.tm4j.jenkins.utils.Constants.INFO;
 
 public class Tm4jJiraRestClient {
 
-	private final Tm4JInstance jiraInstance;
+	private final JiraInstance jiraInstance;
 
-	public Tm4jJiraRestClient(List<Tm4JInstance> jiraInstances, String serverAddress) throws Exception {
+	public Tm4jJiraRestClient(List<JiraInstance> jiraInstances, String serverAddress) throws Exception {
 		jiraInstance = getTm4jInstance(jiraInstances, serverAddress);
 	}
 
@@ -55,15 +55,15 @@ public class Tm4jJiraRestClient {
 		}
 	}
 
-	private Tm4JInstance getTm4jInstance(List<Tm4JInstance> jiraInstances, String serverAddress ) throws Exception {
+	private JiraInstance getTm4jInstance(List<JiraInstance> jiraInstances, String serverAddress ) throws Exception {
 		if (jiraInstances == null)
-			throw new IllegalStateException(Tm4jConstants.THERE_ARE_NO_JIRA_INSTANCES_CONFIGURED);
-		for (Tm4JInstance jiraInstance : jiraInstances) {
+			throw new IllegalStateException(Constants.THERE_ARE_NO_JIRA_INSTANCES_CONFIGURED);
+		for (JiraInstance jiraInstance : jiraInstances) {
 			if (StringUtils.isNotBlank(jiraInstance.getServerAddress()) && jiraInstance.getServerAddress().trim().equals(serverAddress)) {
 				return jiraInstance;
 			}
 		}
-		throw new Exception(MessageFormat.format(Tm4jConstants.JIRA_INSTANCE_NOT_FOUND, serverAddress));
+		throw new Exception(MessageFormat.format(Constants.JIRA_INSTANCE_NOT_FOUND, serverAddress));
 	}
 
 	private void processResponse(HttpResponse<JsonNode> jsonResponse, PrintStream logger) {

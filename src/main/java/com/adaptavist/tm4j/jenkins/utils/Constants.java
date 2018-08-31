@@ -1,8 +1,8 @@
-package com.adaptavist.tm4j.jenkins;
+package com.adaptavist.tm4j.jenkins.utils;
 
 import java.io.PrintStream;
 
-public class Tm4jConstants {
+public class Constants {
 	public static final String NAME_POST_BUILD_ACTION = "Test Management for Jira: Publish Test Results";
 	public static final String NAME_EXPORT_BUILD_STEP = "Test Management for Jira: Export Feature Files";
     public static final String ADD_TM4J_GLOBAL_CONFIG = "Please configure at least one Jira instance in the global configuration";

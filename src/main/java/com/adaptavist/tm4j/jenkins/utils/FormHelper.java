@@ -1,24 +1,24 @@
-package com.adaptavist.tm4j.jenkins.extensions;
+package com.adaptavist.tm4j.jenkins.utils;
 
-import static com.adaptavist.tm4j.jenkins.Tm4jConstants.ADD_TM4J_GLOBAL_CONFIG;
-import static com.adaptavist.tm4j.jenkins.Tm4jConstants.CONNECTION_TO_JIRA_HAS_BEEN_VALIDATED;
-import static com.adaptavist.tm4j.jenkins.Tm4jConstants.CUCUMBER;
-import static com.adaptavist.tm4j.jenkins.Tm4jConstants.INCORRECT_SERVER_ADDRESS_FORMAT;
-import static com.adaptavist.tm4j.jenkins.Tm4jConstants.INVALID_USER_CREDENTIALS;
-import static com.adaptavist.tm4j.jenkins.Tm4jConstants.PLEASE_ENTER_THE_PASSWORD;
-import static com.adaptavist.tm4j.jenkins.Tm4jConstants.PLEASE_ENTER_THE_SERVER_NAME;
-import static com.adaptavist.tm4j.jenkins.Tm4jConstants.PLEASE_ENTER_THE_USERNAME;
-import static com.adaptavist.tm4j.jenkins.Tm4jConstants.TM4J_OUTPUT_RESULT_FOR_JUNIT;
+import static com.adaptavist.tm4j.jenkins.utils.Constants.ADD_TM4J_GLOBAL_CONFIG;
+import static com.adaptavist.tm4j.jenkins.utils.Constants.CONNECTION_TO_JIRA_HAS_BEEN_VALIDATED;
+import static com.adaptavist.tm4j.jenkins.utils.Constants.CUCUMBER;
+import static com.adaptavist.tm4j.jenkins.utils.Constants.INCORRECT_SERVER_ADDRESS_FORMAT;
+import static com.adaptavist.tm4j.jenkins.utils.Constants.INVALID_USER_CREDENTIALS;
+import static com.adaptavist.tm4j.jenkins.utils.Constants.PLEASE_ENTER_THE_PASSWORD;
+import static com.adaptavist.tm4j.jenkins.utils.Constants.PLEASE_ENTER_THE_SERVER_NAME;
+import static com.adaptavist.tm4j.jenkins.utils.Constants.PLEASE_ENTER_THE_USERNAME;
+import static com.adaptavist.tm4j.jenkins.utils.Constants.TM4J_OUTPUT_RESULT_FOR_JUNIT;
 
 import java.util.List;
 
-import com.adaptavist.tm4j.jenkins.Tm4jConstants;
+import com.adaptavist.tm4j.jenkins.extensions.JiraInstance;
 import org.apache.commons.lang.StringUtils;
 
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
 
-public class Tm4jFormHelper
+public class FormHelper
 {
 
 	public FormValidation testConnection(String serverAddress, String username, String password) {
@@ -35,19 +35,19 @@ public class Tm4jFormHelper
 		if (!(serverAddress.trim().startsWith("https://") || serverAddress.trim().startsWith("http://"))) {
 			return FormValidation.error(INCORRECT_SERVER_ADDRESS_FORMAT);
 		}
-		if (!new Tm4JInstance(serverAddress, username, password).isValidCredentials()) {
+		if (!new JiraInstance(serverAddress, username, password).isValidCredentials()) {
 			return FormValidation.error(INVALID_USER_CREDENTIALS);
 		}
 		return FormValidation.ok(CONNECTION_TO_JIRA_HAS_BEEN_VALIDATED);
 	}
 
-	public ListBoxModel fillServerAddressItems(List<Tm4JInstance> jiraInstances) {
+	public ListBoxModel fillServerAddressItems(List<JiraInstance> jiraInstances) {
 		ListBoxModel modelbox = new ListBoxModel();
 		if (jiraInstances == null || jiraInstances.isEmpty()) {
 			modelbox.add(ADD_TM4J_GLOBAL_CONFIG);
 			return modelbox;
 		}
-		for (Tm4JInstance server : jiraInstances) {
+		for (JiraInstance server : jiraInstances) {
 			modelbox.add(server.getServerAddress());
 		}
 		return modelbox;
@@ -61,11 +61,11 @@ public class Tm4jFormHelper
 	}
 
 	public FormValidation doCheckProjectKey(String projectKey) {
-		return StringUtils.isBlank(projectKey) ? FormValidation.error(Tm4jConstants.PROJECT_KEY_IS_REQUIRED) : FormValidation.ok() ;
+		return StringUtils.isBlank(projectKey) ? FormValidation.error(Constants.PROJECT_KEY_IS_REQUIRED) : FormValidation.ok() ;
 	}
 
 	public FormValidation doCheckFilePath(String filePath) {
-		return StringUtils.isBlank(filePath) ? FormValidation.error(Tm4jConstants.FILE_PATH_IS_REQUIRED) : FormValidation.ok() ;
+		return StringUtils.isBlank(filePath) ? FormValidation.error(Constants.FILE_PATH_IS_REQUIRED) : FormValidation.ok() ;
 	}
 
 	public FormValidation doCheckServerAddress(String serverAddress) {

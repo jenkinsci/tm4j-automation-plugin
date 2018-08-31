@@ -12,7 +12,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.text.MessageFormat;
 
-public class Tm4JInstance {
+public class JiraInstance {
 
 	private static final String CUCUMBER_ENDPOINT = "{0}/rest/atm/1.0/automation/execution/cucumber/{1}";
 	private static final String CUSTOM_FORMAT_ENDPOINT = "{0}/rest/atm/1.0/automation/execution/{1}";
@@ -23,11 +23,11 @@ public class Tm4JInstance {
 	private String username;
 	private String password;
 
-	public Tm4JInstance() {
+	public JiraInstance() {
 	}
 
 	@DataBoundConstructor
-	public Tm4JInstance(String serverAddress, String username, String password) {
+	public JiraInstance(String serverAddress, String username, String password) {
 		this.serverAddress = serverAddress;
 		this.username = username;
 		this.password = password;
