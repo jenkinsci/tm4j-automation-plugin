@@ -1,0 +1,10 @@
+<?xml version='1.1' encoding='UTF-8'?>
+<com.adaptavist.tm4j.jenkins.extensions.configuration.Tm4jGlobalConfiguration plugin="tm4j-jenkins-plugin@1.0-SNAPSHOT">
+  <jiraInstances>
+    <com.adaptavist.tm4j.jenkins.extensions.JiraInstance>
+      <serverAddress>http://localhost:2990/jira</serverAddress>
+      <username>admin</username>
+      <password>admin</password>
+    </com.adaptavist.tm4j.jenkins.extensions.JiraInstance>
+  </jiraInstances>
+</com.adaptavist.tm4j.jenkins.extensions.configuration.Tm4jGlobalConfiguration>

@@ -51,11 +51,11 @@ java -jar jenkins-cli.jar -s $server restart
 wait_start
 
 echo "Setting Jenkins configurations"
-java -jar jenkins-cli.jar -s $server create-job tm4j-cucumber < config_cucumber.xml
+java -jar jenkins-cli.jar -s $server create-job tm4j-cucumber < setup/config_cucumber.xml
 echo "Creating a cucumber job"
-java -jar jenkins-cli.jar -s $server create-job tm4j-junit < config_junit.xml
+java -jar jenkins-cli.jar -s $server create-job tm4j-junit < setup/config_junit.xml
 echo "Creating a junit job"
-cp com.adaptavist.tm4j.jenkins.extensions.postbuildactions.Tm4jBuildResultReporter.xml work/com.adaptavist.tm4j.jenkins.extensions.postbuildactions.Tm4jBuildResultReporter.xml
+cp setup/com.adaptavist.tm4j.jenkins.extensions.configuration.Tm4jGlobalConfiguration.xml work/
 echo "Restarting..."
 java -jar jenkins-cli.jar -s $server restart
 wait_start
