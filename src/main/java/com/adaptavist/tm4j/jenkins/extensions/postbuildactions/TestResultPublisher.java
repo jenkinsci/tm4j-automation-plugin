@@ -1,15 +1,15 @@
 package com.adaptavist.tm4j.jenkins.extensions.postbuildactions;
 
-import static com.adaptavist.tm4j.jenkins.Tm4jConstants.ERROR;
-import static com.adaptavist.tm4j.jenkins.Tm4jConstants.INFO;
-import static com.adaptavist.tm4j.jenkins.Tm4jConstants.NAME_POST_BUILD_ACTION;
+import static com.adaptavist.tm4j.jenkins.utils.Constants.ERROR;
+import static com.adaptavist.tm4j.jenkins.utils.Constants.INFO;
+import static com.adaptavist.tm4j.jenkins.utils.Constants.NAME_POST_BUILD_ACTION;
 
 import java.io.PrintStream;
 import java.util.List;
 
-import com.adaptavist.tm4j.jenkins.extensions.Tm4JInstance;
-import com.adaptavist.tm4j.jenkins.Tm4jConstants;
-import com.adaptavist.tm4j.jenkins.extensions.Tm4jFormHelper;
+import com.adaptavist.tm4j.jenkins.extensions.JiraInstance;
+import com.adaptavist.tm4j.jenkins.utils.Constants;
+import com.adaptavist.tm4j.jenkins.utils.FormHelper;
 import com.adaptavist.tm4j.jenkins.http.Tm4jJiraRestClient;
 import com.adaptavist.tm4j.jenkins.extensions.configuration.Tm4jGlobalConfiguration;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -31,7 +31,7 @@ import net.sf.json.JSONObject;
 
 import javax.inject.Inject;
 
-public class Tm4jBuildResultReporter extends Notifier {
+public class TestResultPublisher extends Notifier {
 
 	public static PrintStream logger;
 
@@ -42,7 +42,7 @@ public class Tm4jBuildResultReporter extends Notifier {
 	private Boolean autoCreateTestCases;
 
     @DataBoundConstructor
-    public Tm4jBuildResultReporter(String serverAddress, String projectKey, String filePath, Boolean autoCreateTestCases, String format) {
+    public TestResultPublisher(String serverAddress, String projectKey, String filePath, Boolean autoCreateTestCases, String format) {
         this.serverAddress = serverAddress;
         this.projectKey = projectKey;
         this.filePath = filePath;
@@ -59,20 +59,20 @@ public class Tm4jBuildResultReporter extends Notifier {
     public boolean perform(final AbstractBuild<?, ?> build, final Launcher launcher, final BuildListener listener) {
         logger = listener.getLogger();
         logger.printf("%s Publishing test results...%n", INFO);
-        List<Tm4JInstance> jiraInstances = getDescriptor().getJiraInstances();
+        List<JiraInstance> jiraInstances = getDescriptor().getJiraInstances();
 		String workspace = build.getWorkspace().getRemote() + "/";
         try {
 			Tm4jJiraRestClient tm4jJiraRestClient = new Tm4jJiraRestClient(jiraInstances, this.serverAddress);
-			if (Tm4jConstants.CUCUMBER.equals(this.format)) {
+			if (Constants.CUCUMBER.equals(this.format)) {
 				tm4jJiraRestClient.uploadCucumberFile(workspace, this.filePath, this.projectKey, this.autoCreateTestCases, logger);
         	} else {
-				tm4jJiraRestClient.uploadCustomFormatFile(workspace, Tm4jConstants.CUSTOM_FORMAT_FILE_NAME, this.projectKey, this.autoCreateTestCases, logger);
+				tm4jJiraRestClient.uploadCustomFormatFile(workspace, Constants.CUSTOM_FORMAT_FILE_NAME, this.projectKey, this.autoCreateTestCases, logger);
         	}
         } catch (Exception e) {
-        	logger.printf("%s There was an error trying to send the test results to Test Management for Jira. Error details: %n", ERROR);
+        	logger.printf("%s There was an error trying to publish test results to Test Management for Jira. Error details: %n", ERROR);
             logger.printf(ERROR);
             logger.printf(" %s  %n", e.getMessage());
-        	logger.printf("%s Tests results didn't send to TM4J %n", ERROR);
+        	logger.printf("%s Tests results have not been sent to Test Management for Jira %n", ERROR);
             return false;
         }
     	return true;
@@ -101,7 +101,7 @@ public class Tm4jBuildResultReporter extends Notifier {
 		private Tm4jGlobalConfiguration tm4jGlobalConfiguration;
 	
 		public DescriptorImpl() {
-			super(Tm4jBuildResultReporter.class);
+			super(TestResultPublisher.class);
 			load();
 		}
 	
@@ -122,22 +122,22 @@ public class Tm4jBuildResultReporter extends Notifier {
 		}
 		
 		public ListBoxModel doFillServerAddressItems() {
-			return new Tm4jFormHelper().fillServerAddressItens(getJiraInstances());
+			return new FormHelper().fillServerAddressItems(getJiraInstances());
 		}
 
 		public ListBoxModel doFillFormatItems() {
-			return new Tm4jFormHelper().fillFormat();
+			return new FormHelper().fillFormat();
 		}
 
 		public FormValidation doCheckProjectKey(@QueryParameter String projectKey) {
-			return new Tm4jFormHelper().doCheckProjectKey(projectKey);
+			return new FormHelper().doCheckProjectKey(projectKey);
 		}
 
 		public FormValidation doCheckFilePath(@QueryParameter String filePath) {
-			return new Tm4jFormHelper().doCheckFilePath(filePath);
+			return new FormHelper().doCheckFilePath(filePath);
 		}
 
-		public List<Tm4JInstance> getJiraInstances() {
+		public List<JiraInstance> getJiraInstances() {
 			return tm4jGlobalConfiguration.getJiraInstances();
 		}
 	}

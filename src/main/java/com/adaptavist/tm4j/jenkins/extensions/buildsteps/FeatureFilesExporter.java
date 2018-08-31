@@ -1,7 +1,7 @@
 package com.adaptavist.tm4j.jenkins.extensions.buildsteps;
 
-import com.adaptavist.tm4j.jenkins.extensions.Tm4JInstance;
-import com.adaptavist.tm4j.jenkins.extensions.Tm4jFormHelper;
+import com.adaptavist.tm4j.jenkins.extensions.JiraInstance;
+import com.adaptavist.tm4j.jenkins.utils.FormHelper;
 import com.adaptavist.tm4j.jenkins.http.Tm4jJiraRestClient;
 import com.adaptavist.tm4j.jenkins.extensions.configuration.Tm4jGlobalConfiguration;
 import hudson.Extension;
@@ -21,23 +21,23 @@ import javax.inject.Inject;
 import java.io.PrintStream;
 import java.util.List;
 
-import static com.adaptavist.tm4j.jenkins.Tm4jConstants.*;
+import static com.adaptavist.tm4j.jenkins.utils.Constants.*;
 import static java.lang.String.format;
 import static org.apache.commons.lang.StringUtils.isEmpty;
 
-public class Tm4jFeatureFilesExporter extends Builder {
+public class FeatureFilesExporter extends Builder {
 
     public static PrintStream logger;
 
     private String serverAddress;
     private String projectKey;
-    private String filePath;
+    private String targetPath;
 
     @DataBoundConstructor
-    public Tm4jFeatureFilesExporter(String serverAddress, String projectKey, String filePath) {
+    public FeatureFilesExporter(String serverAddress, String projectKey, String targetPath) {
         this.serverAddress = serverAddress;
         this.projectKey = projectKey;
-        this.filePath = filePath;
+        this.targetPath = targetPath;
     }
 
     @Override
@@ -45,7 +45,7 @@ public class Tm4jFeatureFilesExporter extends Builder {
         logger = listener.getLogger();
         logger.printf("%s Downloading feature files...%n", INFO);
 
-        List<Tm4JInstance> jiraInstances = getDescriptor().getJiraInstances();
+        List<JiraInstance> jiraInstances = getDescriptor().getJiraInstances();
         String workspace = build.getWorkspace().getRemote() + "/";
         try {
             if (isEmpty(this.projectKey)) {
@@ -53,7 +53,7 @@ public class Tm4jFeatureFilesExporter extends Builder {
             }
 
             String tql = format("testCase.projectKey = '%s'", this.projectKey);
-            String featureFilesPath = workspace + (isEmpty(filePath) ? DEFAULT_FEATURE_FILES_PATH : filePath);
+            String featureFilesPath = workspace + (isEmpty(targetPath) ? DEFAULT_FEATURE_FILES_PATH : targetPath);
             Tm4jJiraRestClient tm4jJiraRestClient = new Tm4jJiraRestClient(jiraInstances, serverAddress);
             tm4jJiraRestClient.exportFeatureFiles(featureFilesPath, tql, logger);
         } catch (Exception e) {
@@ -83,12 +83,12 @@ public class Tm4jFeatureFilesExporter extends Builder {
         this.projectKey = projectKey;
     }
 
-    public String getFilePath() {
-        return filePath;
+    public String getTargetPath() {
+        return targetPath;
     }
 
-    public void setFilePath(String filePath) {
-        this.filePath = filePath;
+    public void setTargetPath(String targetPath) {
+        this.targetPath = targetPath;
     }
 
 
@@ -110,19 +110,19 @@ public class Tm4jFeatureFilesExporter extends Builder {
         }
 
         public ListBoxModel doFillServerAddressItems() {
-            return new Tm4jFormHelper().fillServerAddressItens(getJiraInstances());
+            return new FormHelper().fillServerAddressItems(getJiraInstances());
         }
 
-        public List<Tm4JInstance> getJiraInstances() {
+        public List<JiraInstance> getJiraInstances() {
             return tm4jGlobalConfiguration.getJiraInstances();
         }
 
         public FormValidation doCheckProjectKey(@QueryParameter String projectKey) {
-            return new Tm4jFormHelper().doCheckProjectKey(projectKey);
+            return new FormHelper().doCheckProjectKey(projectKey);
         }
 
         public FormValidation doCheckFilePath(@QueryParameter String filePath) {
-            return new Tm4jFormHelper().doCheckFilePath(filePath);
+            return new FormHelper().doCheckFilePath(filePath);
         }
     }
 }
