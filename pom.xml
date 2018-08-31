@@ -14,7 +14,7 @@
 	<description>Integration with Test Management for Jira (by Adaptavist), for automatic publishing of test results.</description>
     <groupId>com.adaptavist</groupId>
     <artifactId>tm4j-jenkins-plugin</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.0</version>
     <packaging>hpi</packaging>
 
     <licenses>
