@@ -1,5 +1,6 @@
 package com.adaptavist.tm4j.jenkins.extensions.buildsteps;
 
+import com.adaptavist.tm4j.jenkins.exception.NoTestCasesFoundException;
 import com.adaptavist.tm4j.jenkins.extensions.JiraInstance;
 import com.adaptavist.tm4j.jenkins.utils.FormHelper;
 import com.adaptavist.tm4j.jenkins.http.Tm4jJiraRestClient;
@@ -56,6 +57,9 @@ public class FeatureFilesExporter extends Builder {
             String featureFilesPath = workspace + (isEmpty(targetPath) ? DEFAULT_FEATURE_FILES_PATH : targetPath);
             Tm4jJiraRestClient tm4jJiraRestClient = new Tm4jJiraRestClient(jiraInstances, serverAddress);
             tm4jJiraRestClient.exportFeatureFiles(featureFilesPath, tql, logger);
+        } catch (NoTestCasesFoundException e) {
+            logger.printf("%s No feature files found. %n", ERROR);
+          return false;
         } catch (Exception e) {
             logger.printf("%s There was an error while trying to download feature files from Test Management for Jira. Error details: %n", ERROR);
             logger.printf(ERROR);
