@@ -36,14 +36,13 @@
     </hudson.tasks.Maven>
   </builders>
   <publishers>
-    <com.adaptavist.tm4j.jenkins.Tm4jReporter plugin="com.adaptavist.tm4j.jenkins-plugin@1.0-SNAPSHOT">
-      <pInfo>[TM4JTestResultReporter] [INFO]</pInfo>
+    <com.adaptavist.tm4j.jenkins.extensions.postbuildactions.TestResultPublisher plugin="tm4j-jenkins-plugin@1.0-SNAPSHOT">
       <serverAddress>http://localhost:2990/jira</serverAddress>
       <projectKey>JQA</projectKey>
       <filePath>target/cucumber/*.json</filePath>
       <format>Cucumber</format>
       <autoCreateTestCases>false</autoCreateTestCases>
-    </com.adaptavist.tm4j.jenkins.Tm4jReporter>
+    </com.adaptavist.tm4j.jenkins.extensions.postbuildactions.TestResultPublisher>
   </publishers>
   <buildWrappers/>
 </project>
