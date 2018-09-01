@@ -36,7 +36,7 @@
     </hudson.tasks.Maven>
   </builders>
   <publishers>
-    <com.adaptavist.tm4j.jenkins.extensions.postbuildactions.TestResultPublisher plugin="tm4j-jenkins-plugin@1.0-SNAPSHOT">
+    <com.adaptavist.tm4j.jenkins.extensions.postbuildactions.TestResultPublisher plugin="tm4j-automation@1.0.0">
       <serverAddress>http://localhost:2990/jira</serverAddress>
       <projectKey>JQA</projectKey>
       <filePath>tm4j_result.json</filePath>
