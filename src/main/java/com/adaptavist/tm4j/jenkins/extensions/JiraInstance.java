@@ -4,6 +4,7 @@ import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
+import hudson.util.Secret;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -21,13 +22,13 @@ public class JiraInstance {
 
 	private String serverAddress;
 	private String username;
-	private String password;
+	private Secret password;
 
 	public JiraInstance() {
 	}
 
 	@DataBoundConstructor
-	public JiraInstance(String serverAddress, String username, String password) {
+	public JiraInstance(String serverAddress, String username, Secret password) {
 		this.serverAddress = serverAddress;
 		this.username = username;
 		this.password = password;
@@ -45,10 +46,10 @@ public class JiraInstance {
 	public void setUsername(String username) {
 		this.username = username;
 	}
-	public String getPassword() {
+	public Secret getPassword() {
 		return password;
 	}
-	public void setPassword(String password) {
+	public void setPassword(Secret password) {
 		this.password = password;
 	}
 
@@ -58,7 +59,7 @@ public class JiraInstance {
 			HttpClient httpClient = HttpClientBuilder.create().disableCookieManagement().build();
 			Unirest.setHttpClient(httpClient);
 			HttpResponse<String> response = Unirest.get(url)
-					.basicAuth(username, password)
+					.basicAuth(username, this.getPlainTextPassword())
 					.asString();
 			return response.getStatus() == 200;
 		} catch (UnirestException e) {
@@ -73,7 +74,7 @@ public class JiraInstance {
 		Unirest.setHttpClient(httpClient);
 
 		return Unirest.get(url)
-				.basicAuth(username, password)
+				.basicAuth(username, this.getPlainTextPassword())
 				.queryString("tql", tql)
 				.asBinary();
 	}
@@ -94,10 +95,14 @@ public class JiraInstance {
 
 	private HttpResponse<JsonNode> importBuildResultsFile(Boolean autoCreateTestCases, File zip, String url) throws UnirestException {
 		return Unirest.post(url)
-				.basicAuth(username, password)
+				.basicAuth(username, this.getPlainTextPassword())
 				.queryString("autoCreateTestCases", autoCreateTestCases)
 				.field("parameter", "value")
 				.field("file", zip)
 				.asJson();
+	}
+
+	private String getPlainTextPassword() {
+		return Secret.toString(password);
 	}
 }
