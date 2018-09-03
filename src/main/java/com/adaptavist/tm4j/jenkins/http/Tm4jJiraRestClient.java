@@ -74,7 +74,9 @@ public class Tm4jJiraRestClient {
 	private void processResponse(HttpResponse<JsonNode> jsonResponse, PrintStream logger) {
 		if(jsonResponse.getStatus() == 400) {
 			JSONArray errorMessages = (JSONArray) jsonResponse.getBody().getObject().get("errorMessages");
-			errorMessages.forEach(errorMessage -> logger.printf("%s %s %n", ERROR, errorMessage));
+			for (Object errorMessage : errorMessages) {
+				logger.printf("%s %s %n", ERROR, errorMessage);
+			}
 			logger.printf("%s Test Cycle was not created %n", ERROR);
 		} else {
 			JSONObject testRun = (JSONObject) jsonResponse.getBody().getObject().get("testCycle");

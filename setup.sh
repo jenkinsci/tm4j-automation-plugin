@@ -44,10 +44,11 @@ java -jar jenkins-cli.jar -s $server safe-restart
 wait_stop
 wait_start
 
+sleep 5
 java -jar jenkins-cli.jar -s $server install-plugin git
 sleep 1
 echo "Stoping..."
-java -jar jenkins-cli.jar -s $server restart
+java -jar jenkins-cli.jar -s $server safe-restart
 wait_start
 
 echo "Setting Jenkins configurations"
@@ -57,11 +58,12 @@ java -jar jenkins-cli.jar -s $server create-job tm4j-junit < setup/config_junit.
 echo "Creating a junit job"
 cp setup/com.adaptavist.tm4j.jenkins.extensions.configuration.Tm4jGlobalConfiguration.xml work/
 echo "Restarting..."
-java -jar jenkins-cli.jar -s $server restart
+java -jar jenkins-cli.jar -s $server safe-restart
 wait_start
 
 echo "Shutdown"
 java -jar jenkins-cli.jar -s $server safe-shutdown
+
 sleep 2
 echo "Jenkins stoped"
 echo "Setup finished"
