@@ -13,6 +13,7 @@ import static com.adaptavist.tm4j.jenkins.utils.Constants.TM4J_OUTPUT_RESULT_FOR
 import java.util.List;
 
 import com.adaptavist.tm4j.jenkins.extensions.JiraInstance;
+import hudson.util.Secret;
 import org.apache.commons.lang.StringUtils;
 
 import hudson.util.FormValidation;
@@ -35,7 +36,7 @@ public class FormHelper
 		if (!(serverAddress.trim().startsWith("https://") || serverAddress.trim().startsWith("http://"))) {
 			return FormValidation.error(INCORRECT_SERVER_ADDRESS_FORMAT);
 		}
-		if (!new JiraInstance(serverAddress, username, password).isValidCredentials()) {
+		if (!new JiraInstance(serverAddress, username, Secret.fromString(password)).isValidCredentials()) {
 			return FormValidation.error(INVALID_USER_CREDENTIALS);
 		}
 		return FormValidation.ok(CONNECTION_TO_JIRA_HAS_BEEN_VALIDATED);

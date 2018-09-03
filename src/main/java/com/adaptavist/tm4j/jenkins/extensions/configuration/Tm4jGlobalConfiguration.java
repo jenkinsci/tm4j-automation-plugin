@@ -5,6 +5,7 @@ import com.adaptavist.tm4j.jenkins.utils.Constants;
 import com.adaptavist.tm4j.jenkins.utils.FormHelper;
 import hudson.Extension;
 import hudson.util.FormValidation;
+import hudson.util.Secret;
 import jenkins.model.GlobalConfiguration;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -79,7 +80,7 @@ public class Tm4jGlobalConfiguration extends GlobalConfiguration {
         }
         jiraInstance.setServerAddress(StringUtils.removeEnd(serverAddres.trim(), "/"));
         jiraInstance.setUsername(username.trim());
-        jiraInstance.setPassword(password.trim());
+        jiraInstance.setPassword(Secret.fromString(password));
 
         if (jiraInstance.isValidCredentials()) {
             return jiraInstance;

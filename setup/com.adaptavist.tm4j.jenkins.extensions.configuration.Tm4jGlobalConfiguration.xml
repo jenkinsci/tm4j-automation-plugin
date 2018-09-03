@@ -4,7 +4,7 @@
     <com.adaptavist.tm4j.jenkins.extensions.JiraInstance>
       <serverAddress>http://localhost:2990/jira</serverAddress>
       <username>admin</username>
-      <password>admin</password>
+      <password>znLFOowj3c3JfLpkydjpGanmnhn70UZO2yvWzP7yCI8=</password>
     </com.adaptavist.tm4j.jenkins.extensions.JiraInstance>
   </jiraInstances>
 </com.adaptavist.tm4j.jenkins.extensions.configuration.Tm4jGlobalConfiguration>
