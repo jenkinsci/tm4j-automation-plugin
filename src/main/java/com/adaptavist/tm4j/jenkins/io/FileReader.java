@@ -17,7 +17,7 @@ public class FileReader {
 
 	public List<File> getFiles(String workpace, String pattern) throws Exception {
 		if (!new File(workpace).isDirectory()) {
-			throw new Exception(MessageFormat.format("Path not found : {0}",  workpace));
+			throw new Exception(MessageFormat.format("Path not found : {0}", workpace));
 		}
 		if (!pattern.contains("*")) {
 			File file = new File(workpace + pattern);
@@ -27,7 +27,7 @@ public class FileReader {
 			return Arrays.asList(file);
 		}
 		DirectoryScanner scanner = new DirectoryScanner();
-		scanner.setIncludes(new String[]{pattern});
+		scanner.setIncludes(new String[] { pattern });
 		scanner.setBasedir(workpace);
 		scanner.setCaseSensitive(false);
 		scanner.scan();

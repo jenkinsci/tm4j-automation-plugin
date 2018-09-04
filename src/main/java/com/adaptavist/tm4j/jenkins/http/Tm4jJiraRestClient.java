@@ -52,7 +52,7 @@ public class Tm4jJiraRestClient {
 		}
 	}
 
-	private void processExportingFeatureFilesResponse(String featureFilesPath, PrintStream logger, HttpResponse<String> httpResponse) throws IOException {
+	private void processExportingFeatureFilesResponse(String featureFilesPath, final PrintStream logger, HttpResponse<String> httpResponse) throws IOException {
 		if (isSuccessful(httpResponse)) {
 			if (httpResponse.getStatus() == 204) {
 				throw new NoTestCasesFoundException();
@@ -69,11 +69,11 @@ public class Tm4jJiraRestClient {
 
 			throw new RuntimeException("There was an error while trying to request from Jira. Http Status Code: " + httpResponse.getStatus());
 		} else if (isServerError(httpResponse)) {
-			throw new RuntimeException("There was an error in Jira Server(" + jiraInstance.getServerAddress() + "). Http Status Code: " + httpResponse.getStatus());
+			throw new RuntimeException(MessageFormat.format("There was an error in Jira Server({0}). Http Status Code: {1}", jiraInstance.getServerAddress(), httpResponse.getStatus()));
 		}
 	}
 
-	private void processImportingResultsResponse(HttpResponse<JsonNode> jsonResponse, PrintStream logger) {
+	private void processImportingResultsResponse(HttpResponse<JsonNode> jsonResponse, final PrintStream logger) {
 		if (isSuccessful(jsonResponse)) {
 			JSONObject testRun = (JSONObject) jsonResponse.getBody().getObject().get("testCycle");
 			String testCycleKey = (String) testRun.get("key");
@@ -85,11 +85,11 @@ public class Tm4jJiraRestClient {
 			logger.printf("%s Test Cycle was not created %n", ERROR);
 			throw new RuntimeException("There was an error while trying to import files to Jira. Http Status Code: " + jsonResponse.getStatus());
 		} else if (isServerError(jsonResponse)) {
-			throw new RuntimeException("There was an error in Jira Server(" + jiraInstance.getServerAddress() + "). Http Status Code: " + jsonResponse.getStatus());
+			throw new RuntimeException(MessageFormat.format("There was an error in Jira Server({0}). Http Status Code: {1}", jiraInstance.getServerAddress(), jsonResponse.getStatus()));
 		}
 	}
 
-	private void processErrorMessages(HttpResponse<?> httpResponse, PrintStream logger) {
+	private void processErrorMessages(HttpResponse<?> httpResponse, final PrintStream logger) {
 		JSONObject jsonObject = new JsonNode(httpResponse.getBody().toString()).getObject();
 		JSONArray errorMessages = (JSONArray) jsonObject.get("errorMessages");
 		for (Object errorMessage : errorMessages) {

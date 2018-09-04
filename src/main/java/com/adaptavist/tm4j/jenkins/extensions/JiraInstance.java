@@ -36,18 +36,23 @@ public class JiraInstance {
 	public String getServerAddress() {
 		return serverAddress;
 	}
+
 	public void setServerAddress(String serverAddress) {
 		this.serverAddress = serverAddress;
 	}
+
 	public String getUsername() {
 		return username;
 	}
+
 	public void setUsername(String username) {
 		this.username = username;
 	}
+
 	public Secret getPassword() {
 		return password;
 	}
+
 	public void setPassword(Secret password) {
 		this.password = password;
 	}
@@ -72,10 +77,7 @@ public class JiraInstance {
 		HttpClient httpClient = HttpClientBuilder.create().disableCookieManagement().build();
 		Unirest.setHttpClient(httpClient);
 
-		return Unirest.get(url)
-				.basicAuth(username, this.getPlainTextPassword())
-				.queryString("tql", tql)
-				.asString();
+		return Unirest.get(url).basicAuth(username, this.getPlainTextPassword()).queryString("tql", tql).asString();
 	}
 
 	public HttpResponse<JsonNode> importCucumberBuildResult(String projectKey, Boolean autoCreateTestCases, File zip) throws UnirestException {

@@ -62,17 +62,17 @@ public class FormHelper {
 	}
 
 	public FormValidation doCheckProjectKey(String projectKey) {
-		return StringUtils.isBlank(projectKey) ? FormValidation.error(Constants.PROJECT_KEY_IS_REQUIRED) : FormValidation.ok() ;
+		return StringUtils.isBlank(projectKey) ? FormValidation.error(Constants.PROJECT_KEY_IS_REQUIRED) : FormValidation.ok();
 	}
 
 	public FormValidation doCheckFilePath(String filePath) {
-		return StringUtils.isBlank(filePath) ? FormValidation.error(Constants.FILE_PATH_IS_REQUIRED) : FormValidation.ok() ;
+		return StringUtils.isBlank(filePath) ? FormValidation.error(Constants.FILE_PATH_IS_REQUIRED) : FormValidation.ok();
 	}
 
 	public FormValidation doCheckServerAddress(String serverAddress) {
 		return StringUtils.isBlank(serverAddress) ? FormValidation.error(PLEASE_ENTER_THE_SERVER_NAME) : FormValidation.ok();
 	}
-	
+
 	public FormValidation doCheckUsername(String userName) {
 		return StringUtils.isBlank(userName) ? FormValidation.error(PLEASE_ENTER_THE_USERNAME) : FormValidation.ok();
 	}

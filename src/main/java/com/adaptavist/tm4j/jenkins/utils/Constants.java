@@ -1,11 +1,9 @@
 package com.adaptavist.tm4j.jenkins.utils;
 
-import java.io.PrintStream;
-
 public class Constants {
 	public static final String NAME_POST_BUILD_ACTION = "Test Management for Jira: Publish Test Results";
 	public static final String NAME_EXPORT_BUILD_STEP = "Test Management for Jira: Export Feature Files";
-    public static final String ADD_TM4J_GLOBAL_CONFIG = "Please configure at least one Jira instance in the global configuration";
+	public static final String ADD_TM4J_GLOBAL_CONFIG = "Please configure at least one Jira instance in the global configuration";
 	public static final String CONNECTION_TO_JIRA_HAS_BEEN_VALIDATED = "The connection to Jira has been validated";
 	public static final String INVALID_USER_CREDENTIALS = "Invalid user credentials";
 	public static final String INCORRECT_SERVER_ADDRESS_FORMAT = "Incorrect server address format";
@@ -23,9 +21,7 @@ public class Constants {
 	public static final String ERROR_AT_GLOBAL_CONFIGURATIONS_OF_TEST_MANAGEMENT_FOR_JIRA = "Error at global configurations of Test Management for Jira: {0}";
 	public static final String DEFAULT_FEATURE_FILES_PATH = "target/features";
 	public static final String TM4J_GLOBAL_CONFIGURATION = "TM4J configuration";
-
-	public static PrintStream logger;
 	private static final String PLUGIN_NAME = "[Test Management for Jira]";
-	public static String INFO = String.format("%s [INFO]", PLUGIN_NAME);
-	public static String ERROR = String.format("%s [ERROR]", PLUGIN_NAME);
+	public static final String INFO = String.format("%s [INFO]", PLUGIN_NAME);
+	public static final String ERROR = String.format("%s [ERROR]", PLUGIN_NAME);
 }

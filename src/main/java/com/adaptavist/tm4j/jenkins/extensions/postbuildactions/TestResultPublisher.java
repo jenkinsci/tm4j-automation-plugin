@@ -35,93 +35,124 @@ import javax.inject.Inject;
 public class TestResultPublisher extends Notifier {
 
 	private PrintStream logger;
-    private String serverAddress;
-    private String projectKey;
+	private String serverAddress;
+	private String projectKey;
 	private String filePath;
 	private String format;
 	private Boolean autoCreateTestCases;
 
-    @DataBoundConstructor
-    public TestResultPublisher(String serverAddress, String projectKey, String filePath, Boolean autoCreateTestCases, String format) {
-        this.serverAddress = serverAddress;
-        this.projectKey = projectKey;
-        this.filePath = filePath;
-        this.autoCreateTestCases = autoCreateTestCases;
-        this.format = format;
-    }
+	@DataBoundConstructor
+	public TestResultPublisher(String serverAddress, String projectKey, String filePath, Boolean autoCreateTestCases, String format) {
+		this.serverAddress = serverAddress;
+		this.projectKey = projectKey;
+		this.filePath = filePath;
+		this.autoCreateTestCases = autoCreateTestCases;
+		this.format = format;
+	}
 
-    @Override
-    public BuildStepMonitor getRequiredMonitorService() {
-        return BuildStepMonitor.NONE;
-    }
+	@Override
+	public BuildStepMonitor getRequiredMonitorService() {
+		return BuildStepMonitor.NONE;
+	}
 
-    @Override
-    public boolean perform(final AbstractBuild<?, ?> build, final Launcher launcher, final BuildListener listener) {
-        logger = listener.getLogger();
-        logger.printf("%s Publishing test results...%n", INFO);
-        List<JiraInstance> jiraInstances = getDescriptor().getJiraInstances();
+	@Override
+	public boolean perform(final AbstractBuild<?, ?> build, final Launcher launcher, final BuildListener listener) {
+		logger = listener.getLogger();
+		logger.printf("%s Publishing test results...%n", INFO);
+		List<JiraInstance> jiraInstances = getDescriptor().getJiraInstances();
 		String workspace = build.getWorkspace().getRemote() + "/";
-        try {
+		try {
 			Tm4jJiraRestClient tm4jJiraRestClient = new Tm4jJiraRestClient(jiraInstances, this.serverAddress);
 			if (Constants.CUCUMBER.equals(this.format)) {
 				tm4jJiraRestClient.uploadCucumberFile(workspace, this.filePath, this.projectKey, this.autoCreateTestCases, logger);
-        	} else {
+			} else {
 				tm4jJiraRestClient.uploadCustomFormatFile(workspace, Constants.CUSTOM_FORMAT_FILE_NAME, this.projectKey, this.autoCreateTestCases, logger);
-        	}
-        } catch (Exception e) {
-        	e.printStackTrace();
-        	logger.printf("%s There was an error trying to publish test results to Test Management for Jira. Error details: %n", ERROR);
-            logger.printf(ERROR);
-            logger.printf(" %s  %n", e.getMessage());
-        	logger.printf("%s Tests results have not been sent to Test Management for Jira %n", ERROR);
-            return false;
-        }
-    	return true;
-    }
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.printf(
+					"%s There was an error trying to publish test results to Test Management for Jira. Error details: %n",
+					ERROR);
+			logger.printf(ERROR);
+			logger.printf(" %s  %n", e.getMessage());
+			logger.printf("%s Tests results have not been sent to Test Management for Jira %n", ERROR);
+			return false;
+		}
+		return true;
+	}
 
-    @Override
-    public DescriptorImpl getDescriptor() {
-        return (DescriptorImpl) super.getDescriptor();
-    }
-    
-    public String getServerAddress() {return serverAddress;}
-    public void setServerAddress(String serverAddress) {this.serverAddress = serverAddress;}
-    public String getProjectKey() {return projectKey;}
-    public void setProjectKey(String projectKey) {this.projectKey = projectKey;}
-    public String getFilePath() {return  this.filePath;}
-    public void setFilePath ( String filePath) {this.filePath = filePath;}
-	public String getFormat() {return format;}
-	public void setFormat(String format) {this.format = format;}
-	public Boolean getAutoCreateTestCases() {return autoCreateTestCases;}
-	public void setAutoCreateTestCases(Boolean autoCreateTestCases) {this.autoCreateTestCases = autoCreateTestCases;}
+	@Override
+	public DescriptorImpl getDescriptor() {
+		return (DescriptorImpl) super.getDescriptor();
+	}
+
+	public String getServerAddress() {
+		return serverAddress;
+	}
+
+	public void setServerAddress(String serverAddress) {
+		this.serverAddress = serverAddress;
+	}
+
+	public String getProjectKey() {
+		return projectKey;
+	}
+
+	public void setProjectKey(String projectKey) {
+		this.projectKey = projectKey;
+	}
+
+	public String getFilePath() {
+		return this.filePath;
+	}
+
+	public void setFilePath(String filePath) {
+		this.filePath = filePath;
+	}
+
+	public String getFormat() {
+		return format;
+	}
+
+	public void setFormat(String format) {
+		this.format = format;
+	}
+
+	public Boolean getAutoCreateTestCases() {
+		return autoCreateTestCases;
+	}
+
+	public void setAutoCreateTestCases(Boolean autoCreateTestCases) {
+		this.autoCreateTestCases = autoCreateTestCases;
+	}
 
 	@Extension
 	public static final class DescriptorImpl extends BuildStepDescriptor<Publisher> {
-	
+
 		@Inject
 		private Tm4jGlobalConfiguration tm4jGlobalConfiguration;
-	
+
 		public DescriptorImpl() {
 			super(TestResultPublisher.class);
 			load();
 		}
-	
+
 		@Override
 		public Publisher newInstance(StaplerRequest reqquest, JSONObject formData) throws FormException {
 			return super.newInstance(reqquest, formData);
 		}
-	
+
 		@SuppressWarnings("rawtypes")
 		@Override
 		public boolean isApplicable(final Class<? extends AbstractProject> jobType) {
 			return true;
 		}
-	
+
 		@Override
 		public String getDisplayName() {
 			return NAME_POST_BUILD_ACTION;
 		}
-		
+
 		public ListBoxModel doFillServerAddressItems() {
 			return new FormHelper().fillServerAddressItems(getJiraInstances());
 		}
@@ -145,4 +176,3 @@ public class TestResultPublisher extends Notifier {
 		}
 	}
 }
-
