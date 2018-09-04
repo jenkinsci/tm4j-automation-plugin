@@ -19,7 +19,7 @@ public class FileReaderTest {
 		List<File> files = new FileReader().getFiles(FILE_PATH, ALL);
 		assertEquals(files.size(), 8);
 	}
-	
+
 	@Test
 	public void shouldReadAllFilesFromAFolderPath() throws Exception {
 		List<File> files = new FileReader().getFiles(FILE_PATH, "**/*");
@@ -43,7 +43,7 @@ public class FileReaderTest {
 		List<File> files = new FileReader().getFiles(FILE_PATH, "result_1.json");
 		assertEquals(files.size(), 1);
 	}
-	
+
 	@Test
 	public void shouldCreateAZipFromAPatterm() throws Exception {
 		File file = new FileReader().getZip(FILE_PATH, JSON_ONLY);
@@ -54,7 +54,7 @@ public class FileReaderTest {
 	public void shouldThrowAnExceptionWhenFileNotFound() throws Exception {
 		try {
 			new FileReader().getZip(FILE_PATH, "abc.xyz");
-		} catch(Exception e) {
+		} catch (Exception e) {
 			assertEquals(e.getMessage(), "File not found: abc.xyz");
 			throw e;
 		}
@@ -64,17 +64,17 @@ public class FileReaderTest {
 	public void shouldThrowAnExceptionWhenFileNotFoundForPattern() throws Exception {
 		try {
 			new FileReader().getZip(FILE_PATH, "*.xyz");
-		} catch(Exception e) {
+		} catch (Exception e) {
 			assertEquals(e.getMessage(), "File not found : *.xyz");
 			throw e;
 		}
 	}
-	
+
 	@Test(expected = Exception.class)
 	public void shouldThrowAnExceptionWhenPathIsWrong() throws Exception {
 		try {
 			new FileReader().getZip("/abc/xyz", JSON_ONLY);
-		} catch(Exception e) {
+		} catch (Exception e) {
 			assertEquals(e.getMessage(), "Path not found : /abc/xyz");
 			throw e;
 		}
