@@ -73,27 +73,19 @@ public class Tm4jJiraRestClient {
 		}
 	}
 
-	private JiraInstance getTm4jInstance(List<JiraInstance> jiraInstances, String serverAddress) throws Exception {
-		if (jiraInstances == null)
-			throw new IllegalStateException(Constants.THERE_ARE_NO_JIRA_INSTANCES_CONFIGURED);
-		for (JiraInstance jiraInstance : jiraInstances) {
-			if (StringUtils.isNotBlank(jiraInstance.getServerAddress()) && jiraInstance.getServerAddress().trim().equals(serverAddress)) {
-				return jiraInstance;
-			}
-		}
-		throw new Exception(MessageFormat.format(Constants.JIRA_INSTANCE_NOT_FOUND, serverAddress));
-	}
-
 	private void processImportingResultsResponse(HttpResponse<JsonNode> jsonResponse, PrintStream logger) {
-		if(jsonResponse.getStatus() == 400) {
-			processErrorMessages(jsonResponse, logger);
-			logger.printf("%s Test Cycle was not created %n", ERROR);
-		} else {
+		if (isSuccessful(jsonResponse)) {
 			JSONObject testRun = (JSONObject) jsonResponse.getBody().getObject().get("testCycle");
 			String testCycleKey = (String) testRun.get("key");
 			String testCycleUrl = (String) testRun.get("url");
 			logger.printf("%s Test Cycle created with the following KEY: %s. %s %n", INFO, testCycleKey, testCycleUrl);
 			logger.printf("%s Test results published to Test Management for Jira successfully.%n", INFO);
+		} else if (isClientError(jsonResponse)) {
+			processErrorMessages(jsonResponse, logger);
+			logger.printf("%s Test Cycle was not created %n", ERROR);
+			throw new RuntimeException("There was an error while trying to import files to Jira. Http Status Code: " + jsonResponse.getStatus());
+		} else if (isServerError(jsonResponse)) {
+			throw new RuntimeException("There was an error in Jira Server(" + jiraInstance.getServerAddress() + "). Http Status Code: " + jsonResponse.getStatus());
 		}
 	}
 
@@ -115,5 +107,16 @@ public class Tm4jJiraRestClient {
 
 	private boolean isServerError(HttpResponse httpResponse) {
 		return httpResponse.getStatus() >= 500;
+	}
+
+	private JiraInstance getTm4jInstance(List<JiraInstance> jiraInstances, String serverAddress) throws Exception {
+		if (jiraInstances == null)
+			throw new IllegalStateException(Constants.THERE_ARE_NO_JIRA_INSTANCES_CONFIGURED);
+		for (JiraInstance jiraInstance : jiraInstances) {
+			if (StringUtils.isNotBlank(jiraInstance.getServerAddress()) && jiraInstance.getServerAddress().trim().equals(serverAddress)) {
+				return jiraInstance;
+			}
+		}
+		throw new Exception(MessageFormat.format(Constants.JIRA_INSTANCE_NOT_FOUND, serverAddress));
 	}
 }
