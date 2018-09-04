@@ -97,7 +97,6 @@ public class JiraInstance {
 		return Unirest.post(url)
 				.basicAuth(username, this.getPlainTextPassword())
 				.queryString("autoCreateTestCases", autoCreateTestCases)
-				.field("parameter", "value")
 				.field("file", zip)
 				.asJson();
 	}

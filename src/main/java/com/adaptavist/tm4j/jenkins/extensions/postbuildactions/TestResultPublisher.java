@@ -69,6 +69,7 @@ public class TestResultPublisher extends Notifier {
 				tm4jJiraRestClient.uploadCustomFormatFile(workspace, Constants.CUSTOM_FORMAT_FILE_NAME, this.projectKey, this.autoCreateTestCases, logger);
         	}
         } catch (Exception e) {
+        	e.printStackTrace();
         	logger.printf("%s There was an error trying to publish test results to Test Management for Jira. Error details: %n", ERROR);
             logger.printf(ERROR);
             logger.printf(" %s  %n", e.getMessage());
