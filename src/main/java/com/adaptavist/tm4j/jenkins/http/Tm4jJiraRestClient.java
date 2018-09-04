@@ -89,7 +89,7 @@ public class Tm4jJiraRestClient {
 		}
 	}
 
-	private void processErrorMessages(HttpResponse httpResponse, PrintStream logger) {
+	private void processErrorMessages(HttpResponse<?> httpResponse, PrintStream logger) {
 		JSONObject jsonObject = new JsonNode(httpResponse.getBody().toString()).getObject();
 		JSONArray errorMessages = (JSONArray) jsonObject.get("errorMessages");
 		for (Object errorMessage : errorMessages) {
@@ -97,15 +97,15 @@ public class Tm4jJiraRestClient {
 		}
 	}
 
-	private boolean isSuccessful(HttpResponse httpResponse) {
+	private boolean isSuccessful(HttpResponse<?> httpResponse) {
 		return httpResponse.getStatus() >= 200 && httpResponse.getStatus() < 300;
 	}
 
-	private boolean isClientError(HttpResponse httpResponse) {
+	private boolean isClientError(HttpResponse<?> httpResponse) {
 		return httpResponse.getStatus() >= 400 && httpResponse.getStatus() < 500;
 	}
 
-	private boolean isServerError(HttpResponse httpResponse) {
+	private boolean isServerError(HttpResponse<?> httpResponse) {
 		return httpResponse.getStatus() >= 500;
 	}
 

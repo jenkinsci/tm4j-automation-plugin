@@ -7,11 +7,13 @@ import hudson.Extension;
 import hudson.util.FormValidation;
 import hudson.util.Secret;
 import jenkins.model.GlobalConfiguration;
+import jenkins.model.Jenkins;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.verb.POST;
 
 import javax.annotation.Nonnull;
 import java.text.MessageFormat;
@@ -81,28 +83,39 @@ public class Tm4jGlobalConfiguration extends GlobalConfiguration {
         jiraInstance.setServerAddress(StringUtils.removeEnd(serverAddres.trim(), "/"));
         jiraInstance.setUsername(username.trim());
         jiraInstance.setPassword(Secret.fromString(password));
-
         if (jiraInstance.isValidCredentials()) {
             return jiraInstance;
         }
         throw new Exception(Constants.INVALID_USER_CREDENTIALS);
     }
 
+    @POST
     public FormValidation doTestConnection(@QueryParameter String serverAddress, @QueryParameter String username, @QueryParameter String password) {
-        return new FormHelper().testConnection(serverAddress, username, password);
+    	checkPermissions();
+    	return new FormHelper().testConnection(serverAddress, username, password);
     }
 
+    @POST
     public FormValidation doCheckServerAddress(@QueryParameter String serverAddress) {
+    	checkPermissions();
         return new FormHelper().doCheckServerAddress(serverAddress);
     }
 
+    @POST
     public FormValidation doCheckUsername(@QueryParameter String username) {
+    	checkPermissions();
         return new FormHelper().doCheckUsername(username);
     }
 
+    @POST
     public FormValidation doCheckPassword(@QueryParameter String password) {
+    	checkPermissions();
         return new FormHelper().doCheckPassword(password);
     }
+
+	private void checkPermissions() {
+		Jenkins.getInstance().checkPermission(Jenkins.ADMINISTER);
+	}
 
     public List<JiraInstance> getJiraInstances() {
         return jiraInstances;

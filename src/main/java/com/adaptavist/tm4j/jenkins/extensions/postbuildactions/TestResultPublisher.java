@@ -15,6 +15,7 @@ import com.adaptavist.tm4j.jenkins.extensions.configuration.Tm4jGlobalConfigurat
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.verb.POST;
 
 import hudson.Extension;
 import hudson.Launcher;
@@ -33,8 +34,7 @@ import javax.inject.Inject;
 
 public class TestResultPublisher extends Notifier {
 
-	public static PrintStream logger;
-
+	private PrintStream logger;
     private String serverAddress;
     private String projectKey;
 	private String filePath;
@@ -130,10 +130,12 @@ public class TestResultPublisher extends Notifier {
 			return new FormHelper().fillFormat();
 		}
 
+		@POST
 		public FormValidation doCheckProjectKey(@QueryParameter String projectKey) {
 			return new FormHelper().doCheckProjectKey(projectKey);
 		}
 
+		@POST
 		public FormValidation doCheckFilePath(@QueryParameter String filePath) {
 			return new FormHelper().doCheckFilePath(filePath);
 		}

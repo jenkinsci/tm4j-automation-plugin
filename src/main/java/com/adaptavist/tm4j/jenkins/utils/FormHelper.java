@@ -12,15 +12,15 @@ import static com.adaptavist.tm4j.jenkins.utils.Constants.TM4J_OUTPUT_RESULT_FOR
 
 import java.util.List;
 
-import com.adaptavist.tm4j.jenkins.extensions.JiraInstance;
-import hudson.util.Secret;
 import org.apache.commons.lang.StringUtils;
+
+import com.adaptavist.tm4j.jenkins.extensions.JiraInstance;
 
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
+import hudson.util.Secret;
 
-public class FormHelper
-{
+public class FormHelper {
 
 	public FormValidation testConnection(String serverAddress, String username, String password) {
 		serverAddress = StringUtils.removeEnd(serverAddress, "/");

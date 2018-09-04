@@ -8,7 +8,7 @@
     </f:entry>
 
     <f:entry title="Project key" field="projectKey">
-        <f:textbox field="projectKey"/>
+        <f:textbox field="projectKey" checkMethod="post"/>
     </f:entry>
     
     <f:entry title="Test framework" field="format">
@@ -17,7 +17,7 @@
 
 
 	<f:entry title="File path" field="filePath" >
-		<f:textbox field="filePath" id="tm4jAutomationPostBuildActionFilePath" />
+		<f:textbox field="filePath" id="tm4jAutomationPostBuildActionFilePath" checkMethod="post" />
 	</f:entry>
 
 

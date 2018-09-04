@@ -1,10 +1,29 @@
 package com.adaptavist.tm4j.jenkins.extensions.buildsteps;
 
+import static com.adaptavist.tm4j.jenkins.utils.Constants.DEFAULT_FEATURE_FILES_PATH;
+import static com.adaptavist.tm4j.jenkins.utils.Constants.ERROR;
+import static com.adaptavist.tm4j.jenkins.utils.Constants.INFO;
+import static com.adaptavist.tm4j.jenkins.utils.Constants.NAME_EXPORT_BUILD_STEP;
+import static com.adaptavist.tm4j.jenkins.utils.Constants.PROJECT_KEY_IS_REQUIRED;
+import static java.lang.String.format;
+import static org.apache.commons.lang.StringUtils.isEmpty;
+
+import java.io.PrintStream;
+import java.util.List;
+
+import javax.annotation.Nonnull;
+import javax.inject.Inject;
+
+import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.verb.POST;
+
 import com.adaptavist.tm4j.jenkins.exception.NoTestCasesFoundException;
 import com.adaptavist.tm4j.jenkins.extensions.JiraInstance;
-import com.adaptavist.tm4j.jenkins.utils.FormHelper;
-import com.adaptavist.tm4j.jenkins.http.Tm4jJiraRestClient;
 import com.adaptavist.tm4j.jenkins.extensions.configuration.Tm4jGlobalConfiguration;
+import com.adaptavist.tm4j.jenkins.http.Tm4jJiraRestClient;
+import com.adaptavist.tm4j.jenkins.utils.FormHelper;
+
 import hudson.Extension;
 import hudson.Launcher;
 import hudson.model.AbstractBuild;
@@ -14,17 +33,6 @@ import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
-import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.QueryParameter;
-
-import javax.annotation.Nonnull;
-import javax.inject.Inject;
-import java.io.PrintStream;
-import java.util.List;
-
-import static com.adaptavist.tm4j.jenkins.utils.Constants.*;
-import static java.lang.String.format;
-import static org.apache.commons.lang.StringUtils.isEmpty;
 
 public class FeatureFilesExporter extends Builder {
 
@@ -45,14 +53,12 @@ public class FeatureFilesExporter extends Builder {
     public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) {
         logger = listener.getLogger();
         logger.printf("%s Downloading feature files...%n", INFO);
-
         List<JiraInstance> jiraInstances = getDescriptor().getJiraInstances();
         String workspace = build.getWorkspace().getRemote() + "/";
         try {
             if (isEmpty(this.projectKey)) {
                 throw new RuntimeException(PROJECT_KEY_IS_REQUIRED);
             }
-
             String tql = format("testCase.projectKey = '%s'", this.projectKey);
             String featureFilesPath = workspace + (isEmpty(targetPath) ? DEFAULT_FEATURE_FILES_PATH : targetPath);
             Tm4jJiraRestClient tm4jJiraRestClient = new Tm4jJiraRestClient(jiraInstances, serverAddress);
@@ -67,7 +73,6 @@ public class FeatureFilesExporter extends Builder {
             logger.printf(" %s  %n", e.getMessage());
             return false;
         }
-
         return true;
     }
 
@@ -96,7 +101,6 @@ public class FeatureFilesExporter extends Builder {
         this.targetPath = targetPath;
     }
 
-
     @Extension
     public static class DescriptorImpl extends BuildStepDescriptor<Builder> {
 
@@ -104,7 +108,7 @@ public class FeatureFilesExporter extends Builder {
         private Tm4jGlobalConfiguration tm4jGlobalConfiguration;
 
         @Override
-        public boolean isApplicable(Class<? extends AbstractProject> aClass) {
+        public boolean isApplicable(@SuppressWarnings("rawtypes") Class<? extends AbstractProject> aClass) {
             return true;
         }
 
@@ -122,10 +126,12 @@ public class FeatureFilesExporter extends Builder {
             return tm4jGlobalConfiguration.getJiraInstances();
         }
 
+        @POST
         public FormValidation doCheckProjectKey(@QueryParameter String projectKey) {
             return new FormHelper().doCheckProjectKey(projectKey);
         }
 
+        @POST
         public FormValidation doCheckFilePath(@QueryParameter String filePath) {
             return new FormHelper().doCheckFilePath(filePath);
         }
