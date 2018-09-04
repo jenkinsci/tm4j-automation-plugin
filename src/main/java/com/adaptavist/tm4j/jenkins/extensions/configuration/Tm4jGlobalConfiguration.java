@@ -47,9 +47,7 @@ public class Tm4jGlobalConfiguration extends GlobalConfiguration {
 		try {
 			this.jiraInstances = crateJiraInstances(formJiraInstances);
 		} catch (Exception e) {
-			throw new FormException(MessageFormat
-					.format(Constants.ERROR_AT_GLOBAL_CONFIGURATIONS_OF_TEST_MANAGEMENT_FOR_JIRA, e.getMessage()),
-					"testManagementForJira");
+			throw new FormException(MessageFormat.format(Constants.ERROR_AT_GLOBAL_CONFIGURATIONS_OF_TEST_MANAGEMENT_FOR_JIRA, e.getMessage()),"testManagementForJira");
 		}
 		save();
 		return super.configure(request, formData);
