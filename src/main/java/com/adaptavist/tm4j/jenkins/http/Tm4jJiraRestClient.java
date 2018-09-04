@@ -1,25 +1,26 @@
 package com.adaptavist.tm4j.jenkins.http;
 
+import static com.adaptavist.tm4j.jenkins.utils.Constants.ERROR;
+import static com.adaptavist.tm4j.jenkins.utils.Constants.INFO;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.text.MessageFormat;
 import java.util.List;
 
-import com.adaptavist.tm4j.jenkins.exception.NoTestCasesFoundException;
-import com.adaptavist.tm4j.jenkins.utils.Constants;
-import com.adaptavist.tm4j.jenkins.extensions.JiraInstance;
-import com.adaptavist.tm4j.jenkins.io.FileReader;
-import com.adaptavist.tm4j.jenkins.io.FileWriter;
-import com.mashape.unirest.http.HttpResponse;
-import com.mashape.unirest.http.JsonNode;
-import com.mashape.unirest.http.exceptions.UnirestException;
 import org.apache.commons.lang.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import static com.adaptavist.tm4j.jenkins.utils.Constants.ERROR;
-import static com.adaptavist.tm4j.jenkins.utils.Constants.INFO;
+import com.adaptavist.tm4j.jenkins.exception.NoTestCasesFoundException;
+import com.adaptavist.tm4j.jenkins.extensions.JiraInstance;
+import com.adaptavist.tm4j.jenkins.io.FileReader;
+import com.adaptavist.tm4j.jenkins.io.FileWriter;
+import com.adaptavist.tm4j.jenkins.utils.Constants;
+import com.mashape.unirest.http.HttpResponse;
+import com.mashape.unirest.http.JsonNode;
+import com.mashape.unirest.http.exceptions.UnirestException;
 
 public class Tm4jJiraRestClient {
 

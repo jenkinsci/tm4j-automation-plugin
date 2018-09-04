@@ -1,16 +1,18 @@
 package com.adaptavist.tm4j.jenkins.extensions;
 
-import com.mashape.unirest.http.HttpResponse;
-import com.mashape.unirest.http.JsonNode;
-import com.mashape.unirest.http.Unirest;
-import com.mashape.unirest.http.exceptions.UnirestException;
-import hudson.util.Secret;
+import java.io.File;
+import java.text.MessageFormat;
+
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.kohsuke.stapler.DataBoundConstructor;
 
-import java.io.File;
-import java.text.MessageFormat;
+import com.mashape.unirest.http.HttpResponse;
+import com.mashape.unirest.http.JsonNode;
+import com.mashape.unirest.http.Unirest;
+import com.mashape.unirest.http.exceptions.UnirestException;
+
+import hudson.util.Secret;
 
 public class JiraInstance {
 

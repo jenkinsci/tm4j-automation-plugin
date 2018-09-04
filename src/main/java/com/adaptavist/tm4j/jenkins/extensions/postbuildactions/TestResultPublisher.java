@@ -7,15 +7,18 @@ import static com.adaptavist.tm4j.jenkins.utils.Constants.NAME_POST_BUILD_ACTION
 import java.io.PrintStream;
 import java.util.List;
 
-import com.adaptavist.tm4j.jenkins.extensions.JiraInstance;
-import com.adaptavist.tm4j.jenkins.utils.Constants;
-import com.adaptavist.tm4j.jenkins.utils.FormHelper;
-import com.adaptavist.tm4j.jenkins.http.Tm4jJiraRestClient;
-import com.adaptavist.tm4j.jenkins.extensions.configuration.Tm4jGlobalConfiguration;
+import javax.inject.Inject;
+
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.verb.POST;
+
+import com.adaptavist.tm4j.jenkins.extensions.JiraInstance;
+import com.adaptavist.tm4j.jenkins.extensions.configuration.Tm4jGlobalConfiguration;
+import com.adaptavist.tm4j.jenkins.http.Tm4jJiraRestClient;
+import com.adaptavist.tm4j.jenkins.utils.Constants;
+import com.adaptavist.tm4j.jenkins.utils.FormHelper;
 
 import hudson.Extension;
 import hudson.Launcher;
@@ -29,8 +32,6 @@ import hudson.tasks.Publisher;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
 import net.sf.json.JSONObject;
-
-import javax.inject.Inject;
 
 public class TestResultPublisher extends Notifier {
 

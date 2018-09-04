@@ -1,8 +1,22 @@
 package com.adaptavist.tm4j.jenkins.extensions.configuration;
 
+import static com.adaptavist.tm4j.jenkins.utils.Constants.TM4J_GLOBAL_CONFIGURATION;
+
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.annotation.Nonnull;
+
+import org.apache.commons.lang.StringUtils;
+import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.verb.POST;
+
 import com.adaptavist.tm4j.jenkins.extensions.JiraInstance;
 import com.adaptavist.tm4j.jenkins.utils.Constants;
 import com.adaptavist.tm4j.jenkins.utils.FormHelper;
+
 import hudson.Extension;
 import hudson.util.FormValidation;
 import hudson.util.Secret;
@@ -10,17 +24,6 @@ import jenkins.model.GlobalConfiguration;
 import jenkins.model.Jenkins;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-import org.apache.commons.lang.StringUtils;
-import org.kohsuke.stapler.QueryParameter;
-import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.verb.POST;
-
-import javax.annotation.Nonnull;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.List;
-
-import static com.adaptavist.tm4j.jenkins.utils.Constants.TM4J_GLOBAL_CONFIGURATION;
 
 @Extension
 public class Tm4jGlobalConfiguration extends GlobalConfiguration {
