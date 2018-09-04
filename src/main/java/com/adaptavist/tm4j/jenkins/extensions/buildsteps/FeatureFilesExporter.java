@@ -68,9 +68,7 @@ public class FeatureFilesExporter extends Builder {
 			return false;
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.printf(
-					"%s There was an error while trying to download feature files from Test Management for Jira. Error details: %n",
-					ERROR);
+			logger.printf("%s There was an error while trying to download feature files from Test Management for Jira. Error details: %n",ERROR);
 			logger.printf(ERROR);
 			logger.printf(" %s  %n", e.getMessage());
 			return false;
