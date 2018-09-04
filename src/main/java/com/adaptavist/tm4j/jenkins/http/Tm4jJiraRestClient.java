@@ -1,6 +1,7 @@
 package com.adaptavist.tm4j.jenkins.http;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.text.MessageFormat;
@@ -32,31 +33,40 @@ public class Tm4jJiraRestClient {
 	public void uploadCucumberFile(String workspace, String filePath, String projectKey, Boolean autoCreateTestCases, PrintStream logger) throws Exception {
 		File file = new FileReader().getZip(workspace, filePath);
 		HttpResponse<JsonNode> jsonResponse = jiraInstance.importCucumberBuildResult(projectKey, autoCreateTestCases, file);
-		processResponse(jsonResponse, logger);
+		processImportingResultsResponse(jsonResponse, logger);
 		file.delete();
 	}
 
 	public void uploadCustomFormatFile(String workspace, String filePath, String projectKey, Boolean autoCreateTestCases, PrintStream logger) throws Exception {
 		File file = new FileReader().getZip(workspace, filePath);
 		HttpResponse<JsonNode> jsonResponse = jiraInstance.importCustomFormatBuildResult(projectKey, autoCreateTestCases, file);
-		processResponse(jsonResponse, logger);
+		processImportingResultsResponse(jsonResponse, logger);
 		file.delete();
 	}
 
 	public void exportFeatureFiles(String featureFilesPath, String tql, PrintStream logger) throws Exception {
 		try {
-			HttpResponse<InputStream> featureFiles = jiraInstance.exportFeatureFiles(tql);
+			HttpResponse<InputStream> httpResponse = jiraInstance.exportFeatureFiles(tql);
+			processExportingFeatureFilesResponse(featureFilesPath, logger, httpResponse);
+		} catch (UnirestException e) {
+			throw new Exception("Error trying to communicate with Jira", e.getCause());
+		}
+	}
 
-			if (featureFiles.getStatus() == 204) {
+	private void processExportingFeatureFilesResponse(String featureFilesPath, PrintStream logger, HttpResponse<InputStream> httpResponse) throws IOException {
+		if (isSuccessful(httpResponse)) {
+			if (httpResponse.getStatus() == 204) {
 				throw new NoTestCasesFoundException();
 			}
 
-			FileWriter fileWriter = new FileWriter(featureFiles.getRawBody());
+			FileWriter fileWriter = new FileWriter(httpResponse.getRawBody());
 			fileWriter.extractFeatureFilesFromZipAndSave(featureFilesPath);
 
 			logger.printf("%s %s feature files downloaded to %s %n", INFO, fileWriter.getFileNames().size(), featureFilesPath);
-		} catch (UnirestException e) {
-			throw new Exception("Error trying to communicate with Jira", e.getCause());
+		} else if (isClientError(httpResponse)) {
+			throw new RuntimeException("There was an error while trying to request from Jira. Http Status Code: " + httpResponse.getStatus());
+		} else if (isServerError(httpResponse)) {
+			throw new RuntimeException("There was an error in Jira Server(" + jiraInstance.getServerAddress() + "). Http Status Code: " + httpResponse.getStatus());
 		}
 	}
 
@@ -71,7 +81,7 @@ public class Tm4jJiraRestClient {
 		throw new Exception(MessageFormat.format(Constants.JIRA_INSTANCE_NOT_FOUND, serverAddress));
 	}
 
-	private void processResponse(HttpResponse<JsonNode> jsonResponse, PrintStream logger) {
+	private void processImportingResultsResponse(HttpResponse<JsonNode> jsonResponse, PrintStream logger) {
 		if(jsonResponse.getStatus() == 400) {
 			JSONArray errorMessages = (JSONArray) jsonResponse.getBody().getObject().get("errorMessages");
 			for (Object errorMessage : errorMessages) {
@@ -87,4 +97,15 @@ public class Tm4jJiraRestClient {
 		}
 	}
 
+	private boolean isSuccessful(HttpResponse<InputStream> httpResponse) {
+		return httpResponse.getStatus() >= 200 && httpResponse.getStatus() < 300;
+	}
+
+	private boolean isClientError(HttpResponse<InputStream> httpResponse) {
+		return httpResponse.getStatus() >= 400 && httpResponse.getStatus() < 500;
+	}
+
+	private boolean isServerError(HttpResponse<InputStream> httpResponse) {
+		return httpResponse.getStatus() >= 500;
+	}
 }
