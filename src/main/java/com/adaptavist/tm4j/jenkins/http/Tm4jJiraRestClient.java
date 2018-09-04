@@ -2,7 +2,6 @@ package com.adaptavist.tm4j.jenkins.http;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintStream;
 import java.text.MessageFormat;
 import java.util.List;
@@ -46,14 +45,14 @@ public class Tm4jJiraRestClient {
 
 	public void exportFeatureFiles(String featureFilesPath, String tql, PrintStream logger) throws Exception {
 		try {
-			HttpResponse<InputStream> httpResponse = jiraInstance.exportFeatureFiles(tql);
+			HttpResponse<String> httpResponse = jiraInstance.exportFeatureFiles(tql);
 			processExportingFeatureFilesResponse(featureFilesPath, logger, httpResponse);
 		} catch (UnirestException e) {
 			throw new Exception("Error trying to communicate with Jira", e.getCause());
 		}
 	}
 
-	private void processExportingFeatureFilesResponse(String featureFilesPath, PrintStream logger, HttpResponse<InputStream> httpResponse) throws IOException {
+	private void processExportingFeatureFilesResponse(String featureFilesPath, PrintStream logger, HttpResponse<String> httpResponse) throws IOException {
 		if (isSuccessful(httpResponse)) {
 			if (httpResponse.getStatus() == 204) {
 				throw new NoTestCasesFoundException();
@@ -64,13 +63,17 @@ public class Tm4jJiraRestClient {
 
 			logger.printf("%s %s feature files downloaded to %s %n", INFO, fileWriter.getFileNames().size(), featureFilesPath);
 		} else if (isClientError(httpResponse)) {
+			if (httpResponse.getStatus() == 400) {
+				processErrorMessages(httpResponse, logger);
+			}
+
 			throw new RuntimeException("There was an error while trying to request from Jira. Http Status Code: " + httpResponse.getStatus());
 		} else if (isServerError(httpResponse)) {
 			throw new RuntimeException("There was an error in Jira Server(" + jiraInstance.getServerAddress() + "). Http Status Code: " + httpResponse.getStatus());
 		}
 	}
 
-	private JiraInstance getTm4jInstance(List<JiraInstance> jiraInstances, String serverAddress ) throws Exception {
+	private JiraInstance getTm4jInstance(List<JiraInstance> jiraInstances, String serverAddress) throws Exception {
 		if (jiraInstances == null)
 			throw new IllegalStateException(Constants.THERE_ARE_NO_JIRA_INSTANCES_CONFIGURED);
 		for (JiraInstance jiraInstance : jiraInstances) {
@@ -83,10 +86,7 @@ public class Tm4jJiraRestClient {
 
 	private void processImportingResultsResponse(HttpResponse<JsonNode> jsonResponse, PrintStream logger) {
 		if(jsonResponse.getStatus() == 400) {
-			JSONArray errorMessages = (JSONArray) jsonResponse.getBody().getObject().get("errorMessages");
-			for (Object errorMessage : errorMessages) {
-				logger.printf("%s %s %n", ERROR, errorMessage);
-			}
+			processErrorMessages(jsonResponse, logger);
 			logger.printf("%s Test Cycle was not created %n", ERROR);
 		} else {
 			JSONObject testRun = (JSONObject) jsonResponse.getBody().getObject().get("testCycle");
@@ -97,15 +97,23 @@ public class Tm4jJiraRestClient {
 		}
 	}
 
-	private boolean isSuccessful(HttpResponse<InputStream> httpResponse) {
+	private void processErrorMessages(HttpResponse httpResponse, PrintStream logger) {
+		JSONObject jsonObject = new JsonNode(httpResponse.getBody().toString()).getObject();
+		JSONArray errorMessages = (JSONArray) jsonObject.get("errorMessages");
+		for (Object errorMessage : errorMessages) {
+			logger.printf("%s %s %n", ERROR, errorMessage);
+		}
+	}
+
+	private boolean isSuccessful(HttpResponse httpResponse) {
 		return httpResponse.getStatus() >= 200 && httpResponse.getStatus() < 300;
 	}
 
-	private boolean isClientError(HttpResponse<InputStream> httpResponse) {
+	private boolean isClientError(HttpResponse httpResponse) {
 		return httpResponse.getStatus() >= 400 && httpResponse.getStatus() < 500;
 	}
 
-	private boolean isServerError(HttpResponse<InputStream> httpResponse) {
+	private boolean isServerError(HttpResponse httpResponse) {
 		return httpResponse.getStatus() >= 500;
 	}
 }
