@@ -10,7 +10,6 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import java.io.File;
-import java.io.InputStream;
 import java.text.MessageFormat;
 
 public class JiraInstance {
@@ -68,7 +67,7 @@ public class JiraInstance {
 		return false;
 	}
 
-	public HttpResponse<InputStream> exportFeatureFiles(String tql) throws UnirestException {
+	public HttpResponse<String> exportFeatureFiles(String tql) throws UnirestException {
 		String url = MessageFormat.format(FEATURE_FILES_ENDPOINT, serverAddress);
 		HttpClient httpClient = HttpClientBuilder.create().disableCookieManagement().build();
 		Unirest.setHttpClient(httpClient);
@@ -76,7 +75,7 @@ public class JiraInstance {
 		return Unirest.get(url)
 				.basicAuth(username, this.getPlainTextPassword())
 				.queryString("tql", tql)
-				.asBinary();
+				.asString();
 	}
 
 	public HttpResponse<JsonNode> importCucumberBuildResult(String projectKey, Boolean autoCreateTestCases, File zip) throws UnirestException {

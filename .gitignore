@@ -8,3 +8,4 @@ run_docker.sh
 .project
 jenkins-cli.jar
 com.adaptavist.tm4j.jenkins-plugin.iml
+tm4j-automation.iml
