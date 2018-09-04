@@ -30,21 +30,21 @@ public class Tm4jJiraRestClient {
 		jiraInstance = getTm4jInstance(jiraInstances, serverAddress);
 	}
 
-	public void uploadCucumberFile(String workspace, String filePath, String projectKey, Boolean autoCreateTestCases, PrintStream logger) throws Exception {
+	public void uploadCucumberFile(String workspace, String filePath, String projectKey, Boolean autoCreateTestCases, final PrintStream logger) throws Exception {
 		File file = new FileReader().getZip(workspace, filePath);
 		HttpResponse<JsonNode> jsonResponse = jiraInstance.importCucumberBuildResult(projectKey, autoCreateTestCases, file);
 		processImportingResultsResponse(jsonResponse, logger);
 		file.delete();
 	}
 
-	public void uploadCustomFormatFile(String workspace, String filePath, String projectKey, Boolean autoCreateTestCases, PrintStream logger) throws Exception {
+	public void uploadCustomFormatFile(String workspace, String filePath, String projectKey, Boolean autoCreateTestCases, final PrintStream logger) throws Exception {
 		File file = new FileReader().getZip(workspace, filePath);
 		HttpResponse<JsonNode> jsonResponse = jiraInstance.importCustomFormatBuildResult(projectKey, autoCreateTestCases, file);
 		processImportingResultsResponse(jsonResponse, logger);
 		file.delete();
 	}
 
-	public void exportFeatureFiles(String featureFilesPath, String tql, PrintStream logger) throws Exception {
+	public void exportFeatureFiles(String featureFilesPath, String tql, final PrintStream logger) throws Exception {
 		try {
 			HttpResponse<String> httpResponse = jiraInstance.exportFeatureFiles(tql);
 			processExportingFeatureFilesResponse(featureFilesPath, logger, httpResponse);

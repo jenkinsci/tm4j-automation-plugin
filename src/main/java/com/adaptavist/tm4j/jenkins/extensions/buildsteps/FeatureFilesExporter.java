@@ -23,6 +23,7 @@ import com.adaptavist.tm4j.jenkins.extensions.JiraInstance;
 import com.adaptavist.tm4j.jenkins.extensions.configuration.Tm4jGlobalConfiguration;
 import com.adaptavist.tm4j.jenkins.http.Tm4jJiraRestClient;
 import com.adaptavist.tm4j.jenkins.utils.FormHelper;
+import com.adaptavist.tm4j.jenkins.utils.Permissions;
 
 import hudson.Extension;
 import hudson.Launcher;
@@ -35,9 +36,7 @@ import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
 
 public class FeatureFilesExporter extends Builder {
-
-	public static PrintStream logger;
-
+	private PrintStream logger;
 	private String serverAddress;
 	private String projectKey;
 	private String targetPath;
@@ -123,10 +122,11 @@ public class FeatureFilesExporter extends Builder {
 		}
 
 		public ListBoxModel doFillServerAddressItems() {
+			Permissions.checkAdminPermission();
 			return new FormHelper().fillServerAddressItems(getJiraInstances());
 		}
 
-		public List<JiraInstance> getJiraInstances() {
+		private List<JiraInstance> getJiraInstances() {
 			return tm4jGlobalConfiguration.getJiraInstances();
 		}
 

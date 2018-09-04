@@ -16,12 +16,12 @@ import org.kohsuke.stapler.verb.POST;
 import com.adaptavist.tm4j.jenkins.extensions.JiraInstance;
 import com.adaptavist.tm4j.jenkins.utils.Constants;
 import com.adaptavist.tm4j.jenkins.utils.FormHelper;
+import com.adaptavist.tm4j.jenkins.utils.Permissions;
 
 import hudson.Extension;
 import hudson.util.FormValidation;
 import hudson.util.Secret;
 import jenkins.model.GlobalConfiguration;
-import jenkins.model.Jenkins;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
@@ -42,6 +42,7 @@ public class Tm4jGlobalConfiguration extends GlobalConfiguration {
 
 	@Override
 	public boolean configure(StaplerRequest request, JSONObject formData) throws FormException {
+		Permissions.checkAdminPermission();
 		request.bindParameters(this);
 		Object formJiraInstances = formData.get("jiraInstances");
 		try {
@@ -94,30 +95,26 @@ public class Tm4jGlobalConfiguration extends GlobalConfiguration {
 
 	@POST
 	public FormValidation doTestConnection(@QueryParameter String serverAddress, @QueryParameter String username, @QueryParameter String password) {
-		checkPermissions();
+		Permissions.checkAdminPermission();
 		return new FormHelper().testConnection(serverAddress, username, password);
 	}
 
 	@POST
 	public FormValidation doCheckServerAddress(@QueryParameter String serverAddress) {
-		checkPermissions();
+		Permissions.checkAdminPermission();
 		return new FormHelper().doCheckServerAddress(serverAddress);
 	}
 
 	@POST
 	public FormValidation doCheckUsername(@QueryParameter String username) {
-		checkPermissions();
+		Permissions.checkAdminPermission();
 		return new FormHelper().doCheckUsername(username);
 	}
 
 	@POST
 	public FormValidation doCheckPassword(@QueryParameter String password) {
-		checkPermissions();
+		Permissions.checkAdminPermission();
 		return new FormHelper().doCheckPassword(password);
-	}
-
-	private void checkPermissions() {
-		Jenkins.getInstance().checkPermission(Jenkins.ADMINISTER);
 	}
 
 	public List<JiraInstance> getJiraInstances() {
