@@ -3,6 +3,7 @@ package com.adaptavist.tm4j.jenkins.extensions.configuration;
 import com.adaptavist.tm4j.jenkins.extensions.JiraInstance;
 import com.adaptavist.tm4j.jenkins.utils.Constants;
 import com.adaptavist.tm4j.jenkins.utils.FormHelper;
+import com.adaptavist.tm4j.jenkins.utils.Permissions;
 import hudson.Extension;
 import hudson.util.FormValidation;
 import hudson.util.Secret;
@@ -12,6 +13,7 @@ import net.sf.json.JSONObject;
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.verb.POST;
 
 import javax.annotation.Nonnull;
 import java.text.MessageFormat;
@@ -37,6 +39,7 @@ public class Tm4jGlobalConfiguration extends GlobalConfiguration {
 
     @Override
     public boolean configure(StaplerRequest request, JSONObject formData) throws FormException {
+        Permissions.checkAdminPermission();
         request.bindParameters(this);
         Object formJiraInstances = formData.get("jiraInstances");
         try {
@@ -55,7 +58,7 @@ public class Tm4jGlobalConfiguration extends GlobalConfiguration {
         List<JiraInstance> newJiraInstances = new ArrayList<>();
         if (formJiraInstances instanceof JSONArray) {
             JSONArray jiraInstancesList = (JSONArray) formJiraInstances;
-            for (Object jiraInstance :  jiraInstancesList.toArray()) {
+            for (Object jiraInstance : jiraInstancesList.toArray()) {
                 newJiraInstances.add(createAnInstance((JSONObject) jiraInstance));
             }
         } else {
@@ -75,32 +78,39 @@ public class Tm4jGlobalConfiguration extends GlobalConfiguration {
         if (StringUtils.isBlank(username)) {
             throw new Exception(Constants.PLEASE_ENTER_THE_USERNAME);
         }
-        if (StringUtils.isBlank(password)){
+        if (StringUtils.isBlank(password)) {
             throw new Exception(Constants.PLEASE_ENTER_THE_PASSWORD);
         }
         jiraInstance.setServerAddress(StringUtils.removeEnd(serverAddres.trim(), "/"));
         jiraInstance.setUsername(username.trim());
         jiraInstance.setPassword(Secret.fromString(password));
-
         if (jiraInstance.isValidCredentials()) {
             return jiraInstance;
         }
         throw new Exception(Constants.INVALID_USER_CREDENTIALS);
     }
 
+    @POST
     public FormValidation doTestConnection(@QueryParameter String serverAddress, @QueryParameter String username, @QueryParameter String password) {
+        Permissions.checkAdminPermission();
         return new FormHelper().testConnection(serverAddress, username, password);
     }
 
+    @POST
     public FormValidation doCheckServerAddress(@QueryParameter String serverAddress) {
+        Permissions.checkAdminPermission();
         return new FormHelper().doCheckServerAddress(serverAddress);
     }
 
+    @POST
     public FormValidation doCheckUsername(@QueryParameter String username) {
+        Permissions.checkAdminPermission();
         return new FormHelper().doCheckUsername(username);
     }
 
+    @POST
     public FormValidation doCheckPassword(@QueryParameter String password) {
+        Permissions.checkAdminPermission();
         return new FormHelper().doCheckPassword(password);
     }
 

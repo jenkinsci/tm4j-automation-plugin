@@ -44,9 +44,9 @@ java -jar jenkins-cli.jar -s $server safe-restart
 wait_stop
 wait_start
 
-sleep 5
+sleep 20
 java -jar jenkins-cli.jar -s $server install-plugin git
-sleep 1
+sleep 2
 echo "Stoping..."
 java -jar jenkins-cli.jar -s $server safe-restart
 wait_start
