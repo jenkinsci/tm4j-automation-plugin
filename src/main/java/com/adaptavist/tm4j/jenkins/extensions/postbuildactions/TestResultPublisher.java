@@ -68,6 +68,9 @@ public class TestResultPublisher extends Notifier {
             e.printStackTrace();
             logger.printf("%s There was an error trying to publish test results to Test Management for Jira. Error details: %n", ERROR);
             logger.printf(ERROR);
+            for (StackTraceElement trace : e.getStackTrace()) {
+            	logger.printf(" %s  %n", trace.toString());
+            }
             logger.printf(" %s  %n", e.getMessage());
             logger.printf("%s Tests results have not been sent to Test Management for Jira %n", ERROR);
             return false;
