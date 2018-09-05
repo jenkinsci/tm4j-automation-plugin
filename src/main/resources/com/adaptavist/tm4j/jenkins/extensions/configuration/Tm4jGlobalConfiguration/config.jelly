@@ -1,6 +1,5 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler"
-         xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson"
+<j:jelly xmlns:j="jelly:core"
          xmlns:f="/lib/form">
     <f:section title="Test Management for Jira">
 
@@ -18,7 +17,7 @@
                     <f:entry title="Password" description="Jira user password" field="password">
                         <f:password value="${tm4jInstancesList.password}" default="" checkMethod="post"/>
                     </f:entry>
-                    <f:validateButton title="Test Configuration&#160;"  checkMethod="post"
+                    <f:validateButton title="Test Configuration&#160;" checkMethod="post"
                                       progress="Please wait .. We are validating the connection and credentials"
                                       method="testConnection" with="serverAddress,username,password"/>
                     <tr>

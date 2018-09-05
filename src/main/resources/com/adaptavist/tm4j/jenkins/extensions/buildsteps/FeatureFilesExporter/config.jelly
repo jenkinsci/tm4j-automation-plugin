@@ -1,17 +1,16 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler"
-		 xmlns:d="jelly:define" xmlns:l="/lib/layout"
-         xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+<j:jelly xmlns:j="jelly:core"
+         xmlns:f="/lib/form">
 
-  <f:entry title="Jira instance" field="serverAddress">
-      <f:select/>
-  </f:entry>
+    <f:entry title="Jira instance" field="serverAddress">
+        <f:select/>
+    </f:entry>
 
-  <f:entry title="Project key" field="projectKey">
-      <f:textbox field="projectKey"  checkMethod="post"/>
-  </f:entry>
+    <f:entry title="Project key" field="projectKey">
+        <f:textbox field="projectKey" checkMethod="post"/>
+    </f:entry>
 
-   <f:entry title="Target path" field="targetPath" >
-      <f:textbox field="targetPath" checkMethod="post"/>
-   </f:entry>
+    <f:entry title="Target path" field="targetPath">
+        <f:textbox field="targetPath" checkMethod="post"/>
+    </f:entry>
 </j:jelly>
