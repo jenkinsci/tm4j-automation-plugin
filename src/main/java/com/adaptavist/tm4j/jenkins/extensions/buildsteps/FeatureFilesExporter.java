@@ -10,7 +10,6 @@ import static org.apache.commons.lang.StringUtils.isEmpty;
 
 import java.io.PrintStream;
 import java.util.List;
-import java.util.logging.Logger;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
@@ -38,7 +37,6 @@ import hudson.util.ListBoxModel;
 
 public class FeatureFilesExporter extends Builder {
 	
-    private PrintStream logger;
     private String serverAddress;
     private String projectKey;
     private String targetPath;
@@ -52,7 +50,7 @@ public class FeatureFilesExporter extends Builder {
 
     @Override
     public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) {
-        logger = listener.getLogger();
+        final PrintStream logger = listener.getLogger();
         logger.printf("%s Downloading feature files...%n", INFO);
         List<JiraInstance> jiraInstances = getDescriptor().getJiraInstances();
         String workspace = build.getWorkspace().getRemote() + "/";

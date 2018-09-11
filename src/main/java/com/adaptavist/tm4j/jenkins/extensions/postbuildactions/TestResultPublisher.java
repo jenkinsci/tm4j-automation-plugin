@@ -26,6 +26,7 @@ import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
 import hudson.model.AbstractProject;
+import hudson.model.Result;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.tasks.BuildStepDescriptor;
@@ -39,7 +40,6 @@ import net.sf.json.JSONObject;
 
 public class TestResultPublisher extends Notifier implements SimpleBuildStep {
 
-    private PrintStream logger;
     private String serverAddress;
     private String projectKey;
     private String filePath;
@@ -62,7 +62,7 @@ public class TestResultPublisher extends Notifier implements SimpleBuildStep {
     
 	@Override
 	public void perform(Run<?, ?> run, FilePath workspace, Launcher launcher, TaskListener listener) throws InterruptedException, IOException {
-        logger = listener.getLogger();
+        final PrintStream logger = listener.getLogger();
         logger.printf("%s Publishing test results...%n", INFO);
         List<JiraInstance> jiraInstances = getDescriptor().getJiraInstances();
         String remoteWorkspace = workspace.getRemote() + "/";
@@ -74,6 +74,7 @@ public class TestResultPublisher extends Notifier implements SimpleBuildStep {
                 tm4jJiraRestClient.uploadCustomFormatFile(remoteWorkspace, Constants.CUSTOM_FORMAT_FILE_NAME, this.projectKey, this.autoCreateTestCases, logger);
             }
         } catch (Exception e) {
+        	run.setResult(Result.FAILURE);
             logger.printf("%s There was an error trying to publish test results to Test Management for Jira. Error details: %n", ERROR);
             logger.printf(ERROR);
             for (StackTraceElement trace : e.getStackTrace()) {

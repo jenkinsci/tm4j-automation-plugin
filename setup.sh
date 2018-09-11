@@ -45,6 +45,7 @@ wait_stop
 wait_start
 
 sleep 20
+java -jar jenkins-cli.jar -s $server install-plugin workflow-aggregator
 java -jar jenkins-cli.jar -s $server install-plugin git
 sleep 2
 echo "Stoping..."
@@ -55,6 +56,8 @@ echo "Setting Jenkins configurations"
 java -jar jenkins-cli.jar -s $server create-job tm4j-cucumber < setup/config_cucumber.xml
 echo "Creating a cucumber job"
 java -jar jenkins-cli.jar -s $server create-job tm4j-junit < setup/config_junit.xml
+echo "Creating a pipeline job for cucumber"
+java -jar jenkins-cli.jar -s $server create-job tm4j-cucumber-pipeline < setup/config_cucumber_pipeline.xml
 echo "Creating a junit job"
 cp setup/com.adaptavist.tm4j.jenkins.extensions.configuration.Tm4jGlobalConfiguration.xml work/
 echo "Restarting..."
