@@ -53,11 +53,13 @@ java -jar jenkins-cli.jar -s $server safe-restart
 wait_start
 
 echo "Setting Jenkins configurations"
-java -jar jenkins-cli.jar -s $server create-job tm4j-cucumber < setup/config_cucumber.xml
+java -jar jenkins-cli.jar -s $server create-job tm4j-cucumber < setup/tm4j-cucumber.xml
 echo "Creating a cucumber job"
-java -jar jenkins-cli.jar -s $server create-job tm4j-junit < setup/config_junit.xml
+java -jar jenkins-cli.jar -s $server create-job tm4j-junit < setup/tm4j-junit.xml
 echo "Creating a pipeline job for cucumber"
-java -jar jenkins-cli.jar -s $server create-job tm4j-cucumber-pipeline < setup/config_cucumber_pipeline.xml
+java -jar jenkins-cli.jar -s $server create-job tm4j-cucumber-pipeline < setup/tm4j-cucumber-pipeline.xml
+echo "Creating a pipeline job for cucumber without fatures"
+java -jar jenkins-cli.jar -s $server create-job tm4j-cucumber-pipeline-download-feature < setup/tm4j-cucumber-pipeline-download-feature.xml
 echo "Creating a junit job"
 cp setup/com.adaptavist.tm4j.jenkins.extensions.configuration.Tm4jGlobalConfiguration.xml work/
 echo "Restarting..."
