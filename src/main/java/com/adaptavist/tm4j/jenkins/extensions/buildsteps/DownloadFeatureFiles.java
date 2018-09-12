@@ -40,14 +40,14 @@ import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
 import jenkins.tasks.SimpleBuildStep;
 
-public class FeatureFilesExporter extends Builder implements SimpleBuildStep {
+public class DownloadFeatureFiles extends Builder implements SimpleBuildStep {
 	
     private String serverAddress;
     private String projectKey;
     private String targetPath;
 
     @DataBoundConstructor
-    public FeatureFilesExporter(String serverAddress, String projectKey, String targetPath) {
+    public DownloadFeatureFiles(String serverAddress, String projectKey, String targetPath) {
         this.serverAddress = serverAddress;
         this.projectKey = projectKey;
         this.targetPath = targetPath;
@@ -112,7 +112,7 @@ public class FeatureFilesExporter extends Builder implements SimpleBuildStep {
         this.targetPath = targetPath;
     }
     
-    @Symbol("tm4jGet")
+    @Symbol("downloadFeatureFiles")
     @Extension
     public static class DescriptorImpl extends BuildStepDescriptor<Builder> {
 

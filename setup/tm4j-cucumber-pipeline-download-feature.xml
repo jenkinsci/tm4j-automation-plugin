@@ -23,7 +23,7 @@
         }
         stage(&apos;Download Feature Files&apos;){
             steps {
-                tm4jGet serverAddress: &apos;http://localhost:2990/jira&apos;, 
+                downloadFeatureFiles serverAddress: &apos;http://localhost:2990/jira&apos;, 
                     projectKey: &apos;WEB&apos;, targetPath:&apos;src/test/resources/features&apos;
             }
         }
@@ -40,7 +40,7 @@
     }
     post {
         always {
-            tm4jSend serverAddress: &apos;http://localhost:2990/jira&apos;, 
+            publishTestResults serverAddress: &apos;http://localhost:2990/jira&apos;, 
                     projectKey: &apos;WEB&apos;, filePath:&apos;target/cucumber/*.json&apos;, 
                     format: &apos;Cucumber&apos;, 
                     autoCreateTestCases: false
