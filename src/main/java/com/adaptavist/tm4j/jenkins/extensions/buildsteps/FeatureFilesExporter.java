@@ -112,7 +112,7 @@ public class FeatureFilesExporter extends Builder implements SimpleBuildStep {
         this.targetPath = targetPath;
     }
     
-    @Symbol("tm4jBuild")
+    @Symbol("tm4jGet")
     @Extension
     public static class DescriptorImpl extends BuildStepDescriptor<Builder> {
 

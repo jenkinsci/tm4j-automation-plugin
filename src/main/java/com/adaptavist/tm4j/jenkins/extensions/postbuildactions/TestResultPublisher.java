@@ -130,7 +130,7 @@ public class TestResultPublisher extends Notifier implements SimpleBuildStep {
         this.autoCreateTestCases = autoCreateTestCases;
     }
 
-    @Symbol("tm4jPostBuild")
+    @Symbol("tm4jSend")
     @Extension
     public static final class DescriptorImpl extends BuildStepDescriptor<Publisher> {
 

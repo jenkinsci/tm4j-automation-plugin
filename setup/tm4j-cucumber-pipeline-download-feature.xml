@@ -18,13 +18,13 @@
     stages {
         stage(&apos;Preparation&apos;) {
             steps {
-                git &apos;https://cfaccin@bitbucket.org/cfaccin/tm4j-cucumber-integration-example-without-features.git&apos;
+                git &apos;ssh://git@stash.adaptavist.com:7999/atm/tm4j-cucumber-jenkins-plugin-example.git&apos;
             }
         }
         stage(&apos;Download Feature Files&apos;){
             steps {
-                tm4jBuild serverAddress: &apos;http://localhost:2990/jira&apos;, 
-                    projectKey: &apos;WEB&apos;, targetPath:&apos;src/test/resources/&apos;
+                tm4jGet serverAddress: &apos;http://localhost:2990/jira&apos;, 
+                    projectKey: &apos;WEB&apos;, targetPath:&apos;src/test/resources/features&apos;
             }
         }
         stage(&apos;Clean Work Space&apos;){
@@ -40,7 +40,7 @@
     }
     post {
         always {
-            tm4jPostBuild serverAddress: &apos;http://localhost:2990/jira&apos;, 
+            tm4jSend serverAddress: &apos;http://localhost:2990/jira&apos;, 
                     projectKey: &apos;WEB&apos;, filePath:&apos;target/cucumber/*.json&apos;, 
                     format: &apos;Cucumber&apos;, 
                     autoCreateTestCases: false
