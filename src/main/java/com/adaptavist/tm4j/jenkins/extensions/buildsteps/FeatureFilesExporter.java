@@ -1,32 +1,11 @@
 package com.adaptavist.tm4j.jenkins.extensions.buildsteps;
 
-import static com.adaptavist.tm4j.jenkins.utils.Constants.DEFAULT_FEATURE_FILES_PATH;
-import static com.adaptavist.tm4j.jenkins.utils.Constants.ERROR;
-import static com.adaptavist.tm4j.jenkins.utils.Constants.INFO;
-import static com.adaptavist.tm4j.jenkins.utils.Constants.NAME_EXPORT_BUILD_STEP;
-import static com.adaptavist.tm4j.jenkins.utils.Constants.PROJECT_KEY_IS_REQUIRED;
-import static java.lang.String.format;
-import static org.apache.commons.lang.StringUtils.isEmpty;
-
-import java.io.IOException;
-import java.io.PrintStream;
-import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.inject.Inject;
-
-import org.jenkinsci.Symbol;
-import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.QueryParameter;
-import org.kohsuke.stapler.verb.POST;
-
 import com.adaptavist.tm4j.jenkins.exception.NoTestCasesFoundException;
 import com.adaptavist.tm4j.jenkins.extensions.JiraInstance;
 import com.adaptavist.tm4j.jenkins.extensions.configuration.Tm4jGlobalConfiguration;
 import com.adaptavist.tm4j.jenkins.http.Tm4jJiraRestClient;
 import com.adaptavist.tm4j.jenkins.utils.FormHelper;
 import com.adaptavist.tm4j.jenkins.utils.Permissions;
-
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
@@ -39,28 +18,42 @@ import hudson.tasks.Builder;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
 import jenkins.tasks.SimpleBuildStep;
+import org.jenkinsci.Symbol;
+import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.verb.POST;
 
-public class DownloadFeatureFiles extends Builder implements SimpleBuildStep {
-	
+import javax.annotation.Nonnull;
+import javax.inject.Inject;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.util.List;
+
+import static com.adaptavist.tm4j.jenkins.utils.Constants.*;
+import static java.lang.String.format;
+import static org.apache.commons.lang.StringUtils.isEmpty;
+
+public class FeatureFilesExporter extends Builder implements SimpleBuildStep {
+
     private String serverAddress;
     private String projectKey;
     private String targetPath;
 
     @DataBoundConstructor
-    public DownloadFeatureFiles(String serverAddress, String projectKey, String targetPath) {
+    public FeatureFilesExporter(String serverAddress, String projectKey, String targetPath) {
         this.serverAddress = serverAddress;
         this.projectKey = projectKey;
         this.targetPath = targetPath;
     }
 
-	@Override
-	public void perform(Run<?, ?> run, FilePath workspace, Launcher launcher, TaskListener listener) throws InterruptedException, IOException {
+    @Override
+    public void perform(Run<?, ?> run, FilePath workspace, Launcher launcher, TaskListener listener) throws InterruptedException, IOException {
         final PrintStream logger = listener.getLogger();
         logger.printf("%s Downloading feature files...%n", INFO);
         List<JiraInstance> jiraInstances = getDescriptor().getJiraInstances();
         String path = workspace.getRemote() + "/";
         try {
-        	if (isEmpty(this.projectKey)) {
+            if (isEmpty(this.projectKey)) {
                 throw new RuntimeException(PROJECT_KEY_IS_REQUIRED);
             }
             String tql = format("testCase.projectKey = '%s'", this.projectKey);
@@ -69,19 +62,19 @@ public class DownloadFeatureFiles extends Builder implements SimpleBuildStep {
         } catch (NoTestCasesFoundException e) {
             logger.printf("%s No feature files found. %n", ERROR);
         } catch (Exception e) {
-        	run.setResult(Result.FAILURE);
+            run.setResult(Result.FAILURE);
             logger.printf("%s There was an error while trying to download feature files from Test Management for Jira. Error details: %n", ERROR);
             logger.printf(ERROR);
             logger.printf(" %s  %n", e.getMessage());
             for (StackTraceElement trace : e.getStackTrace()) {
-            	logger.printf(" %s  %n", trace.toString());
-			}
+                logger.printf(" %s  %n", trace.toString());
+            }
         }
-	}
-    
-	private String getFeatureFilePath(String workspace) {
-		return workspace + (isEmpty(targetPath) ? DEFAULT_FEATURE_FILES_PATH : targetPath);
-	}
+    }
+
+    private String getFeatureFilePath(String workspace) {
+        return workspace + (isEmpty(targetPath) ? DEFAULT_FEATURE_FILES_PATH : targetPath);
+    }
 
     @Override
     public DescriptorImpl getDescriptor() {
@@ -111,8 +104,8 @@ public class DownloadFeatureFiles extends Builder implements SimpleBuildStep {
     public void setTargetPath(String targetPath) {
         this.targetPath = targetPath;
     }
-    
-    @Symbol("downloadFeatureFiles")
+
+    @Symbol("featureFilesExporter")
     @Extension
     public static class DescriptorImpl extends BuildStepDescriptor<Builder> {
 

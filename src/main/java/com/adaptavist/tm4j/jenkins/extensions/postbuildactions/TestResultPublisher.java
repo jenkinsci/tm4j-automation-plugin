@@ -1,27 +1,10 @@
 package com.adaptavist.tm4j.jenkins.extensions.postbuildactions;
 
-import static com.adaptavist.tm4j.jenkins.utils.Constants.ERROR;
-import static com.adaptavist.tm4j.jenkins.utils.Constants.INFO;
-import static com.adaptavist.tm4j.jenkins.utils.Constants.NAME_POST_BUILD_ACTION;
-
-import java.io.IOException;
-import java.io.PrintStream;
-import java.util.List;
-
-import javax.inject.Inject;
-
-import org.jenkinsci.Symbol;
-import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.QueryParameter;
-import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.verb.POST;
-
 import com.adaptavist.tm4j.jenkins.extensions.JiraInstance;
 import com.adaptavist.tm4j.jenkins.extensions.configuration.Tm4jGlobalConfiguration;
 import com.adaptavist.tm4j.jenkins.http.Tm4jJiraRestClient;
 import com.adaptavist.tm4j.jenkins.utils.Constants;
 import com.adaptavist.tm4j.jenkins.utils.FormHelper;
-
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
@@ -37,6 +20,18 @@ import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
 import jenkins.tasks.SimpleBuildStep;
 import net.sf.json.JSONObject;
+import org.jenkinsci.Symbol;
+import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.verb.POST;
+
+import javax.inject.Inject;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.util.List;
+
+import static com.adaptavist.tm4j.jenkins.utils.Constants.*;
 
 public class TestResultPublisher extends Notifier implements SimpleBuildStep {
 
@@ -59,9 +54,9 @@ public class TestResultPublisher extends Notifier implements SimpleBuildStep {
     public BuildStepMonitor getRequiredMonitorService() {
         return BuildStepMonitor.NONE;
     }
-    
-	@Override
-	public void perform(Run<?, ?> run, FilePath workspace, Launcher launcher, TaskListener listener) throws InterruptedException, IOException {
+
+    @Override
+    public void perform(Run<?, ?> run, FilePath workspace, Launcher launcher, TaskListener listener) throws InterruptedException, IOException {
         final PrintStream logger = listener.getLogger();
         logger.printf("%s Publishing test results...%n", INFO);
         List<JiraInstance> jiraInstances = getDescriptor().getJiraInstances();
@@ -74,16 +69,16 @@ public class TestResultPublisher extends Notifier implements SimpleBuildStep {
                 tm4jJiraRestClient.uploadCustomFormatFile(remoteWorkspace, Constants.CUSTOM_FORMAT_FILE_NAME, this.projectKey, this.autoCreateTestCases, logger);
             }
         } catch (Exception e) {
-        	run.setResult(Result.FAILURE);
+            run.setResult(Result.FAILURE);
             logger.printf("%s There was an error trying to publish test results to Test Management for Jira. Error details: %n", ERROR);
             logger.printf(ERROR);
             for (StackTraceElement trace : e.getStackTrace()) {
-            	logger.printf(" %s  %n", trace.toString());
+                logger.printf(" %s  %n", trace.toString());
             }
             logger.printf(" %s  %n", e.getMessage());
             logger.printf("%s Tests results have not been sent to Test Management for Jira %n", ERROR);
         }
-	}
+    }
 
     @Override
     public DescriptorImpl getDescriptor() {
