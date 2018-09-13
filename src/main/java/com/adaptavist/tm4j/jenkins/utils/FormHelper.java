@@ -58,6 +58,10 @@ public class FormHelper {
     public FormValidation doCheckFilePath(String filePath) {
         return StringUtils.isBlank(filePath) ? FormValidation.error(Constants.FILE_PATH_IS_REQUIRED) : FormValidation.ok();
     }
+    
+    public FormValidation doCheckTargetPath(String fileTarget) {
+    	return StringUtils.isBlank(fileTarget) ? FormValidation.error(Constants.FILE_TARGET_IS_REQUIRED) : FormValidation.ok();
+    }
 
     public FormValidation doCheckServerAddress(String serverAddress) {
         return StringUtils.isBlank(serverAddress) ? FormValidation.error(PLEASE_ENTER_THE_SERVER_NAME) : FormValidation.ok();

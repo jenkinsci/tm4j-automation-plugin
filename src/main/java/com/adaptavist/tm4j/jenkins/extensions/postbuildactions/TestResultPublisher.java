@@ -5,6 +5,8 @@ import com.adaptavist.tm4j.jenkins.extensions.configuration.Tm4jGlobalConfigurat
 import com.adaptavist.tm4j.jenkins.http.Tm4jJiraRestClient;
 import com.adaptavist.tm4j.jenkins.utils.Constants;
 import com.adaptavist.tm4j.jenkins.utils.FormHelper;
+import com.adaptavist.tm4j.jenkins.utils.Validator;
+
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
@@ -62,6 +64,10 @@ public class TestResultPublisher extends Notifier implements SimpleBuildStep {
         List<JiraInstance> jiraInstances = getDescriptor().getJiraInstances();
         String remoteWorkspace = workspace.getRemote() + "/";
         try {
+        	new Validator().validateProjectKey(this.projectKey)
+			    		.validateFilePath(this.filePath)
+			    		.validateFormat(this.format)
+			    		.serverAddress(this.serverAddress);
             Tm4jJiraRestClient tm4jJiraRestClient = new Tm4jJiraRestClient(jiraInstances, this.serverAddress);
             if (Constants.CUCUMBER.equals(this.format)) {
                 tm4jJiraRestClient.uploadCucumberFile(remoteWorkspace, this.filePath, this.projectKey, this.autoCreateTestCases, logger);
@@ -77,6 +83,7 @@ public class TestResultPublisher extends Notifier implements SimpleBuildStep {
             }
             logger.printf(" %s  %n", e.getMessage());
             logger.printf("%s Tests results have not been sent to Test Management for Jira %n", ERROR);
+            throw new RuntimeException();
         }
     }
 

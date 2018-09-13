@@ -6,6 +6,8 @@ import com.adaptavist.tm4j.jenkins.extensions.configuration.Tm4jGlobalConfigurat
 import com.adaptavist.tm4j.jenkins.http.Tm4jJiraRestClient;
 import com.adaptavist.tm4j.jenkins.utils.FormHelper;
 import com.adaptavist.tm4j.jenkins.utils.Permissions;
+import com.adaptavist.tm4j.jenkins.utils.Validator;
+
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
@@ -33,14 +35,14 @@ import static com.adaptavist.tm4j.jenkins.utils.Constants.*;
 import static java.lang.String.format;
 import static org.apache.commons.lang.StringUtils.isEmpty;
 
-public class FeatureFilesExporter extends Builder implements SimpleBuildStep {
+public class FeatureFilesDownloader extends Builder implements SimpleBuildStep {
 
     private String serverAddress;
     private String projectKey;
     private String targetPath;
 
     @DataBoundConstructor
-    public FeatureFilesExporter(String serverAddress, String projectKey, String targetPath) {
+    public FeatureFilesDownloader(String serverAddress, String projectKey, String targetPath) {
         this.serverAddress = serverAddress;
         this.projectKey = projectKey;
         this.targetPath = targetPath;
@@ -53,27 +55,28 @@ public class FeatureFilesExporter extends Builder implements SimpleBuildStep {
         List<JiraInstance> jiraInstances = getDescriptor().getJiraInstances();
         String path = workspace.getRemote() + "/";
         try {
-            if (isEmpty(this.projectKey)) {
-                throw new RuntimeException(PROJECT_KEY_IS_REQUIRED);
-            }
+        	new Validator().validateProjectKey(this.projectKey)
+        		.validateTargetPath(this.targetPath)
+        		.serverAddress(this.serverAddress);
             String tql = format("testCase.projectKey = '%s'", this.projectKey);
             Tm4jJiraRestClient tm4jJiraRestClient = new Tm4jJiraRestClient(jiraInstances, serverAddress);
             tm4jJiraRestClient.exportFeatureFiles(getFeatureFilePath(path), tql, logger);
         } catch (NoTestCasesFoundException e) {
             logger.printf("%s No feature files found. %n", ERROR);
         } catch (Exception e) {
-            run.setResult(Result.FAILURE);
+        	run.setResult(Result.FAILURE);
             logger.printf("%s There was an error while trying to download feature files from Test Management for Jira. Error details: %n", ERROR);
             logger.printf(ERROR);
             logger.printf(" %s  %n", e.getMessage());
             for (StackTraceElement trace : e.getStackTrace()) {
                 logger.printf(" %s  %n", trace.toString());
             }
+            throw new RuntimeException();
         }
     }
 
     private String getFeatureFilePath(String workspace) {
-        return workspace + (isEmpty(targetPath) ? DEFAULT_FEATURE_FILES_PATH : targetPath);
+        return workspace + targetPath;
     }
 
     @Override
@@ -85,7 +88,7 @@ public class FeatureFilesExporter extends Builder implements SimpleBuildStep {
         return serverAddress;
     }
 
-    public void setServerAddress(String serverAddress) {
+    public void setServerAddress(@Nonnull String serverAddress) {
         this.serverAddress = serverAddress;
     }
 
@@ -105,7 +108,7 @@ public class FeatureFilesExporter extends Builder implements SimpleBuildStep {
         this.targetPath = targetPath;
     }
 
-    @Symbol("featureFilesExporter")
+    @Symbol("downloadFeatureFiles")
     @Extension
     public static class DescriptorImpl extends BuildStepDescriptor<Builder> {
 
@@ -120,7 +123,7 @@ public class FeatureFilesExporter extends Builder implements SimpleBuildStep {
         @Nonnull
         @Override
         public String getDisplayName() {
-            return NAME_EXPORT_BUILD_STEP;
+            return NAME_DOWNLOAD_BUILD_STEP;
         }
 
         public ListBoxModel doFillServerAddressItems() {
@@ -138,8 +141,8 @@ public class FeatureFilesExporter extends Builder implements SimpleBuildStep {
         }
 
         @POST
-        public FormValidation doCheckFilePath(@QueryParameter String filePath) {
-            return new FormHelper().doCheckFilePath(filePath);
+        public FormValidation doCheckTargetPath(@QueryParameter String targetPath) {
+            return new FormHelper().doCheckTargetPath(targetPath);
         }
     }
 }
