@@ -1,5 +1,22 @@
 package com.adaptavist.tm4j.jenkins.extensions.buildsteps;
 
+import static com.adaptavist.tm4j.jenkins.utils.Constants.ERROR;
+import static com.adaptavist.tm4j.jenkins.utils.Constants.INFO;
+import static com.adaptavist.tm4j.jenkins.utils.Constants.NAME_DOWNLOAD_BUILD_STEP;
+import static java.lang.String.format;
+
+import java.io.IOException;
+import java.io.PrintStream;
+import java.util.List;
+
+import javax.annotation.Nonnull;
+import javax.inject.Inject;
+
+import org.jenkinsci.Symbol;
+import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.verb.POST;
+
 import com.adaptavist.tm4j.jenkins.exception.NoTestCasesFoundException;
 import com.adaptavist.tm4j.jenkins.extensions.JiraInstance;
 import com.adaptavist.tm4j.jenkins.extensions.configuration.Tm4jGlobalConfiguration;
@@ -20,20 +37,6 @@ import hudson.tasks.Builder;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
 import jenkins.tasks.SimpleBuildStep;
-import org.jenkinsci.Symbol;
-import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.QueryParameter;
-import org.kohsuke.stapler.verb.POST;
-
-import javax.annotation.Nonnull;
-import javax.inject.Inject;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.util.List;
-
-import static com.adaptavist.tm4j.jenkins.utils.Constants.*;
-import static java.lang.String.format;
-import static org.apache.commons.lang.StringUtils.isEmpty;
 
 public class FeatureFilesDownloader extends Builder implements SimpleBuildStep {
 
