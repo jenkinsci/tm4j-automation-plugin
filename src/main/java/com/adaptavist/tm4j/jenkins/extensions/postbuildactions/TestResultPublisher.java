@@ -6,31 +6,35 @@ import com.adaptavist.tm4j.jenkins.http.Tm4jJiraRestClient;
 import com.adaptavist.tm4j.jenkins.utils.Constants;
 import com.adaptavist.tm4j.jenkins.utils.FormHelper;
 import hudson.Extension;
+import hudson.FilePath;
 import hudson.Launcher;
-import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
-import hudson.model.BuildListener;
+import hudson.model.Result;
+import hudson.model.Run;
+import hudson.model.TaskListener;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Notifier;
 import hudson.tasks.Publisher;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
+import jenkins.tasks.SimpleBuildStep;
 import net.sf.json.JSONObject;
+import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.verb.POST;
 
 import javax.inject.Inject;
+import java.io.IOException;
 import java.io.PrintStream;
 import java.util.List;
 
 import static com.adaptavist.tm4j.jenkins.utils.Constants.*;
 
-public class TestResultPublisher extends Notifier {
+public class TestResultPublisher extends Notifier implements SimpleBuildStep {
 
-    private PrintStream logger;
     private String serverAddress;
     private String projectKey;
     private String filePath;
@@ -52,30 +56,28 @@ public class TestResultPublisher extends Notifier {
     }
 
     @Override
-    public boolean perform(final AbstractBuild<?, ?> build, final Launcher launcher, final BuildListener listener) {
-        logger = listener.getLogger();
+    public void perform(Run<?, ?> run, FilePath workspace, Launcher launcher, TaskListener listener) throws InterruptedException, IOException {
+        final PrintStream logger = listener.getLogger();
         logger.printf("%s Publishing test results...%n", INFO);
         List<JiraInstance> jiraInstances = getDescriptor().getJiraInstances();
-        String workspace = build.getWorkspace().getRemote() + "/";
+        String remoteWorkspace = workspace.getRemote() + "/";
         try {
             Tm4jJiraRestClient tm4jJiraRestClient = new Tm4jJiraRestClient(jiraInstances, this.serverAddress);
             if (Constants.CUCUMBER.equals(this.format)) {
-                tm4jJiraRestClient.uploadCucumberFile(workspace, this.filePath, this.projectKey, this.autoCreateTestCases, logger);
+                tm4jJiraRestClient.uploadCucumberFile(remoteWorkspace, this.filePath, this.projectKey, this.autoCreateTestCases, logger);
             } else {
-                tm4jJiraRestClient.uploadCustomFormatFile(workspace, Constants.CUSTOM_FORMAT_FILE_NAME, this.projectKey, this.autoCreateTestCases, logger);
+                tm4jJiraRestClient.uploadCustomFormatFile(remoteWorkspace, Constants.CUSTOM_FORMAT_FILE_NAME, this.projectKey, this.autoCreateTestCases, logger);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            run.setResult(Result.FAILURE);
             logger.printf("%s There was an error trying to publish test results to Test Management for Jira. Error details: %n", ERROR);
             logger.printf(ERROR);
             for (StackTraceElement trace : e.getStackTrace()) {
-            	logger.printf(" %s  %n", trace.toString());
+                logger.printf(" %s  %n", trace.toString());
             }
             logger.printf(" %s  %n", e.getMessage());
             logger.printf("%s Tests results have not been sent to Test Management for Jira %n", ERROR);
-            return false;
         }
-        return true;
     }
 
     @Override
@@ -123,6 +125,7 @@ public class TestResultPublisher extends Notifier {
         this.autoCreateTestCases = autoCreateTestCases;
     }
 
+    @Symbol("publishTestResults")
     @Extension
     public static final class DescriptorImpl extends BuildStepDescriptor<Publisher> {
 
