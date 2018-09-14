@@ -60,8 +60,9 @@ public class FeatureFilesDownloader extends Builder implements SimpleBuildStep {
             Tm4jJiraRestClient tm4jJiraRestClient = new Tm4jJiraRestClient(jiraInstances, serverAddress);
             tm4jJiraRestClient.exportFeatureFiles(getFeatureFilePath(path), tql, logger);
         } catch (NoTestCasesFoundException e) {
-            logger.printf("%s No feature files found. %n", ERROR);
-            throw new RuntimeException(e);
+            logger.printf("%s No feature files have been found for project " +  this.projectKey + ". %n", ERROR);
+            run.setResult(Result.FAILURE);
+            throw new RuntimeException();
         } catch (Exception e) {
             run.setResult(Result.FAILURE);
             logger.printf("%s There was an error while trying to download feature files from Test Management for Jira. Error details: %n", ERROR);
@@ -70,7 +71,7 @@ public class FeatureFilesDownloader extends Builder implements SimpleBuildStep {
             for (StackTraceElement trace : e.getStackTrace()) {
                 logger.printf(" %s  %n", trace.toString());
             }
-            throw new RuntimeException(e);
+            throw new RuntimeException();
         }
     }
 
