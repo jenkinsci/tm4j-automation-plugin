@@ -29,7 +29,7 @@ public class Validator {
         return this;
     }
 
-    public Validator serverAddress(String serverAddress) throws Exception {
+    public Validator validateServerAddress(String serverAddress) throws Exception {
         if (isEmpty(serverAddress))
             throw new Exception(SERVER_URL_IS_REQUIRED);
         return this;

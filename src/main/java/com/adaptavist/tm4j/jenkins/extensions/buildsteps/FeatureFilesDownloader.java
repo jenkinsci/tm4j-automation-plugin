@@ -1,22 +1,5 @@
 package com.adaptavist.tm4j.jenkins.extensions.buildsteps;
 
-import static com.adaptavist.tm4j.jenkins.utils.Constants.ERROR;
-import static com.adaptavist.tm4j.jenkins.utils.Constants.INFO;
-import static com.adaptavist.tm4j.jenkins.utils.Constants.NAME_DOWNLOAD_BUILD_STEP;
-import static java.lang.String.format;
-
-import java.io.IOException;
-import java.io.PrintStream;
-import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.inject.Inject;
-
-import org.jenkinsci.Symbol;
-import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.QueryParameter;
-import org.kohsuke.stapler.verb.POST;
-
 import com.adaptavist.tm4j.jenkins.exception.NoTestCasesFoundException;
 import com.adaptavist.tm4j.jenkins.extensions.JiraInstance;
 import com.adaptavist.tm4j.jenkins.extensions.configuration.Tm4jGlobalConfiguration;
@@ -24,7 +7,6 @@ import com.adaptavist.tm4j.jenkins.http.Tm4jJiraRestClient;
 import com.adaptavist.tm4j.jenkins.utils.FormHelper;
 import com.adaptavist.tm4j.jenkins.utils.Permissions;
 import com.adaptavist.tm4j.jenkins.utils.Validator;
-
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
@@ -37,6 +19,19 @@ import hudson.tasks.Builder;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
 import jenkins.tasks.SimpleBuildStep;
+import org.jenkinsci.Symbol;
+import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.verb.POST;
+
+import javax.annotation.Nonnull;
+import javax.inject.Inject;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.util.List;
+
+import static com.adaptavist.tm4j.jenkins.utils.Constants.*;
+import static java.lang.String.format;
 
 public class FeatureFilesDownloader extends Builder implements SimpleBuildStep {
 
@@ -58,23 +53,24 @@ public class FeatureFilesDownloader extends Builder implements SimpleBuildStep {
         List<JiraInstance> jiraInstances = getDescriptor().getJiraInstances();
         String path = workspace.getRemote() + "/";
         try {
-        	new Validator().validateProjectKey(this.projectKey)
-        		.validateTargetPath(this.targetPath)
-        		.serverAddress(this.serverAddress);
+            new Validator().validateProjectKey(this.projectKey)
+                    .validateTargetPath(this.targetPath)
+                    .validateServerAddress(this.serverAddress);
             String tql = format("testCase.projectKey = '%s'", this.projectKey);
             Tm4jJiraRestClient tm4jJiraRestClient = new Tm4jJiraRestClient(jiraInstances, serverAddress);
             tm4jJiraRestClient.exportFeatureFiles(getFeatureFilePath(path), tql, logger);
         } catch (NoTestCasesFoundException e) {
             logger.printf("%s No feature files found. %n", ERROR);
+            throw new RuntimeException(e);
         } catch (Exception e) {
-        	run.setResult(Result.FAILURE);
+            run.setResult(Result.FAILURE);
             logger.printf("%s There was an error while trying to download feature files from Test Management for Jira. Error details: %n", ERROR);
             logger.printf(ERROR);
             logger.printf(" %s  %n", e.getMessage());
             for (StackTraceElement trace : e.getStackTrace()) {
                 logger.printf(" %s  %n", trace.toString());
             }
-            throw new RuntimeException();
+            throw new RuntimeException(e);
         }
     }
 

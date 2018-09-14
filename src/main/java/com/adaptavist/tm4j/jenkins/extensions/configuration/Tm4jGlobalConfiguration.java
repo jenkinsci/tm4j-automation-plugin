@@ -69,7 +69,7 @@ public class Tm4jGlobalConfiguration extends GlobalConfiguration {
 
     private JiraInstance createAnInstance(JSONObject formJiraInstance) throws Exception {
         JiraInstance jiraInstance = new JiraInstance();
-        String serverAddres = formJiraInstance.getString("serverAddress");
+        String serverAddres = formJiraInstance.getString("validateServerAddress");
         String username = formJiraInstance.getString("username");
         String password = formJiraInstance.getString("password");
         if (StringUtils.isBlank(serverAddres)) {
