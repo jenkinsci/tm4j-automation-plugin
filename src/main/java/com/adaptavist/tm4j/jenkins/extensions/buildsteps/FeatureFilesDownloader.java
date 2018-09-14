@@ -91,7 +91,7 @@ public class FeatureFilesDownloader extends Builder implements SimpleBuildStep {
         return serverAddress;
     }
 
-    public void setServerAddress(@Nonnull String serverAddress) {
+    public void setServerAddress(String serverAddress) {
         this.serverAddress = serverAddress;
     }
 
