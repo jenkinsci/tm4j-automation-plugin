@@ -83,7 +83,7 @@ public class TestResultPublisher extends Notifier implements SimpleBuildStep {
             }
             logger.printf(" %s  %n", e.getMessage());
             logger.printf("%s Tests results have not been sent to Test Management for Jira %n", ERROR);
-            throw new RuntimeException(e);
+            throw new RuntimeException();
         }
     }
 
