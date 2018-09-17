@@ -24,7 +24,7 @@ pipeline {
         }
         stage('Download Feature Files'){
             steps {
-                featureFilesExporter serverAddress: 'http://localhost:2990/jira', 
+                downloadFeatureFiles serverAddress: 'http://localhost:2990/jira', 
                     projectKey: 'WEB', targetPath:'src/test/resources/features'
             }
         }

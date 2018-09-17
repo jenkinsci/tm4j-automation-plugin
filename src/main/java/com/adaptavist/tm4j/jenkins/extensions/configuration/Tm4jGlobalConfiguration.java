@@ -69,10 +69,10 @@ public class Tm4jGlobalConfiguration extends GlobalConfiguration {
 
     private JiraInstance createAnInstance(JSONObject formJiraInstance) throws Exception {
         JiraInstance jiraInstance = new JiraInstance();
-        String serverAddres = formJiraInstance.getString("serverAddress");
+        String serverAddress = formJiraInstance.getString("serverAddress");
         String username = formJiraInstance.getString("username");
         String password = formJiraInstance.getString("password");
-        if (StringUtils.isBlank(serverAddres)) {
+        if (StringUtils.isBlank(serverAddress)) {
             throw new Exception(Constants.PLEASE_ENTER_THE_SERVER_NAME);
         }
         if (StringUtils.isBlank(username)) {
@@ -81,7 +81,7 @@ public class Tm4jGlobalConfiguration extends GlobalConfiguration {
         if (StringUtils.isBlank(password)) {
             throw new Exception(Constants.PLEASE_ENTER_THE_PASSWORD);
         }
-        jiraInstance.setServerAddress(StringUtils.removeEnd(serverAddres.trim(), "/"));
+        jiraInstance.setServerAddress(StringUtils.removeEnd(serverAddress.trim(), "/"));
         jiraInstance.setUsername(username.trim());
         jiraInstance.setPassword(Secret.fromString(password));
         if (jiraInstance.isValidCredentials()) {

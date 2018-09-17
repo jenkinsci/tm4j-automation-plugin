@@ -34,7 +34,7 @@
     }
     post {
         always {
-            tm4jPostBuild serverAddress: &apos;http://localhost:2990/jira&apos;, 
+            publishTestResults serverAddress: &apos;http://localhost:2990/jira&apos;, 
                     projectKey: &apos;JQA&apos;, filePath:&apos;target/cucumber/*.json&apos;, 
                     format: &apos;Cucumber&apos;, 
                     autoCreateTestCases: false

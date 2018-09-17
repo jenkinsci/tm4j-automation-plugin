@@ -23,7 +23,7 @@
         }
         stage(&apos;Download Feature Files&apos;){
             steps {
-                featureFilesExporter serverAddress: &apos;http://localhost:2990/jira&apos;,
+                downloadFeatureFiles serverAddress: &apos;http://localhost:2990/jira&apos;,
                     projectKey: &apos;WEB&apos;, targetPath:&apos;src/test/resources/features&apos;
             }
         }
