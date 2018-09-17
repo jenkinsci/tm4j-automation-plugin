@@ -51,6 +51,9 @@ pipeline {
 
 ```
 
+## Documentation
+
+Check out the documentation at https://www.adaptavist.com/doco/display/KT/Jenkins.
 
 ## Support
 
