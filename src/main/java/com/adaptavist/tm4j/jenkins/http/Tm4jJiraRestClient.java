@@ -33,14 +33,18 @@ public class Tm4jJiraRestClient {
         File file = new FileReader().getZip(workspace, filePath);
         HttpResponse<JsonNode> jsonResponse = jiraInstance.importCucumberBuildResult(projectKey, autoCreateTestCases, file);
         processImportingResultsResponse(jsonResponse, logger);
-        file.delete();
+        if(!file.delete()) {
+            logger.printf("%s The generated ZIP file couldn't be deleted. Please check folder permissions and delete the file manually: " + file.getAbsolutePath() + " %n", INFO);
+        }
     }
 
     public void uploadCustomFormatFile(String workspace, String filePath, String projectKey, Boolean autoCreateTestCases, final PrintStream logger) throws Exception {
         File file = new FileReader().getZip(workspace, filePath);
         HttpResponse<JsonNode> jsonResponse = jiraInstance.importCustomFormatBuildResult(projectKey, autoCreateTestCases, file);
         processImportingResultsResponse(jsonResponse, logger);
-        file.delete();
+        if(!file.delete()) {
+            logger.printf("%s The generated ZIP file couldn't be deleted. Please check folder permissions and delete the file manually: " + file.getAbsolutePath() + " %n", INFO);
+        }
     }
 
     public void exportFeatureFiles(String featureFilesPath, String tql, final PrintStream logger) throws Exception {
