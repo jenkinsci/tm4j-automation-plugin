@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.jenkins-ci.plugins</groupId>
@@ -14,7 +12,7 @@
 	<description>Integration with Test Management for Jira (by Adaptavist), for automatic publishing of test results.</description>
     <groupId>com.adaptavist</groupId>
     <artifactId>tm4j-automation</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0</version>
     <packaging>hpi</packaging>
 
     <licenses>
@@ -33,13 +31,12 @@
         </developer>
     </developers>
 
-    <!-- Configure scm tag when moved to the final repository -->
-    <!--<scm>-->
-        <!--<connection>scm:git:ssh://git@github.com/jenkinsci/tm4j-automation.git</connection>-->
-        <!--<developerConnection>scm:git:ssh://git@github.com/jenkinsci/tm4j-automation.git</developerConnection>-->
-        <!--<url>https://github.com/jenkinsci/tm4j-automation</url>-->
-        <!--<tag>head</tag>-->
-    <!--</scm>-->
+    <scm>
+        <connection>scm:git:ssh://git@github.com/jenkinsci/tm4j-automation-plugin.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/jenkinsci/tm4j-automation-plugin.git</developerConnection>
+        <url>https://github.com/jenkinsci/tm4j-automation-plugin.git</url>
+        <tag>head</tag>
+    </scm>
 
     <properties>
         <jenkins.version>2.73.3</jenkins.version>
