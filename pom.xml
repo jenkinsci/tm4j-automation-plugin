@@ -12,7 +12,7 @@
 	<description>Integration with Test Management for Jira (by Adaptavist), for automatic publishing of test results.</description>
     <groupId>com.adaptavist</groupId>
     <artifactId>tm4j-automation</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0</version>
     <packaging>hpi</packaging>
 
     <licenses>
@@ -74,19 +74,6 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.jenkins-ci.tools</groupId>
-				<artifactId>maven-hpi-plugin</artifactId>
-				<configuration>
-					<disabledTestInjection>true</disabledTestInjection>
-					<dependencyResolution>runtime</dependencyResolution>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
 
 	<repositories>
 		<repository>
