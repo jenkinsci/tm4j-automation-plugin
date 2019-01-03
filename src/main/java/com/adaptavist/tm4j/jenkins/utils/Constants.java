@@ -20,7 +20,6 @@ public class Constants {
     public static final String FORMAT_IS_REQUIRED = "The test framework is required.";
     public static final String THERE_ARE_NO_JIRA_INSTANCES_CONFIGURED = "There are no Jira instances configured. Please, go to Jenkins global configurations and add some Jira instances.";
     public static final String JIRA_INSTANCE_NOT_FOUND = "Jira instance not found for this server address {0}";
-    public static final String JIRA_INSTANCES_CAN_NOT_BE_NULL_OR_EMPTY = "Jira instances are not properly configured. Please check if the URL, username and password are valid and not empty.";
     public static final String ERROR_AT_GLOBAL_CONFIGURATIONS_OF_TEST_MANAGEMENT_FOR_JIRA = "Error at global configurations of Test Management for Jira: {0}";
     public static final String DEFAULT_FEATURE_FILES_PATH = "target/features";
     public static final String TM4J_GLOBAL_CONFIGURATION = "TM4J configuration";
