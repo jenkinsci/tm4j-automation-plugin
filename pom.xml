@@ -8,7 +8,7 @@
 		<relativePath />
 	</parent>
 	<name>Test Management for Jira</name>
-    <url>https://www.adaptavist.com/doco/display/KT/Jenkins</url>
+    <url>https://wiki.jenkins.io/display/JENKINS/Test+Management+for+Jira</url>
 	<description>Integration with Test Management for Jira (by Adaptavist), for automatic publishing of test results.</description>
     <groupId>com.adaptavist</groupId>
     <artifactId>tm4j-automation</artifactId>
