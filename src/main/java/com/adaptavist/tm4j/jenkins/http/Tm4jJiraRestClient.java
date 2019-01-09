@@ -29,8 +29,8 @@ public class Tm4jJiraRestClient {
         jiraInstance = getTm4jInstance(jiraInstances, serverAddress);
     }
 
-    public void uploadCucumberFile(String workspace, String filePath, String projectKey, Boolean autoCreateTestCases, final PrintStream logger) throws Exception {
-        File file = new FileReader().getZip(workspace, filePath);
+    public void uploadCucumberFile(String directory, String filePath, String projectKey, Boolean autoCreateTestCases, final PrintStream logger) throws Exception {
+        File file = new FileReader().getZip(directory, filePath);
         HttpResponse<JsonNode> jsonResponse = jiraInstance.importCucumberBuildResult(projectKey, autoCreateTestCases, file);
         processImportingResultsResponse(jsonResponse, logger);
         if(!file.delete()) {
@@ -38,8 +38,8 @@ public class Tm4jJiraRestClient {
         }
     }
 
-    public void uploadCustomFormatFile(String workspace, String filePath, String projectKey, Boolean autoCreateTestCases, final PrintStream logger) throws Exception {
-        File file = new FileReader().getZip(workspace, filePath);
+    public void uploadCustomFormatFile(String directory, String filePath, String projectKey, Boolean autoCreateTestCases, final PrintStream logger) throws Exception {
+        File file = new FileReader().getZip(directory, filePath);
         HttpResponse<JsonNode> jsonResponse = jiraInstance.importCustomFormatBuildResult(projectKey, autoCreateTestCases, file);
         processImportingResultsResponse(jsonResponse, logger);
         if(!file.delete()) {
@@ -114,8 +114,9 @@ public class Tm4jJiraRestClient {
     }
 
     private JiraInstance getTm4jInstance(List<JiraInstance> jiraInstances, String serverAddress) throws Exception {
-        if (jiraInstances == null)
+        if (jiraInstances == null){
             throw new IllegalStateException(Constants.THERE_ARE_NO_JIRA_INSTANCES_CONFIGURED);
+        }
         for (JiraInstance jiraInstance : jiraInstances) {
             if (StringUtils.isNotBlank(jiraInstance.getServerAddress()) && jiraInstance.getServerAddress().trim().equals(serverAddress)) {
                 return jiraInstance;
