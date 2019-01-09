@@ -52,10 +52,12 @@ public class Tm4jGlobalConfiguration extends GlobalConfiguration {
     }
 
     private List<JiraInstance> crateJiraInstances(Object formJiraInstances) throws Exception {
-        if (formJiraInstances == null) {
-            throw new Exception(Constants.JIRA_INSTANCES_CAN_NOT_BE_NULL_OR_EMPTY);
-        }
         List<JiraInstance> newJiraInstances = new ArrayList<>();
+
+        if (formJiraInstances == null) {
+            return newJiraInstances;
+        }
+
         if (formJiraInstances instanceof JSONArray) {
             JSONArray jiraInstancesList = (JSONArray) formJiraInstances;
             for (Object jiraInstance : jiraInstancesList.toArray()) {
