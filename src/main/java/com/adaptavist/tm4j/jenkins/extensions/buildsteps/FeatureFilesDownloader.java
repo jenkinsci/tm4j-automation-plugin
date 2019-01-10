@@ -47,7 +47,8 @@ public class FeatureFilesDownloader extends Builder implements SimpleBuildStep {
     }
 
     @Override
-    public void perform(Run<?, ?> run, FilePath workspace, Launcher launcher, TaskListener listener) throws InterruptedException, IOException {
+    public void perform(Run<?, ?> run, FilePath workspace, Launcher launcher, TaskListener listener) {
+        System.out.println("Running on " + workspace.getRemote() + " ------------");
         final PrintStream logger = listener.getLogger();
         logger.printf("%s Downloading feature files...%n", INFO);
         List<JiraInstance> jiraInstances = getDescriptor().getJiraInstances();
