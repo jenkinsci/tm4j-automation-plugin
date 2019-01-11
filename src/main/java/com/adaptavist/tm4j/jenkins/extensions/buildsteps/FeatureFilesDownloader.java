@@ -10,10 +10,8 @@ import com.adaptavist.tm4j.jenkins.utils.Validator;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
-import hudson.model.AbstractProject;
-import hudson.model.Result;
-import hudson.model.Run;
-import hudson.model.TaskListener;
+import hudson.model.*;
+import hudson.tasks.BuildStep;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
 import hudson.util.FormValidation;
@@ -48,7 +46,6 @@ public class FeatureFilesDownloader extends Builder implements SimpleBuildStep {
 
     @Override
     public void perform(Run<?, ?> run, FilePath workspace, Launcher launcher, TaskListener listener) {
-        System.out.println("Running on " + workspace.getRemote() + " ------------");
         final PrintStream logger = listener.getLogger();
         logger.printf("%s Downloading feature files...%n", INFO);
         List<JiraInstance> jiraInstances = getDescriptor().getJiraInstances();
