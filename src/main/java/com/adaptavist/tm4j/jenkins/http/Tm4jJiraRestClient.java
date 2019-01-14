@@ -8,6 +8,7 @@ import com.adaptavist.tm4j.jenkins.utils.Constants;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.exceptions.UnirestException;
+import hudson.FilePath;
 import org.apache.commons.lang.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -47,25 +48,25 @@ public class Tm4jJiraRestClient {
         }
     }
 
-    public void exportFeatureFiles(String featureFilesPath, String tql, final PrintStream logger) throws Exception {
+    public void exportFeatureFiles(File rootDir, FilePath workspace, String targetPath, String tql, final PrintStream logger) throws Exception {
         try {
             HttpResponse<String> httpResponse = jiraInstance.exportFeatureFiles(tql);
-            processExportingFeatureFilesResponse(featureFilesPath, logger, httpResponse);
+            processExportingFeatureFilesResponse(rootDir, workspace, targetPath, logger, httpResponse);
         } catch (UnirestException e) {
             throw new Exception("Error trying to communicate with Jira", e.getCause());
         }
     }
 
-    private void processExportingFeatureFilesResponse(String featureFilesPath, final PrintStream logger, HttpResponse<String> httpResponse) throws IOException {
+    private void processExportingFeatureFilesResponse(File rootDir, FilePath workspace, String targetPath, final PrintStream logger, HttpResponse<String> httpResponse) throws IOException, InterruptedException {
         if (isSuccessful(httpResponse)) {
             if (httpResponse.getStatus() == 204) {
                 throw new NoTestCasesFoundException();
             }
 
             FileWriter fileWriter = new FileWriter(httpResponse.getRawBody());
-            fileWriter.extractFeatureFilesFromZipAndSave(featureFilesPath);
+            fileWriter.extractFeatureFilesFromZipAndSave(rootDir, workspace, targetPath);
 
-            logger.printf("%s %s feature files downloaded to %s %n", INFO, fileWriter.getFileNames().size(), featureFilesPath);
+            logger.printf("%s %s feature files downloaded to %s %n", INFO, fileWriter.getFileNames().size(), workspace);
         } else if (isClientError(httpResponse)) {
             if (httpResponse.getStatus() == 400) {
                 processErrorMessages(httpResponse, logger);

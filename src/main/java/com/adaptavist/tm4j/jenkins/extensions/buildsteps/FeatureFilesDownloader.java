@@ -49,14 +49,13 @@ public class FeatureFilesDownloader extends Builder implements SimpleBuildStep {
         final PrintStream logger = listener.getLogger();
         logger.printf("%s Downloading feature files...%n", INFO);
         List<JiraInstance> jiraInstances = getDescriptor().getJiraInstances();
-        String path = workspace.getRemote() + "/";
         try {
             new Validator().validateProjectKey(this.projectKey)
                     .validateTargetPath(this.targetPath)
                     .validateServerAddress(this.serverAddress);
             String tql = format("testCase.projectKey = '%s'", this.projectKey);
             Tm4jJiraRestClient tm4jJiraRestClient = new Tm4jJiraRestClient(jiraInstances, serverAddress);
-            tm4jJiraRestClient.exportFeatureFiles(getFeatureFilePath(path), tql, logger);
+            tm4jJiraRestClient.exportFeatureFiles(run.getRootDir(), workspace, targetPath, tql, logger);
         } catch (NoTestCasesFoundException e) {
             logger.printf("%s No feature files have been found for project " +  this.projectKey + ". %n", ERROR);
             run.setResult(Result.FAILURE);
@@ -71,10 +70,6 @@ public class FeatureFilesDownloader extends Builder implements SimpleBuildStep {
             }
             throw new RuntimeException();
         }
-    }
-
-    private String getFeatureFilePath(String workspace) {
-        return workspace + targetPath;
     }
 
     @Override
