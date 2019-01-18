@@ -8,6 +8,7 @@ import com.adaptavist.tm4j.jenkins.utils.Constants;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.exceptions.UnirestException;
+import hudson.FilePath;
 import org.apache.commons.lang.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -29,8 +30,8 @@ public class Tm4jJiraRestClient {
         jiraInstance = getTm4jInstance(jiraInstances, serverAddress);
     }
 
-    public void uploadCucumberFile(String workspace, String filePath, String projectKey, Boolean autoCreateTestCases, final PrintStream logger) throws Exception {
-        File file = new FileReader().getZip(workspace, filePath);
+    public void uploadCucumberFile(String directory, String filePath, String projectKey, Boolean autoCreateTestCases, final PrintStream logger) throws Exception {
+        File file = new FileReader().getZip(directory, filePath);
         HttpResponse<JsonNode> jsonResponse = jiraInstance.importCucumberBuildResult(projectKey, autoCreateTestCases, file);
         processImportingResultsResponse(jsonResponse, logger);
         if(!file.delete()) {
@@ -38,8 +39,8 @@ public class Tm4jJiraRestClient {
         }
     }
 
-    public void uploadCustomFormatFile(String workspace, String filePath, String projectKey, Boolean autoCreateTestCases, final PrintStream logger) throws Exception {
-        File file = new FileReader().getZip(workspace, filePath);
+    public void uploadCustomFormatFile(String directory, String filePath, String projectKey, Boolean autoCreateTestCases, final PrintStream logger) throws Exception {
+        File file = new FileReader().getZip(directory, filePath);
         HttpResponse<JsonNode> jsonResponse = jiraInstance.importCustomFormatBuildResult(projectKey, autoCreateTestCases, file);
         processImportingResultsResponse(jsonResponse, logger);
         if(!file.delete()) {
@@ -47,25 +48,25 @@ public class Tm4jJiraRestClient {
         }
     }
 
-    public void exportFeatureFiles(String featureFilesPath, String tql, final PrintStream logger) throws Exception {
+    public void exportFeatureFiles(File rootDir, FilePath workspace, String targetPath, String tql, final PrintStream logger) throws Exception {
         try {
             HttpResponse<String> httpResponse = jiraInstance.exportFeatureFiles(tql);
-            processExportingFeatureFilesResponse(featureFilesPath, logger, httpResponse);
+            processExportingFeatureFilesResponse(rootDir, workspace, targetPath, logger, httpResponse);
         } catch (UnirestException e) {
             throw new Exception("Error trying to communicate with Jira", e.getCause());
         }
     }
 
-    private void processExportingFeatureFilesResponse(String featureFilesPath, final PrintStream logger, HttpResponse<String> httpResponse) throws IOException {
+    private void processExportingFeatureFilesResponse(File rootDir, FilePath workspace, String targetPath, final PrintStream logger, HttpResponse<String> httpResponse) throws IOException, InterruptedException {
         if (isSuccessful(httpResponse)) {
             if (httpResponse.getStatus() == 204) {
                 throw new NoTestCasesFoundException();
             }
 
             FileWriter fileWriter = new FileWriter(httpResponse.getRawBody());
-            fileWriter.extractFeatureFilesFromZipAndSave(featureFilesPath);
+            fileWriter.extractFeatureFilesFromZipAndSave(rootDir, workspace, targetPath);
 
-            logger.printf("%s %s feature files downloaded to %s %n", INFO, fileWriter.getFileNames().size(), featureFilesPath);
+            logger.printf("%s %s feature files downloaded to %s %n", INFO, fileWriter.getFileNames().size(), workspace);
         } else if (isClientError(httpResponse)) {
             if (httpResponse.getStatus() == 400) {
                 processErrorMessages(httpResponse, logger);
@@ -114,8 +115,9 @@ public class Tm4jJiraRestClient {
     }
 
     private JiraInstance getTm4jInstance(List<JiraInstance> jiraInstances, String serverAddress) throws Exception {
-        if (jiraInstances == null)
+        if (jiraInstances == null){
             throw new IllegalStateException(Constants.THERE_ARE_NO_JIRA_INSTANCES_CONFIGURED);
+        }
         for (JiraInstance jiraInstance : jiraInstances) {
             if (StringUtils.isNotBlank(jiraInstance.getServerAddress()) && jiraInstance.getServerAddress().trim().equals(serverAddress)) {
                 return jiraInstance;

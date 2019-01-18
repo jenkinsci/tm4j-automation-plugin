@@ -15,12 +15,12 @@ import java.util.zip.ZipOutputStream;
 
 public class FileReader {
 
-    public List<File> getFiles(String workpace, String pattern) throws Exception {
-        if (!new File(workpace).isDirectory()) {
-            throw new Exception(MessageFormat.format("Path not found : {0}", workpace));
+    public List<File> getFiles(String directory, String pattern) throws Exception {
+        if (!new File(directory).isDirectory()) {
+            throw new Exception(MessageFormat.format("Path not found : {0}", directory));
         }
         if (!pattern.contains("*")) {
-            File file = new File(workpace + pattern);
+            File file = new File(directory + pattern);
             if (!file.exists()) {
                 throw new FileNotFoundException(MessageFormat.format("File not found: {0}", pattern));
             }
@@ -28,13 +28,13 @@ public class FileReader {
         }
         DirectoryScanner scanner = new DirectoryScanner();
         scanner.setIncludes(new String[]{pattern});
-        scanner.setBasedir(workpace);
+        scanner.setBasedir(directory);
         scanner.setCaseSensitive(false);
         scanner.scan();
         String[] paths = scanner.getIncludedFiles();
         List<File> files = new ArrayList<>();
         for (String path : paths) {
-            File file = new File(workpace + path);
+            File file = new File(directory + path);
             if (!file.exists()) {
                 throw new FileNotFoundException(MessageFormat.format("File not found : {0}", file.getPath()));
             }
@@ -46,8 +46,8 @@ public class FileReader {
         return files;
     }
 
-    public File getZip(String workspace, String pattern) throws Exception {
-        List<File> files = getFiles(workspace, pattern);
+    public File getZip(String directory, String pattern) throws Exception {
+        List<File> files = getFiles(directory, pattern);
         File zip = File.createTempFile("tm4j", "zip");
         ZipOutputStream out = new ZipOutputStream(new FileOutputStream(zip));
         for (File file : files) {

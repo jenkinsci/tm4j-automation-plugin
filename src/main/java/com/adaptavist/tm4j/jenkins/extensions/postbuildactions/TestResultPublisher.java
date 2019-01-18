@@ -58,22 +58,12 @@ public class TestResultPublisher extends Notifier implements SimpleBuildStep {
     }
 
     @Override
-    public void perform(Run<?, ?> run, FilePath workspace, Launcher launcher, TaskListener listener) throws InterruptedException, IOException {
+    public void perform(Run<?, ?> run, FilePath workspace, Launcher launcher, TaskListener listener) {
         final PrintStream logger = listener.getLogger();
         logger.printf("%s Publishing test results...%n", INFO);
         List<JiraInstance> jiraInstances = getDescriptor().getJiraInstances();
-        String remoteWorkspace = workspace.getRemote() + "/";
         try {
-        	new Validator().validateProjectKey(this.projectKey)
-			    		.validateFilePath(this.filePath)
-			    		.validateFormat(this.format)
-			    		.validateServerAddress(this.serverAddress);
-            Tm4jJiraRestClient tm4jJiraRestClient = new Tm4jJiraRestClient(jiraInstances, this.serverAddress);
-            if (Constants.CUCUMBER.equals(this.format)) {
-                tm4jJiraRestClient.uploadCucumberFile(remoteWorkspace, this.filePath, this.projectKey, this.autoCreateTestCases, logger);
-            } else {
-                tm4jJiraRestClient.uploadCustomFormatFile(remoteWorkspace, Constants.CUSTOM_FORMAT_FILE_NAME, this.projectKey, this.autoCreateTestCases, logger);
-            }
+            perform(logger, jiraInstances, getDirectory(workspace, run));
         } catch (Exception e) {
             run.setResult(Result.FAILURE);
             logger.printf("%s There was an error trying to publish test results to Test Management for Jira. Error details: %n", ERROR);
@@ -85,6 +75,28 @@ public class TestResultPublisher extends Notifier implements SimpleBuildStep {
             logger.printf("%s Tests results have not been sent to Test Management for Jira %n", ERROR);
             throw new RuntimeException();
         }
+    }
+
+    private void perform(PrintStream logger, List<JiraInstance> jiraInstances, String directory) throws Exception {
+        new Validator().validateProjectKey(this.projectKey)
+                    .validateFilePath(this.filePath)
+                    .validateFormat(this.format)
+                    .validateServerAddress(this.serverAddress);
+        Tm4jJiraRestClient tm4jJiraRestClient = new Tm4jJiraRestClient(jiraInstances, this.serverAddress);
+        if (Constants.CUCUMBER.equals(this.format)) {
+            tm4jJiraRestClient.uploadCucumberFile(directory, this.filePath, this.projectKey, this.autoCreateTestCases, logger);
+        } else {
+            tm4jJiraRestClient.uploadCustomFormatFile(directory, Constants.CUSTOM_FORMAT_FILE_NAME, this.projectKey, this.autoCreateTestCases, logger);
+        }
+    }
+
+    private String getDirectory(FilePath workspace, Run run) throws IOException, InterruptedException {
+        if (workspace.isRemote()){
+            FilePath path = new FilePath(run.getRootDir());
+            workspace.copyRecursiveTo(this.filePath, path);
+            return run.getRootDir() + "/";
+        }
+        return workspace.getRemote() + "/";
     }
 
     @Override

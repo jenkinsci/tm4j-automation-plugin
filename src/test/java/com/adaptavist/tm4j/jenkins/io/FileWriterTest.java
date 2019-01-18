@@ -1,5 +1,6 @@
 package com.adaptavist.tm4j.jenkins.io;
 
+import hudson.FilePath;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -20,6 +21,8 @@ public class FileWriterTest {
     private File targetDir;
     private File zipFile;
     private FileWriter fileWriter;
+    private File rootDir = new File("");
+    private FilePath workspace = new FilePath(new File(""));
 
     @Before
     public void setUp() throws Exception {
@@ -34,8 +37,8 @@ public class FileWriterTest {
     }
 
     @Test
-    public void shouldCreateZipFile() throws IOException {
-        fileWriter.extractFeatureFilesFromZipAndSave(targetDir.getPath());
+    public void shouldCreateZipFile() throws IOException, InterruptedException {
+        fileWriter.extractFeatureFilesFromZipAndSave(rootDir, workspace, targetDir.getPath());
 
         List<String> fileNames = fileWriter.getFileNames();
         assertEquals(2, fileNames.size());
@@ -43,12 +46,12 @@ public class FileWriterTest {
     }
 
     @Test
-    public void shouldCleanUpFolderBeforeExtractingZip() throws IOException {
+    public void shouldCleanUpFolderBeforeExtractingZip() throws IOException, InterruptedException {
         Files.createDirectory(targetDir.toPath());
         Files.createFile(Paths.get(targetDir.getPath(), "someFile"));
         Files.createDirectory(Paths.get(targetDir.getPath(), "subdir"));
 
-        fileWriter.extractFeatureFilesFromZipAndSave(targetDir.getPath());
+        fileWriter.extractFeatureFilesFromZipAndSave(rootDir, workspace, targetDir.getPath());
         String[] extractedFiles = targetDir.list();
         assertEquals(2, extractedFiles.length);
         assertTrue(Arrays.asList(extractedFiles).containsAll(Arrays.asList("BA-T1.feature", "BA-T2.feature")));
