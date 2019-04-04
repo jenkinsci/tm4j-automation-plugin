@@ -17,9 +17,9 @@ import java.text.ParseException;
 
 public class JiraCloudInstance implements Instance {
 
-    private static final String CUCUMBER_ENDPOINT = "{0}/v2/automations/executions/cucumber";
-    private static final String CUSTOM_FORMAT_ENDPOINT = "{0}/v2/automations/executions/custom";
-    private static final String TM4J_HEALTH_CHECK = "{0}/v2/healthcheck";
+    private static final String CUCUMBER_ENDPOINT = "{0}/tm4j/v2/automations/executions/cucumber";
+    private static final String CUSTOM_FORMAT_ENDPOINT = "{0}/tm4j/v2/automations/executions/custom";
+    private static final String TM4J_HEALTH_CHECK = "{0}/tm4j/v2/healthcheck";
     private static final String TM4J_API_BASE_URL = "https://api.adaptavist.io";
 
     private Secret jwt;
