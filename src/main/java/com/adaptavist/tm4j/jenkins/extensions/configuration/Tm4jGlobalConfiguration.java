@@ -1,5 +1,7 @@
 package com.adaptavist.tm4j.jenkins.extensions.configuration;
 
+import com.adaptavist.tm4j.jenkins.extensions.Instance;
+import com.adaptavist.tm4j.jenkins.extensions.JiraCloudInstance;
 import com.adaptavist.tm4j.jenkins.extensions.JiraInstance;
 import com.adaptavist.tm4j.jenkins.utils.Constants;
 import com.adaptavist.tm4j.jenkins.utils.FormHelper;
@@ -19,13 +21,15 @@ import javax.annotation.Nonnull;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.adaptavist.tm4j.jenkins.utils.Constants.TM4J_GLOBAL_CONFIGURATION;
 
 @Extension
 public class Tm4jGlobalConfiguration extends GlobalConfiguration {
 
-    private List<JiraInstance> jiraInstances;
+    private static final String CLOUD_TYPE = "cloud";
+    private List<Instance> jiraInstances;
 
     public Tm4jGlobalConfiguration() {
         load();
@@ -48,11 +52,11 @@ public class Tm4jGlobalConfiguration extends GlobalConfiguration {
             throw new FormException(MessageFormat.format(Constants.ERROR_AT_GLOBAL_CONFIGURATIONS_OF_TEST_MANAGEMENT_FOR_JIRA, e.getMessage()), "testManagementForJira");
         }
         save();
-        return super.configure(request, formData);
+        return true;
     }
 
-    private List<JiraInstance> crateJiraInstances(Object formJiraInstances) throws Exception {
-        List<JiraInstance> newJiraInstances = new ArrayList<>();
+    private List<Instance> crateJiraInstances(Object formJiraInstances) throws Exception {
+        List<Instance> newJiraInstances = new ArrayList<>();
 
         if (formJiraInstances == null) {
             return newJiraInstances;
@@ -61,15 +65,24 @@ public class Tm4jGlobalConfiguration extends GlobalConfiguration {
         if (formJiraInstances instanceof JSONArray) {
             JSONArray jiraInstancesList = (JSONArray) formJiraInstances;
             for (Object jiraInstance : jiraInstancesList.toArray()) {
-                newJiraInstances.add(createAnInstance((JSONObject) jiraInstance));
+                JSONObject instance = ((JSONObject)jiraInstance).getJSONObject("type");
+                newJiraInstances.add(createInstance(instance));
             }
         } else {
-            newJiraInstances.add(createAnInstance((JSONObject) formJiraInstances));
+            newJiraInstances.add(createInstance(((JSONObject) formJiraInstances).getJSONObject("type")));
         }
         return newJiraInstances;
     }
 
-    private JiraInstance createAnInstance(JSONObject formJiraInstance) throws Exception {
+    private Instance createInstance(JSONObject jsonJiraInstance) throws Exception {
+        if (CLOUD_TYPE.equals(jsonJiraInstance.getString("value"))) {
+            return createCloudInstance(jsonJiraInstance);
+        } else {
+            return createServerInstance(jsonJiraInstance);
+        }
+    }
+
+    private JiraInstance createServerInstance(JSONObject formJiraInstance) throws Exception {
         JiraInstance jiraInstance = new JiraInstance();
         String serverAddress = formJiraInstance.getString("serverAddress");
         String username = formJiraInstance.getString("username");
@@ -89,13 +102,27 @@ public class Tm4jGlobalConfiguration extends GlobalConfiguration {
         if (jiraInstance.isValidCredentials()) {
             return jiraInstance;
         }
-        throw new Exception(Constants.INVALID_USER_CREDENTIALS);
+        throw new Exception(Constants.INVALID_CREDENTIALS);
+    }
+
+    private JiraCloudInstance createCloudInstance(JSONObject formJiraInstance) throws Exception {
+        JiraCloudInstance jiraInstance = new JiraCloudInstance();
+        String jwt = formJiraInstance.getString("jwt");
+        if (StringUtils.isBlank(jwt)) {
+            throw new Exception(Constants.PLEASE_ENTER_THE_JWT);
+        }
+        jiraInstance.setJwt(Secret.fromString(jwt));
+        if (jiraInstance.isValidCredentials()) {
+            return jiraInstance;
+        }
+        throw new Exception(Constants.INVALID_CREDENTIALS);
     }
 
     @POST
-    public FormValidation doTestConnection(@QueryParameter String serverAddress, @QueryParameter String username, @QueryParameter String password) {
+    public FormValidation doTestConnection(@QueryParameter String serverAddress, @QueryParameter String
+            username, @QueryParameter String password, @QueryParameter String jwt, @QueryParameter Boolean cloud) {
         Permissions.checkAdminPermission();
-        return new FormHelper().testConnection(serverAddress, username, password);
+        return new FormHelper().testConnection(serverAddress, username, password, jwt, cloud);
     }
 
     @POST
@@ -116,11 +143,21 @@ public class Tm4jGlobalConfiguration extends GlobalConfiguration {
         return new FormHelper().doCheckPassword(password);
     }
 
-    public List<JiraInstance> getJiraInstances() {
+    @POST
+    public FormValidation doCheckJwt(@QueryParameter String jwt) {
+        Permissions.checkAdminPermission();
+        return new FormHelper().doCheckPassword(jwt);
+    }
+
+    public List<Instance> getJiraInstances() {
         return jiraInstances;
     }
 
-    public void setJiraInstances(List<JiraInstance> jiraInstances) {
+    public List<Instance> getJiraServerInstances() {
+        return jiraInstances.stream().filter(instance -> !instance.cloud()).collect(Collectors.toList());
+    }
+
+    public void setJiraInstances(List<Instance> jiraInstances) {
         this.jiraInstances = jiraInstances;
     }
 }

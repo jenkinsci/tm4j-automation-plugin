@@ -5,10 +5,11 @@ public class Constants {
     public static final String NAME_DOWNLOAD_BUILD_STEP = "Test Management for Jira: Download Feature Files";
     public static final String ADD_TM4J_GLOBAL_CONFIG = "Please configure at least one Jira instance in the global configuration";
     public static final String CONNECTION_TO_JIRA_HAS_BEEN_VALIDATED = "The connection to Jira has been validated";
-    public static final String INVALID_USER_CREDENTIALS = "Invalid user credentials";
+    public static final String INVALID_CREDENTIALS = "Invalid credentials";
     public static final String INCORRECT_SERVER_ADDRESS_FORMAT = "Incorrect server address format";
     public static final String PLEASE_ENTER_THE_PASSWORD = "Please enter the password";
     public static final String PLEASE_ENTER_THE_SERVER_NAME = "Please enter the server name";
+    public static final String PLEASE_ENTER_THE_JWT = "Please enter the JSON Web Token (JWT)";
     public static final String SERVER_URL_IS_REQUIRED = "Server URL is required";
     public static final String PLEASE_ENTER_THE_USERNAME = "Please enter the username";
     public static final String TM4J_OUTPUT_RESULT_FOR_JUNIT = "Test Management for Jira Output Result For JUnit";

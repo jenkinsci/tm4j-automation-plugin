@@ -1,5 +1,7 @@
 package com.adaptavist.tm4j.jenkins.utils;
 
+import com.adaptavist.tm4j.jenkins.extensions.Instance;
+import com.adaptavist.tm4j.jenkins.extensions.JiraCloudInstance;
 import com.adaptavist.tm4j.jenkins.extensions.JiraInstance;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
@@ -12,7 +14,11 @@ import static com.adaptavist.tm4j.jenkins.utils.Constants.*;
 
 public class FormHelper {
 
-    public FormValidation testConnection(String serverAddress, String username, String password) {
+    public FormValidation testConnection(String serverAddress, String username, String password, String jwt, Boolean cloud) {
+        return cloud ? testConnectionCloud(jwt) : testConnectionServer(serverAddress, username, password);
+    }
+
+    private FormValidation testConnectionServer(String serverAddress, String username, String password) {
         serverAddress = StringUtils.removeEnd(serverAddress, "/");
         if (StringUtils.isBlank(serverAddress)) {
             return FormValidation.error(PLEASE_ENTER_THE_SERVER_NAME);
@@ -27,19 +33,27 @@ public class FormHelper {
             return FormValidation.error(INCORRECT_SERVER_ADDRESS_FORMAT);
         }
         if (!new JiraInstance(serverAddress, username, Secret.fromString(password)).isValidCredentials()) {
-            return FormValidation.error(INVALID_USER_CREDENTIALS);
+            return FormValidation.error(INVALID_CREDENTIALS);
         }
         return FormValidation.ok(CONNECTION_TO_JIRA_HAS_BEEN_VALIDATED);
     }
 
-    public ListBoxModel fillServerAddressItems(List<JiraInstance> jiraInstances) {
+    private FormValidation testConnectionCloud(String jwt) {
+        JiraCloudInstance instance = new JiraCloudInstance(Secret.fromString(jwt));
+        if (!instance.isValidCredentials()) {
+            return FormValidation.error(INVALID_CREDENTIALS);
+        }
+        return FormValidation.ok(CONNECTION_TO_JIRA_HAS_BEEN_VALIDATED);
+    }
+
+    public ListBoxModel fillServerAddressItems(List<Instance> jiraInstances) {
         ListBoxModel modelbox = new ListBoxModel();
         if (jiraInstances == null || jiraInstances.isEmpty()) {
             modelbox.add(ADD_TM4J_GLOBAL_CONFIG);
             return modelbox;
         }
-        for (JiraInstance server : jiraInstances) {
-            modelbox.add(server.getServerAddress());
+        for (Instance server : jiraInstances) {
+            modelbox.add(server.name());
         }
         return modelbox;
     }
@@ -72,6 +86,6 @@ public class FormHelper {
     }
 
     public FormValidation doCheckPassword(String password) {
-        return StringUtils.isBlank(password) ? FormValidation.error(PLEASE_ENTER_THE_PASSWORD) : FormValidation.ok();
+        return StringUtils.isBlank(password) ? FormValidation.error(PLEASE_ENTER_THE_JWT) : FormValidation.ok();
     }
 }

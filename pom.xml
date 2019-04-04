@@ -39,7 +39,7 @@
     </scm>
 
     <properties>
-        <jenkins.version>2.73.3</jenkins.version>
+        <jenkins.version>2.164.1</jenkins.version>
         <java.level>8</java.level>
     </properties>
 
@@ -48,6 +48,11 @@
 			<groupId>com.mashape.unirest</groupId>
 			<artifactId>unirest-java</artifactId>
 			<version>1.4.9</version>
+		</dependency>
+		<dependency>
+			<groupId>com.nimbusds</groupId>
+			<artifactId>nimbus-jose-jwt</artifactId>
+			<version>7.0.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
