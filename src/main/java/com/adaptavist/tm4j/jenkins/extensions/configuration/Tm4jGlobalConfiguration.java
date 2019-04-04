@@ -146,7 +146,7 @@ public class Tm4jGlobalConfiguration extends GlobalConfiguration {
     @POST
     public FormValidation doCheckJwt(@QueryParameter String jwt) {
         Permissions.checkAdminPermission();
-        return new FormHelper().doCheckPassword(jwt);
+        return new FormHelper().doCheckJwt(jwt);
     }
 
     public List<Instance> getJiraInstances() {

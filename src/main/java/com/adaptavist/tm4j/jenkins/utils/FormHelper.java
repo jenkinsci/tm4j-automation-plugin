@@ -86,6 +86,10 @@ public class FormHelper {
     }
 
     public FormValidation doCheckPassword(String password) {
-        return StringUtils.isBlank(password) ? FormValidation.error(PLEASE_ENTER_THE_JWT) : FormValidation.ok();
+        return StringUtils.isBlank(password) ? FormValidation.error(PLEASE_ENTER_THE_PASSWORD) : FormValidation.ok();
+    }
+
+    public FormValidation doCheckJwt(String jwt) {
+        return StringUtils.isBlank(jwt) ? FormValidation.error(PLEASE_ENTER_THE_JWT) : FormValidation.ok();
     }
 }
