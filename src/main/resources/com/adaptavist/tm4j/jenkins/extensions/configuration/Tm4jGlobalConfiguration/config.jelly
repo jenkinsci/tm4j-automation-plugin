@@ -18,7 +18,7 @@
                         </f:entry>
                     </f:radioBlock>
                     <f:radioBlock title="Test Management for Jira Cloud" name="type" value="cloud" checked="${tm4jInstancesList.cloud}">
-                        <f:entry title="JSON Web Token" description="Jira user name" field="jwt">
+                        <f:entry title="JSON Web Token" description="TM4J API key" field="jwt">
                             <f:password value="${tm4jInstancesList.jwt}" checkMessage="Please enter the JWT" checkMethod="post"/>
                         </f:entry>
                     </f:radioBlock>
