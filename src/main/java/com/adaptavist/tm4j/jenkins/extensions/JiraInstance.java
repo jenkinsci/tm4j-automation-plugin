@@ -7,12 +7,11 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 import hudson.util.Secret;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.kohsuke.stapler.DataBoundConstructor;
 
 import java.io.File;
 import java.text.MessageFormat;
 
-public class JiraInstance {
+public class JiraInstance implements Instance {
 
     private static final String CUCUMBER_ENDPOINT = "{0}/rest/atm/1.0/automation/execution/cucumber/{1}";
     private static final String CUSTOM_FORMAT_ENDPOINT = "{0}/rest/atm/1.0/automation/execution/{1}";
@@ -26,11 +25,61 @@ public class JiraInstance {
     public JiraInstance() {
     }
 
-    @DataBoundConstructor
     public JiraInstance(String serverAddress, String username, Secret password) {
         this.serverAddress = serverAddress;
         this.username = username;
         this.password = password;
+    }
+
+    @Override
+    public Boolean cloud() {
+        return false;
+    }
+
+    @Override
+    public String name() {
+        return serverAddress;
+    }
+
+    @Override
+    public Boolean isValidCredentials() {
+        try {
+            String url = MessageFormat.format(TM4J_HEALTH_CHECK, serverAddress);
+            HttpClient httpClient = HttpClientBuilder.create().disableCookieManagement().build();
+            Unirest.setHttpClient(httpClient);
+            HttpResponse<String> response = Unirest.get(url)
+                    .basicAuth(username, this.getPlainTextPassword())
+                    .asString();
+            return response.getStatus() == 200;
+        } catch (UnirestException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    @Override
+    public HttpResponse<String> downloadFeatureFile(String tql) throws UnirestException {
+        String url = MessageFormat.format(FEATURE_FILES_ENDPOINT, serverAddress);
+        HttpClient httpClient = HttpClientBuilder.create().disableCookieManagement().build();
+        Unirest.setHttpClient(httpClient);
+
+        return Unirest.get(url).basicAuth(username, this.getPlainTextPassword()).queryString("tql", tql).asString();
+    }
+
+    @Override
+    public HttpResponse<JsonNode> publishCucumberFormatBuildResult(String projectKey, Boolean autoCreateTestCases, File zip) throws UnirestException {
+        String url = MessageFormat.format(CUCUMBER_ENDPOINT, serverAddress, projectKey);
+        HttpClient httpClient = HttpClientBuilder.create().disableCookieManagement().build();
+        Unirest.setHttpClient(httpClient);
+        return importBuildResultsFile(autoCreateTestCases, zip, url);
+    }
+
+    @Override
+    public HttpResponse<JsonNode> publishCustomFormatBuildResult(String projectKey, Boolean autoCreateTestCases, File zip) throws UnirestException {
+        String url = MessageFormat.format(CUSTOM_FORMAT_ENDPOINT, serverAddress, projectKey);
+        HttpClient httpClient = HttpClientBuilder.create().disableCookieManagement().build();
+        Unirest.setHttpClient(httpClient);
+        return importBuildResultsFile(autoCreateTestCases, zip, url);
     }
 
     public String getServerAddress() {
@@ -57,43 +106,6 @@ public class JiraInstance {
         this.password = password;
     }
 
-    public boolean isValidCredentials() {
-        try {
-            String url = MessageFormat.format(TM4J_HEALTH_CHECK, serverAddress);
-            HttpClient httpClient = HttpClientBuilder.create().disableCookieManagement().build();
-            Unirest.setHttpClient(httpClient);
-            HttpResponse<String> response = Unirest.get(url)
-                    .basicAuth(username, this.getPlainTextPassword())
-                    .asString();
-            return response.getStatus() == 200;
-        } catch (UnirestException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    public HttpResponse<String> exportFeatureFiles(String tql) throws UnirestException {
-        String url = MessageFormat.format(FEATURE_FILES_ENDPOINT, serverAddress);
-        HttpClient httpClient = HttpClientBuilder.create().disableCookieManagement().build();
-        Unirest.setHttpClient(httpClient);
-
-        return Unirest.get(url).basicAuth(username, this.getPlainTextPassword()).queryString("tql", tql).asString();
-    }
-
-    public HttpResponse<JsonNode> importCucumberBuildResult(String projectKey, Boolean autoCreateTestCases, File zip) throws UnirestException {
-        String url = MessageFormat.format(CUCUMBER_ENDPOINT, serverAddress, projectKey);
-        HttpClient httpClient = HttpClientBuilder.create().disableCookieManagement().build();
-        Unirest.setHttpClient(httpClient);
-        return importBuildResultsFile(autoCreateTestCases, zip, url);
-    }
-
-    public HttpResponse<JsonNode> importCustomFormatBuildResult(String projectKey, Boolean autoCreateTestCases, File zip) throws UnirestException {
-        String url = MessageFormat.format(CUSTOM_FORMAT_ENDPOINT, serverAddress, projectKey);
-        HttpClient httpClient = HttpClientBuilder.create().disableCookieManagement().build();
-        Unirest.setHttpClient(httpClient);
-        return importBuildResultsFile(autoCreateTestCases, zip, url);
-    }
-
     private HttpResponse<JsonNode> importBuildResultsFile(Boolean autoCreateTestCases, File zip, String url) throws UnirestException {
         return Unirest.post(url)
                 .basicAuth(username, this.getPlainTextPassword())
@@ -105,4 +117,5 @@ public class JiraInstance {
     private String getPlainTextPassword() {
         return Secret.toString(password);
     }
+
 }

@@ -1,6 +1,6 @@
 package com.adaptavist.tm4j.jenkins.extensions.postbuildactions;
 
-import com.adaptavist.tm4j.jenkins.extensions.JiraInstance;
+import com.adaptavist.tm4j.jenkins.extensions.Instance;
 import com.adaptavist.tm4j.jenkins.extensions.configuration.Tm4jGlobalConfiguration;
 import com.adaptavist.tm4j.jenkins.http.Tm4jJiraRestClient;
 import com.adaptavist.tm4j.jenkins.utils.Constants;
@@ -28,6 +28,7 @@ import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.verb.POST;
 
+import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -58,16 +59,15 @@ public class TestResultPublisher extends Notifier implements SimpleBuildStep {
     }
 
     @Override
-    public void perform(Run<?, ?> run, FilePath workspace, Launcher launcher, TaskListener listener) {
+    public void perform(@Nonnull Run<?, ?> run, @Nonnull FilePath workspace, @Nonnull Launcher launcher, TaskListener listener) {
         final PrintStream logger = listener.getLogger();
         logger.printf("%s Publishing test results...%n", INFO);
-        List<JiraInstance> jiraInstances = getDescriptor().getJiraInstances();
+        List<Instance> jiraInstances = getDescriptor().getJiraInstances();
         try {
             perform(logger, jiraInstances, getDirectory(workspace, run));
         } catch (Exception e) {
             run.setResult(Result.FAILURE);
             logger.printf("%s There was an error trying to publish test results to Test Management for Jira. Error details: %n", ERROR);
-            logger.printf(ERROR);
             for (StackTraceElement trace : e.getStackTrace()) {
                 logger.printf(" %s  %n", trace.toString());
             }
@@ -77,7 +77,7 @@ public class TestResultPublisher extends Notifier implements SimpleBuildStep {
         }
     }
 
-    private void perform(PrintStream logger, List<JiraInstance> jiraInstances, String directory) throws Exception {
+    private void perform(PrintStream logger, List<Instance> jiraInstances, String directory) throws Exception {
         new Validator().validateProjectKey(this.projectKey)
                     .validateFilePath(this.filePath)
                     .validateFormat(this.format)
@@ -157,17 +157,17 @@ public class TestResultPublisher extends Notifier implements SimpleBuildStep {
         }
 
         @Override
-        public Publisher newInstance(StaplerRequest reqquest, JSONObject formData) throws FormException {
-            return super.newInstance(reqquest, formData);
+        public Publisher newInstance(StaplerRequest request, @Nonnull JSONObject formData) throws FormException {
+            return super.newInstance(request, formData);
         }
 
-        @SuppressWarnings("rawtypes")
         @Override
         public boolean isApplicable(final Class<? extends AbstractProject> jobType) {
             return true;
         }
 
         @Override
+        @Nonnull
         public String getDisplayName() {
             return NAME_POST_BUILD_ACTION;
         }
@@ -190,7 +190,7 @@ public class TestResultPublisher extends Notifier implements SimpleBuildStep {
             return new FormHelper().doCheckFilePath(filePath);
         }
 
-        public List<JiraInstance> getJiraInstances() {
+        List<Instance> getJiraInstances() {
             return tm4jGlobalConfiguration.getJiraInstances();
         }
     }
