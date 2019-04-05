@@ -2,7 +2,6 @@ package com.adaptavist.tm4j.jenkins.http;
 
 import com.adaptavist.tm4j.jenkins.exception.NoTestCasesFoundException;
 import com.adaptavist.tm4j.jenkins.extensions.Instance;
-import com.adaptavist.tm4j.jenkins.extensions.JiraInstance;
 import com.adaptavist.tm4j.jenkins.io.FileReader;
 import com.adaptavist.tm4j.jenkins.io.FileWriter;
 import com.adaptavist.tm4j.jenkins.utils.Constants;
@@ -33,7 +32,7 @@ public class Tm4jJiraRestClient {
 
     public void uploadCucumberFile(String directory, String filePath, String projectKey, Boolean autoCreateTestCases, final PrintStream logger) throws Exception {
         File file = new FileReader().getZip(directory, filePath);
-        HttpResponse<JsonNode> jsonResponse = jiraInstance.exportCucumberFormatBuildResult(projectKey, autoCreateTestCases, file);
+        HttpResponse<JsonNode> jsonResponse = jiraInstance.publishCucumberFormatBuildResult(projectKey, autoCreateTestCases, file);
         processExportingResultsResponse(jsonResponse, logger);
         if (!file.delete()) {
             logger.printf("%s The generated ZIP file couldn't be deleted. Please check folder permissions and delete the file manually: " + file.getAbsolutePath() + " %n", INFO);
@@ -42,7 +41,7 @@ public class Tm4jJiraRestClient {
 
     public void uploadCustomFormatFile(String directory, String filePath, String projectKey, Boolean autoCreateTestCases, final PrintStream logger) throws Exception {
         File file = new FileReader().getZip(directory, filePath);
-        HttpResponse<JsonNode> jsonResponse = jiraInstance.exportCustomFormatBuildResult(projectKey, autoCreateTestCases, file);
+        HttpResponse<JsonNode> jsonResponse = jiraInstance.publishCustomFormatBuildResult(projectKey, autoCreateTestCases, file);
         processExportingResultsResponse(jsonResponse, logger);
         if (!file.delete()) {
             logger.printf("%s The generated ZIP file couldn't be deleted. Please check folder permissions and delete the file manually: " + file.getAbsolutePath() + " %n", INFO);
@@ -51,7 +50,7 @@ public class Tm4jJiraRestClient {
 
     public void importFeatureFiles(File rootDir, FilePath workspace, String targetPath, String tql, final PrintStream logger) throws Exception {
         try {
-            HttpResponse<String> httpResponse = jiraInstance.importFeatureFile(tql);
+            HttpResponse<String> httpResponse = jiraInstance.downloadFeatureFile(tql);
             processImportingFeatureFilesResponse(rootDir, workspace, targetPath, logger, httpResponse);
         } catch (UnirestException e) {
             throw new Exception("Error trying to communicate with Jira", e.getCause());

@@ -1,6 +1,6 @@
 # TM4J Jenkins Plugin
 
-A plugin for Jenkins built for integrating automated tests with [Test Management for Jira Server](https://marketplace.atlassian.com/apps/1213259/test-management-for-jira?hosting=server&tab=overview) and [Test Management for Jira Cloud](https://marketplace.atlassian.com/apps/1213259/tm4j-test-management-for-jira?tab=overview&hosting=cloud) (TM4J).  
+A plugin for Jenkins built for integrating automated tests with Test Management for Jira (TM4J). Compatible with both Jira Server and Jira Cloud. For more information, please check [TM4J Server](https://marketplace.atlassian.com/apps/1213259/test-management-for-jira?hosting=server&tab=overview) and [TM4J Cloud](https://marketplace.atlassian.com/apps/1213259/tm4j-test-management-for-jira?tab=overview&hosting=cloud).
 
 The plugin introduces two new configuration steps for Jenkins jobs:
 1) A build step to import Gherkin feature files (BDD) from TM4J (currently available only for Test Management for Jira Server)
@@ -25,7 +25,8 @@ pipeline {
         stage('Download Feature Files'){
             steps {
                 downloadFeatureFiles serverAddress: 'http://localhost:2990/jira', 
-                    projectKey: 'WEB', targetPath:'src/test/resources/features'
+                    projectKey: 'WEB', 
+                    targetPath:'src/test/resources/features'
             }
         }
         stage('Clean Work Space'){
@@ -42,7 +43,8 @@ pipeline {
     post {
         always {
             publishTestResults serverAddress: 'http://localhost:2990/jira', 
-                    projectKey: 'WEB', filePath:'target/cucumber/*.json', 
+                    projectKey: 'WEB', 
+                    filePath:'target/cucumber/*.json', 
                     format: 'Cucumber', 
                     autoCreateTestCases: false
         }
@@ -50,6 +52,9 @@ pipeline {
 }
 
 ```
+
+For the Junit integration with the post-build action use the  `Test Management for Jira Output Result For JUnit` format, with the `tm4j_result.json` as filepath.
+
 
 ## Documentation
 

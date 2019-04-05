@@ -14,8 +14,8 @@ import static com.adaptavist.tm4j.jenkins.utils.Constants.*;
 
 public class FormHelper {
 
-    public FormValidation testConnection(String serverAddress, String username, String password, String jwt, Boolean cloud) {
-        return cloud ? testConnectionCloud(jwt) : testConnectionServer(serverAddress, username, password);
+    public FormValidation testConnection(String serverAddress, String username, String password, String jwt, String type) {
+        return "cloud".equals(type) ? testConnectionCloud(jwt) : testConnectionServer(serverAddress, username, password);
     }
 
     private FormValidation testConnectionServer(String serverAddress, String username, String password) {

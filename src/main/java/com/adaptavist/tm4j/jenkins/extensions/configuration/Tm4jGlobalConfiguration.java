@@ -120,9 +120,9 @@ public class Tm4jGlobalConfiguration extends GlobalConfiguration {
 
     @POST
     public FormValidation doTestConnection(@QueryParameter String serverAddress, @QueryParameter String
-            username, @QueryParameter String password, @QueryParameter String jwt, @QueryParameter Boolean cloud) {
+            username, @QueryParameter String password, @QueryParameter String jwt, @QueryParameter String type) {
         Permissions.checkAdminPermission();
-        return new FormHelper().testConnection(serverAddress, username, password, jwt, cloud);
+        return new FormHelper().testConnection(serverAddress, username, password, jwt, type);
     }
 
     @POST

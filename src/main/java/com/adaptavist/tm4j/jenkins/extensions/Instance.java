@@ -14,10 +14,10 @@ public interface Instance {
 
     Boolean isValidCredentials();
 
-    HttpResponse<JsonNode> exportCucumberFormatBuildResult(String projectKey, Boolean autoCreateTestCases, File zip) throws UnirestException;
+    HttpResponse<JsonNode> publishCucumberFormatBuildResult(String projectKey, Boolean autoCreateTestCases, File zip) throws UnirestException;
 
-    HttpResponse<JsonNode> exportCustomFormatBuildResult(String projectKey, Boolean autoCreateTestCases, File zip) throws UnirestException;
+    HttpResponse<JsonNode> publishCustomFormatBuildResult(String projectKey, Boolean autoCreateTestCases, File zip) throws UnirestException;
 
-    HttpResponse<String> importFeatureFile(String tql) throws UnirestException;
+    HttpResponse<String> downloadFeatureFile(String tql) throws UnirestException;
 
 }

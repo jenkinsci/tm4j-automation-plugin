@@ -61,7 +61,7 @@ public class JiraCloudInstance implements Instance {
     }
 
     @Override
-    public HttpResponse<JsonNode> exportCucumberFormatBuildResult(String projectKey, Boolean autoCreateTestCases, File zip) throws UnirestException {
+    public HttpResponse<JsonNode> publishCucumberFormatBuildResult(String projectKey, Boolean autoCreateTestCases, File zip) throws UnirestException {
         String url = MessageFormat.format(CUCUMBER_ENDPOINT, TM4J_API_BASE_URL);
         HttpClient httpClient = HttpClientBuilder.create().disableCookieManagement().build();
         Unirest.setHttpClient(httpClient);
@@ -69,7 +69,7 @@ public class JiraCloudInstance implements Instance {
     }
 
     @Override
-    public HttpResponse<JsonNode> exportCustomFormatBuildResult(String projectKey, Boolean autoCreateTestCases, File zip) throws UnirestException {
+    public HttpResponse<JsonNode> publishCustomFormatBuildResult(String projectKey, Boolean autoCreateTestCases, File zip) throws UnirestException {
         String url = MessageFormat.format(CUSTOM_FORMAT_ENDPOINT, TM4J_API_BASE_URL);
         HttpClient httpClient = HttpClientBuilder.create().disableCookieManagement().build();
         Unirest.setHttpClient(httpClient);
@@ -77,7 +77,7 @@ public class JiraCloudInstance implements Instance {
     }
 
     @Override
-    public HttpResponse<String> importFeatureFile(String tql) throws UnirestException {
+    public HttpResponse<String> downloadFeatureFile(String tql) throws UnirestException {
         return null;
     }
 
