@@ -26,14 +26,14 @@ public class Tm4jJiraRestClient {
 
     private final Instance jiraInstance;
 
-    public Tm4jJiraRestClient(List<Instance> jiraInstances, String serverAddress) throws Exception {
-        jiraInstance = getTm4jInstance(jiraInstances, serverAddress);
+    public Tm4jJiraRestClient(List<Instance> jiraInstances, String name) throws Exception {
+        jiraInstance = getTm4jInstance(jiraInstances, name);
     }
 
     public void uploadCucumberFile(String directory, String filePath, String projectKey, Boolean autoCreateTestCases, final PrintStream logger) throws Exception {
         File file = new FileReader().getZip(directory, filePath);
         HttpResponse<JsonNode> jsonResponse = jiraInstance.publishCucumberFormatBuildResult(projectKey, autoCreateTestCases, file);
-        processExportingResultsResponse(jsonResponse, logger);
+        processUploadingResultsResponse(jsonResponse, logger);
         if (!file.delete()) {
             logger.printf("%s The generated ZIP file couldn't be deleted. Please check folder permissions and delete the file manually: " + file.getAbsolutePath() + " %n", INFO);
         }
@@ -42,7 +42,7 @@ public class Tm4jJiraRestClient {
     public void uploadCustomFormatFile(String directory, String filePath, String projectKey, Boolean autoCreateTestCases, final PrintStream logger) throws Exception {
         File file = new FileReader().getZip(directory, filePath);
         HttpResponse<JsonNode> jsonResponse = jiraInstance.publishCustomFormatBuildResult(projectKey, autoCreateTestCases, file);
-        processExportingResultsResponse(jsonResponse, logger);
+        processUploadingResultsResponse(jsonResponse, logger);
         if (!file.delete()) {
             logger.printf("%s The generated ZIP file couldn't be deleted. Please check folder permissions and delete the file manually: " + file.getAbsolutePath() + " %n", INFO);
         }
@@ -51,13 +51,13 @@ public class Tm4jJiraRestClient {
     public void importFeatureFiles(File rootDir, FilePath workspace, String targetPath, String tql, final PrintStream logger) throws Exception {
         try {
             HttpResponse<String> httpResponse = jiraInstance.downloadFeatureFile(tql);
-            processImportingFeatureFilesResponse(rootDir, workspace, targetPath, logger, httpResponse);
+            processDownloadingFeatureFilesResponse(rootDir, workspace, targetPath, logger, httpResponse);
         } catch (UnirestException e) {
             throw new Exception("Error trying to communicate with Jira", e.getCause());
         }
     }
 
-    private void processImportingFeatureFilesResponse(File rootDir, FilePath workspace, String targetPath, final PrintStream logger, HttpResponse<String> httpResponse) throws IOException, InterruptedException {
+    private void processDownloadingFeatureFilesResponse(File rootDir, FilePath workspace, String targetPath, final PrintStream logger, HttpResponse<String> httpResponse) throws IOException, InterruptedException {
         if (isSuccessful(httpResponse)) {
             if (httpResponse.getStatus() == 204) {
                 throw new NoTestCasesFoundException();
@@ -78,7 +78,7 @@ public class Tm4jJiraRestClient {
         }
     }
 
-    private void processExportingResultsResponse(HttpResponse<JsonNode> jsonResponse, final PrintStream logger) {
+    private void processUploadingResultsResponse(HttpResponse<JsonNode> jsonResponse, final PrintStream logger) {
         if (isSuccessful(jsonResponse)) {
             JSONObject testRun = (JSONObject) jsonResponse.getBody().getObject().get("testCycle");
             String testCycleKey = (String) testRun.get("key");
@@ -96,9 +96,18 @@ public class Tm4jJiraRestClient {
 
     private void processErrorMessages(HttpResponse<?> httpResponse, final PrintStream logger) {
         JSONObject jsonObject = new JsonNode(httpResponse.getBody().toString()).getObject();
-        JSONArray errorMessages = (JSONArray) jsonObject.get("errorMessages");
-        for (Object errorMessage : errorMessages) {
-            logger.printf("%s %s %n", ERROR, errorMessage);
+        try {
+            JSONArray errorMessages = (JSONArray) jsonObject.get("errorMessages");
+            for (Object errorMessage : errorMessages) {
+                logger.printf("%s %s %n", ERROR, errorMessage);
+            }
+        } catch (Exception e) {
+            try {
+                String errorMessage = (String) jsonObject.get("message");
+                logger.printf("%s %s %n", ERROR, errorMessage);
+            } catch (Exception e1) {
+                logger.printf("%s Could not parse error message %n", ERROR);
+            }
         }
     }
 
@@ -114,15 +123,15 @@ public class Tm4jJiraRestClient {
         return httpResponse.getStatus() >= 500;
     }
 
-    private Instance getTm4jInstance(List<Instance> jiraInstances, String serverAddress) throws Exception {
+    private Instance getTm4jInstance(List<Instance> jiraInstances, String name) throws Exception {
         if (jiraInstances == null) {
             throw new IllegalStateException(Constants.THERE_ARE_NO_JIRA_INSTANCES_CONFIGURED);
         }
         for (Instance jiraInstance : jiraInstances) {
-            if (StringUtils.isNotBlank(jiraInstance.name()) && jiraInstance.name().trim().equals(serverAddress)) {
+            if (StringUtils.isNotBlank(jiraInstance.name()) && jiraInstance.name().trim().equals(name)) {
                 return jiraInstance;
             }
         }
-        throw new Exception(MessageFormat.format(Constants.JIRA_INSTANCE_NOT_FOUND, serverAddress));
+        throw new Exception(MessageFormat.format(Constants.JIRA_INSTANCE_NOT_FOUND, name));
     }
 }
