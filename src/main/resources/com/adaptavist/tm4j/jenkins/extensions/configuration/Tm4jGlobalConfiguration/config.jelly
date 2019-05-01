@@ -23,6 +23,8 @@
                         </f:entry>
                     </f:radioBlock>
 
+                    <f:entry>
+                    </f:entry>
 
                     <f:validateButton title="Test Configuration&#160;" checkMethod="post"
                                       progress="Please wait .. We are validating the connection and credentials"

@@ -1,5 +1,6 @@
 package com.adaptavist.tm4j.jenkins.utils;
 
+import com.adaptavist.tm4j.jenkins.exception.InvalidJwtException;
 import com.adaptavist.tm4j.jenkins.extensions.Instance;
 import com.adaptavist.tm4j.jenkins.extensions.JiraCloudInstance;
 import com.adaptavist.tm4j.jenkins.extensions.JiraInstance;
@@ -39,8 +40,12 @@ public class FormHelper {
     }
 
     private FormValidation testConnectionCloud(String jwt) {
-        JiraCloudInstance instance = new JiraCloudInstance(Secret.fromString(jwt));
-        if (!instance.isValidCredentials()) {
+        try {
+            JiraCloudInstance instance = new JiraCloudInstance(Secret.fromString(jwt));
+            if (!instance.isValidCredentials()) {
+                return FormValidation.error(INVALID_CREDENTIALS);
+            }
+        } catch (InvalidJwtException e) {
             return FormValidation.error(INVALID_CREDENTIALS);
         }
         return FormValidation.ok(CONNECTION_TO_JIRA_HAS_BEEN_VALIDATED);
