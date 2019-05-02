@@ -18,8 +18,11 @@
                         </f:entry>
                     </f:radioBlock>
                     <f:radioBlock title="Test Management for Jira Cloud" name="type" value="cloud" checked="${tm4jInstancesList.cloud}">
+                        <f:entry title="Jira URL" description="Jira IP address or hostname" field="cloudAddress">
+                            <f:textbox id="tm4j-cloud-base-url" readonly="readonly" value="${tm4jInstancesList.cloudAddress}" field="name" default=""/>
+                        </f:entry>
                         <f:entry title="JSON Web Token" description="TM4J API key" field="jwt">
-                            <f:password value="${tm4jInstancesList.jwt}" checkMessage="Please enter the JWT" checkMethod="post"/>
+                            <f:password id="tm4j-cloud-jwt-field" value="${tm4jInstancesList.jwt}" checkMessage="Please enter the JWT" checkMethod="post"/>
                         </f:entry>
                     </f:radioBlock>
 
@@ -44,4 +47,5 @@
         </f:entry>
     </f:section>
 
+    <script src="${rootURL}/plugin/tm4j-automation/js/configuration/Tm4jGlobalConfiguration/index.js"/>
 </j:jelly>

@@ -44,6 +44,14 @@ public class JiraCloudInstance implements Instance {
         return this.name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getCloudAddress() {
+        return this.name;
+    }
+
     @Override
     public Boolean isValidCredentials() {
         try {
