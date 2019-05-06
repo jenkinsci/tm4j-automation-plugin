@@ -21,7 +21,7 @@
                         <f:entry title="Jira Cloud URL" description="Jira Cloud hostname. This field will be automatically filled when an API key is provided" field="cloudAddress">
                             <f:textbox data-tm4j-jira-url="true" placeholder="Automatically filled when an API key is provided" readonly="readonly" value="${tm4jInstancesList.cloudAddress}" field="name" default=""/>
                         </f:entry>
-                        <f:entry title="API Key" description="TM4J API key - JSON Web Token(JWT)" field="jwt">
+                        <f:entry title="API Key" description="TM4J API key - JSON Web Token (JWT)" field="jwt">
                             <f:password data-tm4j-jwt="true" value="${tm4jInstancesList.jwt}" checkMessage="Please enter the JWT" checkMethod="post"/>
                         </f:entry>
                     </f:radioBlock>
