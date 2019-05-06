@@ -12,17 +12,24 @@
         return '';
     }
 
-    function setJiraBaseUrl(jwt) {
-        var baseUrl = extractBaseUrl(jwt);
-        var cloudBaseUrlField = document.getElementById('tm4j-cloud-base-url');
-        cloudBaseUrlField.value = baseUrl;
-    }
-
     function handleJwtFieldEvent(e) {
-        if (e.target && e.target.id === 'tm4j-cloud-jwt-field') {
+        var elem = e.target;
+        if (!elem) return;
+
+        var tm4jJwt = elem.getAttribute('data-tm4j-jwt');
+        if (tm4jJwt) {
+            var jiraInstanceContainer = elem.closest('[data-jira-instance-container]');
+            var jiraUrlElem = jiraInstanceContainer.querySelector('[data-tm4j-jira-url]');
             setTimeout(function() {
+                if (!e.target.value) {
+                    jiraUrlElem.value = '';
+                    return;
+                }
+
                 if (e.target.value !== e.target.defaultValue) {
-                    setJiraBaseUrl(e.target.value);
+                    var jwt = e.target.value;
+                    var baseUrl = extractBaseUrl(jwt);
+                    jiraUrlElem.value = baseUrl;
                 }
             })
         }

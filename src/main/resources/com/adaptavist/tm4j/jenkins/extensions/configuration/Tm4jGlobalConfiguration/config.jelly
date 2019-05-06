@@ -5,7 +5,7 @@
         <f:entry title="Jira instance(s)">
             <f:repeatable varStatus="status" var="tm4jInstancesList" name="jiraInstances" items="${instance.jiraInstances}"
                           noAddButton="false" minimum="0">
-                <table>
+                <table data-jira-instance-container="true">
                     <f:radioBlock title="Test Management for Jira Server" name="type" value="server" checked="${!tm4jInstancesList.cloud}">
                         <f:entry title="Jira URL" description="Jira IP address or hostname" field="serverAddress" class="serverConf">
                             <f:textbox value="${tm4jInstancesList.serverAddress}" default="" checkMethod="post"/>
@@ -19,10 +19,10 @@
                     </f:radioBlock>
                     <f:radioBlock title="Test Management for Jira Cloud" name="type" value="cloud" checked="${tm4jInstancesList.cloud}">
                         <f:entry title="Jira URL" description="Jira IP address or hostname" field="cloudAddress">
-                            <f:textbox id="tm4j-cloud-base-url" readonly="readonly" value="${tm4jInstancesList.cloudAddress}" field="name" default=""/>
+                            <f:textbox data-tm4j-jira-url="true" readonly="readonly" value="${tm4jInstancesList.cloudAddress}" field="name" default=""/>
                         </f:entry>
                         <f:entry title="JSON Web Token" description="TM4J API key" field="jwt">
-                            <f:password id="tm4j-cloud-jwt-field" value="${tm4jInstancesList.jwt}" checkMessage="Please enter the JWT" checkMethod="post"/>
+                            <f:password data-tm4j-jwt="true" value="${tm4jInstancesList.jwt}" checkMessage="Please enter the JWT" checkMethod="post"/>
                         </f:entry>
                     </f:radioBlock>
 
