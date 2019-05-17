@@ -19,6 +19,7 @@ public class JiraCloudInstance implements Instance {
 
     private static final String CUCUMBER_ENDPOINT = "{0}/tm4j/v2/automations/executions/cucumber";
     private static final String CUSTOM_FORMAT_ENDPOINT = "{0}/tm4j/v2/automations/executions/custom";
+    private static final String FEATURE_FILES_ENDPOINT = "{0}/tm4j/v2/automations/testcases";
     private static final String TM4J_HEALTH_CHECK = "{0}/tm4j/v2/healthcheck";
     private static final String TM4J_API_BASE_URL = "https://api.adaptavist.io";
 
@@ -85,10 +86,17 @@ public class JiraCloudInstance implements Instance {
     }
 
     @Override
-    public HttpResponse<String> downloadFeatureFile(String tql) throws UnirestException {
-        return null;
-    }
+    public HttpResponse<String> downloadFeatureFile(String projectKey) throws UnirestException {
+        String url = MessageFormat.format(FEATURE_FILES_ENDPOINT, TM4J_API_BASE_URL);
+        HttpClient httpClient = HttpClientBuilder.create().disableCookieManagement().build();
+        Unirest.setHttpClient(httpClient);
 
+        return Unirest.get(url)
+                .header("Authorization", "Bearer " + getDecryptedJwt())
+                .header("Accept", "application/zip")
+                .queryString("projectKey", projectKey)
+                .asString();
+    }
 
     public Secret getJwt() {
         return jwt;

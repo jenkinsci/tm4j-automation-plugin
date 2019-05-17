@@ -18,6 +18,6 @@ public interface Instance {
 
     HttpResponse<JsonNode> publishCustomFormatBuildResult(String projectKey, Boolean autoCreateTestCases, File zip) throws UnirestException;
 
-    HttpResponse<String> downloadFeatureFile(String tql) throws UnirestException;
+    HttpResponse<String> downloadFeatureFile(String projectKey) throws UnirestException;
 
 }
