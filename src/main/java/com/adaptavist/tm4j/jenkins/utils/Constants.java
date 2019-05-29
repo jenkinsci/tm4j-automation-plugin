@@ -3,7 +3,7 @@ package com.adaptavist.tm4j.jenkins.utils;
 public class Constants {
     public static final String NAME_POST_BUILD_ACTION = "Test Management for Jira: Publish Test Results";
     public static final String NAME_DOWNLOAD_BUILD_STEP = "Test Management for Jira: Download Feature Files";
-    public static final String ADD_TM4J_GLOBAL_CONFIG = "Please configure at least one Jira Server instance in the global configuration";
+    public static final String ADD_TM4J_GLOBAL_CONFIG = "Please configure at least one Jira instance in the global configuration";
     public static final String CONNECTION_TO_JIRA_HAS_BEEN_VALIDATED = "The connection to Jira has been validated";
     public static final String INVALID_CREDENTIALS = "Invalid credentials";
     public static final String INCORRECT_SERVER_ADDRESS_FORMAT = "Incorrect server address format";
