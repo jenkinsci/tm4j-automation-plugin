@@ -48,9 +48,9 @@ public class Tm4jJiraRestClient {
         }
     }
 
-    public void importFeatureFiles(File rootDir, FilePath workspace, String targetPath, String tql, final PrintStream logger) throws Exception {
+    public void importFeatureFiles(File rootDir, FilePath workspace, String targetPath, String projectKey, final PrintStream logger) throws Exception {
         try {
-            HttpResponse<String> httpResponse = jiraInstance.downloadFeatureFile(tql);
+            HttpResponse<String> httpResponse = jiraInstance.downloadFeatureFile(projectKey);
             processDownloadingFeatureFilesResponse(rootDir, workspace, targetPath, logger, httpResponse);
         } catch (UnirestException e) {
             throw new Exception("Error trying to communicate with Jira", e.getCause());

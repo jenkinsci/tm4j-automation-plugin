@@ -11,6 +11,8 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import java.io.File;
 import java.text.MessageFormat;
 
+import static java.lang.String.format;
+
 public class JiraInstance implements Instance {
 
     private static final String CUCUMBER_ENDPOINT = "{0}/rest/atm/1.0/automation/execution/cucumber/{1}";
@@ -58,10 +60,11 @@ public class JiraInstance implements Instance {
     }
 
     @Override
-    public HttpResponse<String> downloadFeatureFile(String tql) throws UnirestException {
+    public HttpResponse<String> downloadFeatureFile(String projectKey) throws UnirestException {
         String url = MessageFormat.format(FEATURE_FILES_ENDPOINT, serverAddress);
         HttpClient httpClient = HttpClientBuilder.create().disableCookieManagement().build();
         Unirest.setHttpClient(httpClient);
+        String tql = format("testCase.projectKey = '%s'", projectKey);
 
         return Unirest.get(url).basicAuth(username, this.getPlainTextPassword()).queryString("tql", tql).asString();
     }
