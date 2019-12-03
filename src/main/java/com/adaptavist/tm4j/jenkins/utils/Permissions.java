@@ -4,6 +4,6 @@ import jenkins.model.Jenkins;
 
 public class Permissions {
     public static void checkAdminPermission() {
-        Jenkins.getInstance().checkPermission(Jenkins.ADMINISTER);
+        Jenkins.getInstanceOrNull().checkPermission(Jenkins.ADMINISTER);
     }
 }
