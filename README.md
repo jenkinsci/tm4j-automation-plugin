@@ -1,10 +1,13 @@
 # TM4J Jenkins Plugin
 
-A plugin for Jenkins built for integrating automated tests with Test Management for Jira (TM4J). Compatible with both Jira Server and Jira Cloud. For more information, please check [TM4J Server](https://marketplace.atlassian.com/apps/1213259/test-management-for-jira?hosting=server&tab=overview) and [TM4J Cloud](https://marketplace.atlassian.com/apps/1213259/tm4j-test-management-for-jira?tab=overview&hosting=cloud).
+Jenkins plugin built for integrating automated tests with [Test Management for Jira (TM4J)](https://marketplace.atlassian.com/apps/1213259/test-management-for-jira) on any Jira deployment (Cloud, Server and DataCenter).
+
+Test Management for Jira (TM4J) is the enterprise test management app to plan, manage, and measure your entire testing life-cycle inside Jira for both agile and waterfall methodologies. By using TM4J you'll empower agile teams with BDD at scale with Cucumber or your chosen gherkin compatible tool for collaboration between developers, testers and domain experts. With our powerful FREE REST API, easily integrate CI/CD servers, DevOps and test automation tools and frameworks you already use (including Selenium, JUnit, Nunit, Robot, Behave, Calabash) to save time and effort. TM4J is used by more than 3.000 clients worldwide and is the top rated QA and Testing app for Jira.
 
 The plugin introduces two new configuration steps for Jenkins jobs:
-1) A build step to download Gherkin feature files (BDD) from TM4J
-1) A post-build step to publish the test results back to TM4J
+
+1. A build step to download Gherkin feature files (BDD) from TM4J
+1. A post-build step to publish the test results back to TM4J
 
 These two configuration steps depends on a global configuration (Manage Jenkins > Configure System)
 where the user can add/configure different Jira instances to be used on each build step.
@@ -13,7 +16,7 @@ where the user can add/configure different Jira instances to be used on each bui
 
 This is an example using pipeline.
 
-``` 
+```
 pipeline {
     agent any
     stages {
@@ -24,8 +27,8 @@ pipeline {
         }
         stage('Download Feature Files'){
             steps {
-                downloadFeatureFiles serverAddress: 'http://localhost:2990/jira', 
-                    projectKey: 'WEB', 
+                downloadFeatureFiles serverAddress: 'http://localhost:2990/jira',
+                    projectKey: 'WEB',
                     targetPath:'src/test/resources/features'
             }
         }
@@ -42,10 +45,10 @@ pipeline {
     }
     post {
         always {
-            publishTestResults serverAddress: 'http://localhost:2990/jira', 
-                    projectKey: 'WEB', 
-                    filePath:'target/cucumber/*.json', 
-                    format: 'Cucumber', 
+            publishTestResults serverAddress: 'http://localhost:2990/jira',
+                    projectKey: 'WEB',
+                    filePath:'target/cucumber/*.json',
+                    format: 'Cucumber',
                     autoCreateTestCases: false
         }
     }
@@ -53,8 +56,7 @@ pipeline {
 
 ```
 
-For the Junit integration with the post-build action use the  `Test Management for Jira Output Result For JUnit` format, with the `tm4j_result.json` as filepath.
-
+For the Junit integration with the post-build action use the `Test Management for Jira Output Result For JUnit` format, with the `tm4j_result.json` as filepath.
 
 ## Documentation
 

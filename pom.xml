@@ -4,11 +4,11 @@
     <parent>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>plugin</artifactId>
-        <version>3.2</version>
+        <version>3.3</version>
         <relativePath />
     </parent>
     <name>Test Management for Jira</name>
-    <url>https://wiki.jenkins.io/display/JENKINS/Test+Management+for+Jira</url>
+    <url>https://github.com/jenkinsci/tm4j-automation-plugin</url>
     <description>Integration with Test Management for Jira (by Adaptavist), for automatic publishing of test results.</description>
     <groupId>com.adaptavist</groupId>
     <artifactId>tm4j-automation</artifactId>
