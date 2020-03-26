@@ -9,10 +9,10 @@
     </parent>
     <name>Test Management for Jira</name>
     <url>https://github.com/jenkinsci/tm4j-automation-plugin</url>
-    <description>Integration with Test Management for Jira (by Adaptavist), for automatic publishing of test results.</description>
+    <description>Integration with Test Management for Jira (by SmartBear), for automatic publishing of test results.</description>
     <groupId>com.adaptavist</groupId>
     <artifactId>tm4j-automation</artifactId>
-    <version>1.4.1</version>
+    <version>1.5.0</version>
     <packaging>hpi</packaging>
 
     <licenses>
@@ -24,10 +24,10 @@
 
     <developers>
         <developer>
-            <name>Adaptavist - Test Management for Jira</name>
+            <name>SmartBear - Test Management for Jira</name>
             <email>testmanagement@adaptavist.com</email>
-            <organization>Adaptavist</organization>
-            <organizationUrl>http://www.adaptavist.com</organizationUrl>
+            <organization>SmartBear</organization>
+            <organizationUrl>https://smartbear.com/</organizationUrl>
         </developer>
     </developers>
 
