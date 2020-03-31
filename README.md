@@ -64,4 +64,4 @@ Check out the documentation at https://www.adaptavist.com/doco/display/KT/Jenkin
 
 ## Support
 
-For any issues or enquiries please get in touch with the Test Management for Jira team at Adaptavist using the [support portal](https://productsupport.adaptavist.com/servicedesk/customer/portal/27).
+For any issues or enquiries please get in touch with the Test Management for Jira team at SmartBear using the [support portal](https://productsupport.adaptavist.com/servicedesk/customer/portal/27).
