@@ -25,6 +25,3 @@ workflows:
     jobs:
       - maven/test:
           executor: openjdk8
-          filters:
-            tags:
-              ignore: /^\d+\.\d+\.\d+/
