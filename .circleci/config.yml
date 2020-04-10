@@ -1,0 +1,27 @@
+version: 2.1
+
+executors:
+  openjdk8:
+    docker:
+      - image: maven:3.6-jdk-8
+
+orbs:
+  maven: circleci/maven@1.0.0
+
+workflows:
+  build_test_deploy:
+    jobs:
+      - maven/test:
+          executor: openjdk8
+          command: -s mvnsettings.xml deploy
+          context: tm4j
+          filters:
+            tags:
+              only: /^\d+\.\d+\.\d+/
+            branches:
+              ignore: /.*/
+
+  build_test:
+    jobs:
+      - maven/test:
+          executor: openjdk8
