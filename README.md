@@ -60,8 +60,8 @@ For the Junit integration with the post-build action use the `Test Management fo
 
 ## Documentation
 
-Check out the documentation at https://www.adaptavist.com/doco/display/KT/Jenkins.
+Check out the documentation for [TM4J Cloud here](https://support.smartbear.com/tm4j-cloud/docs/api-and-test-automation/jenkins-integration.html) and for [TM4J Server/DC here](https://support.smartbear.com/tm4j-server/docs/test-automation/integrations/jenkins.html).
 
 ## Support
 
-For any issues or enquiries please get in touch with the Test Management for Jira team at SmartBear using the [support portal](https://productsupport.adaptavist.com/servicedesk/customer/portal/27).
+For any issues or enquiries please get in touch with the Test Management for Jira team at SmartBear using the [support portal](https://smartbear.atlassian.net/servicedesk/customer/portals).
