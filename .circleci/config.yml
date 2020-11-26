@@ -13,7 +13,7 @@ workflows:
     jobs:
       - maven/test:
           executor: openjdk8
-          command: -s mvnsettings.xml deploy
+          command: -s .circleci/settings.xml deploy
           context: tm4j
           filters:
             tags:
