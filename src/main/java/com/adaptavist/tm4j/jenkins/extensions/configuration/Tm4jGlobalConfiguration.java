@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.adaptavist.tm4j.jenkins.utils.Constants.TM4J_GLOBAL_CONFIGURATION;
+import static com.adaptavist.tm4j.jenkins.utils.Constants.ZEPHYR_SCALE_GLOBAL_CONFIGURATION;
 
 @Extension
 public class Tm4jGlobalConfiguration extends GlobalConfiguration {
@@ -38,7 +38,7 @@ public class Tm4jGlobalConfiguration extends GlobalConfiguration {
     @Nonnull
     @Override
     public String getDisplayName() {
-        return TM4J_GLOBAL_CONFIGURATION;
+        return ZEPHYR_SCALE_GLOBAL_CONFIGURATION;
     }
 
     @Override

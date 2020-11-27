@@ -1,10 +1,10 @@
 (function(){
     setTimeout(function(){
-        var formatSelect = document.querySelector('#tm4jAutomationPostBuildActionFormatSelect');
-        var filePath = document.querySelector('#tm4jAutomationPostBuildActionFilePath');
-        var currentPath;
+        const formatSelect = document.querySelector('#tm4jAutomationPostBuildActionFormatSelect');
+        const filePath = document.querySelector('#tm4jAutomationPostBuildActionFilePath');
+        let currentPath;
         if (filePath) {
-            currentPath = formatSelect.value == 'Cucumber' ? filePath.value : null;
+            currentPath = formatSelect.value === 'Cucumber' ? filePath.value : null;
         }
         formatSelect.onchange=changeEventHandler;
         checkFormat(formatSelect);
@@ -19,7 +19,7 @@
                 filePath.disabled = false;
             }
             else {
-                filePath.value = 'tm4j_result.json';
+                filePath.value = 'zephyrscale_result.json';
                 filePath.disabled = true;
             }
             filePath.onchange();
