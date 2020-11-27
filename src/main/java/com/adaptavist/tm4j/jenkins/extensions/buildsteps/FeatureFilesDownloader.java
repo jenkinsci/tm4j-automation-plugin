@@ -59,7 +59,7 @@ public class FeatureFilesDownloader extends Builder implements SimpleBuildStep {
             throw new RuntimeException();
         } catch (Exception e) {
             run.setResult(Result.FAILURE);
-            logger.printf("%s There was an error while trying to download feature files from Test Management for Jira. Error details: %n", ERROR);
+            logger.printf("%s There was an error while trying to download feature files from Zephyr Scale. Error details: %n", ERROR);
             logger.printf(" %s  %n", e.getMessage());
             for (StackTraceElement trace : e.getStackTrace()) {
                 logger.printf(" %s  %n", trace.toString());
