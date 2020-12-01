@@ -14,7 +14,8 @@ public class Constants {
     public static final String PLEASE_ENTER_THE_USERNAME = "Please enter the username";
     public static final String ZEPHYR_SCALE_OUTPUT_RESULT_FOR_JUNIT = "Zephyr Scale Output Result For JUnit";
     public static final String CUCUMBER = "Cucumber";
-    public static final String CUSTOM_FORMAT_FILE_NAME = "zephyrscale_result.json";
+    public static final String CUSTOM_FORMAT_FILE_LEGACY = "tm4j_result.json";
+    public static final String CUSTOM_FORMAT_FILE = "zephyrscale_result.json";
     public static final String PROJECT_KEY_IS_REQUIRED = "Project key is required.";
     public static final String FILE_PATH_IS_REQUIRED = "File path is required.";
     public static final String FILE_TARGET_IS_REQUIRED = "File target is required.";

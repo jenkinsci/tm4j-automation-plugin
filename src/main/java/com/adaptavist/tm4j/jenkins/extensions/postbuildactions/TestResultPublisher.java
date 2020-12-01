@@ -86,7 +86,7 @@ public class TestResultPublisher extends Notifier implements SimpleBuildStep {
         if (Constants.CUCUMBER.equals(this.format)) {
             tm4jJiraRestClient.uploadCucumberFile(directory, this.filePath, this.projectKey, this.autoCreateTestCases, logger);
         } else {
-            tm4jJiraRestClient.uploadCustomFormatFile(directory, Constants.CUSTOM_FORMAT_FILE_NAME, this.projectKey, this.autoCreateTestCases, logger);
+            tm4jJiraRestClient.uploadCustomFormatFile(directory, this.projectKey, this.autoCreateTestCases, logger);
         }
     }
 

@@ -6,25 +6,33 @@ import org.apache.tools.ant.DirectoryScanner;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import static com.adaptavist.tm4j.jenkins.utils.Constants.CUSTOM_FORMAT_FILE;
+import static com.adaptavist.tm4j.jenkins.utils.Constants.CUSTOM_FORMAT_FILE_LEGACY;
+
 public class FileReader {
 
-    public List<File> getFiles(String directory, String pattern) throws Exception {
+    public File getZip(String directory, String pattern) throws Exception {
+        return getZip(getFiles(directory, pattern));
+    }
+
+    public File getZip(String directory) throws Exception {
+        return getZip(Collections.singletonList(getFile(directory)));
+    }
+
+    private List<File> getFiles(String directory, String pattern) throws Exception {
         if (!new File(directory).isDirectory()) {
             throw new Exception(MessageFormat.format("Path not found : {0}", directory));
-        }
-        if (!pattern.contains("*")) {
-            File file = new File(directory + pattern);
-            if (!file.exists()) {
-                throw new FileNotFoundException(MessageFormat.format("File not found: {0}", pattern));
-            }
-            return Arrays.asList(file);
         }
         DirectoryScanner scanner = new DirectoryScanner();
         scanner.setIncludes(new String[]{pattern});
@@ -46,8 +54,7 @@ public class FileReader {
         return files;
     }
 
-    public File getZip(String directory, String pattern) throws Exception {
-        List<File> files = getFiles(directory, pattern);
+    private File getZip(List<File> files) throws IOException {
         File zip = File.createTempFile("tm4j", "zip");
         ZipOutputStream out = new ZipOutputStream(new FileOutputStream(zip));
         for (File file : files) {
@@ -57,5 +64,17 @@ public class FileReader {
         }
         out.close();
         return zip;
+    }
+
+    private File getFile(String directory) throws FileNotFoundException {
+        final File file = new File(directory + CUSTOM_FORMAT_FILE);
+        if (file.exists()){
+            return file;
+        }
+        final File legacy = new File(directory + CUSTOM_FORMAT_FILE_LEGACY);
+        if (!legacy.exists()) {
+            throw new FileNotFoundException(MessageFormat.format("File not found: {0}.", CUSTOM_FORMAT_FILE));
+        }
+        return file;
     }
 }

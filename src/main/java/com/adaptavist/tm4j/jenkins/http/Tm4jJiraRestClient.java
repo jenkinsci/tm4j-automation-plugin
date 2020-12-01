@@ -39,8 +39,8 @@ public class Tm4jJiraRestClient {
         }
     }
 
-    public void uploadCustomFormatFile(String directory, String filePath, String projectKey, Boolean autoCreateTestCases, final PrintStream logger) throws Exception {
-        File file = new FileReader().getZip(directory, filePath);
+    public void uploadCustomFormatFile(String directory, String projectKey, Boolean autoCreateTestCases, final PrintStream logger) throws Exception {
+        File file = new FileReader().getZip(directory);
         HttpResponse<JsonNode> jsonResponse = jiraInstance.publishCustomFormatBuildResult(projectKey, autoCreateTestCases, file);
         processUploadingResultsResponse(jsonResponse, logger);
         if (!file.delete()) {
