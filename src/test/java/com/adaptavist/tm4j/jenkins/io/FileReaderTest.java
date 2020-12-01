@@ -1,14 +1,18 @@
 package com.adaptavist.tm4j.jenkins.io;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
-import static com.adaptavist.tm4j.jenkins.utils.Constants.CUSTOM_FORMAT_FILE_LEGACY;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertThrows;
 
 public class FileReaderTest {
 
@@ -16,84 +20,93 @@ public class FileReaderTest {
     private static final String ALL = "**/*.json";
     private static final String JSON_ONLY = "*.json";
 
-//    @Test
-//    public void shouldReadAllFilesFromAFolder() throws Exception {
-//        List<File> files = new FileReader().getFiles(FILE_PATH, ALL);
-//        assertEquals(files.size(), 8);
-//    }
-//
-//    @Test
-//    public void shouldReadAllFilesFromAFolderPath() throws Exception {
-//        List<File> files = new FileReader().getFiles(FILE_PATH, "**/*");
-//        assertEquals(files.size(), 8);
-//    }
-//
-//    @Test
-//    public void shouldReadAllFilesFromAFolderPathWhitHyphen() throws Exception {
-//        List<File> files = new FileReader().getFiles(FILE_PATH, "result*");
-//        assertEquals(files.size(), 2);
-//    }
-//
-//    @Test
-//    public void shouldReadFilesFromAFolder() throws Exception {
-//        List<File> files = new FileReader().getFiles(FILE_PATH, JSON_ONLY);
-//        assertEquals(files.size(), 2);
-//    }
-//
-//    @Test
-//    public void shouldReadAFileFromAFolder() throws Exception {
-//        List<File> files = new FileReader().getFiles(FILE_PATH, "result_1.json");
-//        assertEquals(files.size(), 1);
-//    }
-//
-//    @Test
-//    public void shouldReadCustomJUnitFileVersion1() throws Exception {
-//        List<File> files = new FileReader().getFiles(FILE_PATH);
-//        assertEquals( 1, files.size());
-//        assertEquals(CUSTOM_FORMAT_FILE_LEGACY, files.get(0).getName());
-//    }
-//
-//    @Test
-//    public void shouldReadCustomJUnitFileVersion2() throws Exception {
-//        List<File> files = new FileReader().getFiles(FILE_PATH, CUSTOM_FORMAT_FILE_LEGACY);
-//        assertEquals( 1, files.size());
-//        assertEquals(CUSTOM_FORMAT_FILE_LEGACY, files.get(0).getName());
-//    }
+    @Test
+    public void shouldReadAllFilesFromAFolder() throws Exception {
+        final File zip = new FileReader().getZip(FILE_PATH, ALL);
+        final List<String> files = getFileNames(zip);
+        assertEquals(files.size(), 10);
+    }
 
     @Test
-    public void shouldCreateAZipFromAPatterm() throws Exception {
-        File file = new FileReader().getZip(FILE_PATH, JSON_ONLY);
-        assertTrue(file.exists());
+    public void shouldReadAllFilesFromAFolderPath() throws Exception {
+        final File zip = new FileReader().getZip(FILE_PATH, "**/*");
+        final List<String> files = getFileNames(zip);
+        assertEquals(files.size(), 10);
     }
 
-    @Test(expected = Exception.class)
-    @Ignore
+    @Test
+    public void shouldReadAllFilesFromAFolderPathWhitHyphen() throws Exception {
+        final File zip = new FileReader().getZip(FILE_PATH, "result*");
+        final List<String> files = getFileNames(zip);
+        assertEquals(files.size(), 2);
+    }
+
+    @Test
+    public void shouldReadFilesFromAFolder() throws Exception {
+        final File zip = new FileReader().getZip(FILE_PATH, JSON_ONLY);
+        List<String> files = getFileNames(zip);
+        assertEquals(files.size(), 3);
+    }
+
+    @Test
+    public void shouldReadAFileFromAFolder() throws Exception {
+        final File zip = new FileReader().getZip(FILE_PATH, "result_1.json");
+        final List<String> files = getFileNames(zip);
+        assertEquals(files.size(), 1);
+    }
+
+    @Test
     public void shouldThrowAnExceptionWhenFileNotFound() throws Exception {
-        try {
-            new FileReader().getZip(FILE_PATH, "abc.xyz");
-        } catch (Exception e) {
-            assertEquals(e.getMessage(), "File not found: abc.xyz");
-            throw e;
-        }
+        final FileReader fileReader = new FileReader();
+        FileNotFoundException exception = assertThrows(FileNotFoundException.class, () -> fileReader.getZip(FILE_PATH, "abc.xyz"));
+        assertEquals("File not found: abc.xyz", exception.getMessage());
     }
 
-    @Test(expected = Exception.class)
+    @Test
     public void shouldThrowAnExceptionWhenFileNotFoundForPattern() throws Exception {
-        try {
-            new FileReader().getZip(FILE_PATH, "*.xyz");
-        } catch (Exception e) {
-            assertEquals(e.getMessage(), "File not found : *.xyz");
-            throw e;
-        }
+        final FileReader fileReader = new FileReader();
+        FileNotFoundException exception = assertThrows( FileNotFoundException.class, () -> fileReader.getZip(FILE_PATH, "*.xyz"));
+        assertEquals("File not found: *.xyz", exception.getMessage());
     }
 
-    @Test(expected = Exception.class)
+    @Test
     public void shouldThrowAnExceptionWhenPathIsWrong() throws Exception {
-        try {
-            new FileReader().getZip("/abc/xyz", JSON_ONLY);
-        } catch (Exception e) {
-            assertEquals(e.getMessage(), "Path not found : /abc/xyz");
-            throw e;
+        final FileReader fileReader = new FileReader();
+        Exception exception = assertThrows(Exception.class, () -> fileReader.getZip("/abc/xyz", JSON_ONLY));
+        assertEquals(exception.getMessage(), "Path not found: /abc/xyz");
+    }
+
+    @Test
+    public void shouldFindLegacyCustomFile() throws Exception {
+        File zip = new FileReader().getZipForCustomFormat(FILE_PATH+ "legacy/");
+        List<String> files = getFileNames(zip);
+        assertEquals(1, files.size());
+        assertEquals(FILE_PATH + "legacy/tm4j_result.json", files.get(0));
+    }
+
+    @Test
+    public void shouldFindCustomFile() throws Exception {
+        final File zip = new FileReader().getZipForCustomFormat(FILE_PATH);
+        final List<String> files = getFileNames(zip);
+        assertEquals(1, files.size());
+        assertEquals(FILE_PATH + "zephyrscale_result.json", files.get(0));
+    }
+
+    @Test
+    public void shouldThrowAnExceptionWhenCustomFileDoesNotExist() throws Exception {
+        final FileReader fileReader = new FileReader();
+        FileNotFoundException exception = assertThrows(FileNotFoundException.class, () -> fileReader.getZipForCustomFormat("not/found"));
+        assertEquals("File not found: zephyrscale_result.json.", exception.getMessage());
+    }
+
+    private List<String> getFileNames(File zip) throws IOException {
+        List<String> fileNames = new ArrayList<>();
+        ZipInputStream zipInputStream = new ZipInputStream(new FileInputStream(zip));
+        ZipEntry entry;
+        while ((entry = zipInputStream.getNextEntry()) != null) {
+            fileNames.add(entry.getName());
+            zipInputStream.closeEntry();
         }
+        return fileNames;
     }
 }
