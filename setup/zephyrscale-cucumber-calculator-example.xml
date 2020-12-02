@@ -1,8 +1,8 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<flow-definition plugin="workflow-job@2.25">
+<?xml version='1.1' encoding='UTF-8'?>
+<flow-definition plugin="workflow-job@2.40">
   <actions>
-    <org.jenkinsci.plugins.pipeline.modeldefinition.actions.DeclarativeJobAction plugin="pipeline-model-definition@1.3.2"/>
-    <org.jenkinsci.plugins.pipeline.modeldefinition.actions.DeclarativeJobPropertyTrackerAction plugin="pipeline-model-definition@1.3.2">
+    <org.jenkinsci.plugins.pipeline.modeldefinition.actions.DeclarativeJobAction plugin="pipeline-model-definition@1.7.2"/>
+    <org.jenkinsci.plugins.pipeline.modeldefinition.actions.DeclarativeJobPropertyTrackerAction plugin="pipeline-model-definition@1.7.2">
       <jobProperties/>
       <triggers/>
       <parameters/>
@@ -12,13 +12,13 @@
   <description></description>
   <keepDependencies>false</keepDependencies>
   <properties/>
-  <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@2.55">
+  <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@2.86">
     <script>pipeline {
     agent any
     stages {
         stage(&apos;Preparation&apos;) {
             steps {
-                git &apos;ssh://git@stash.adaptavist.com:7999/atm/tm4j-cucumber-jenkins-plugin-example.git&apos;
+                git &apos;https://bitbucket.org/smartbeartm4j/tm4j-cucumber-calculator-example.git&apos;
             }
         }
         stage(&apos;Download Feature Files&apos;){

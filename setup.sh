@@ -2,8 +2,10 @@
 set -e
 server=http://localhost:8080/jenkins
 
-is_running() { 
-	if [ 200 == $(curl -o /dev/null -s -w "%{http_code}\n" $server/jnlpJars/jenkins-cli.jar) ] 
+echo "[==== SETUP ====] Starting Zephyr Scale Jenkins plugin setup..."
+
+is_running() {
+	if [ 200 == $(curl -o /dev/null -s -w "%{http_code}\n" $server/jnlpJars/jenkins-cli.jar) ]
 	then
 		true
 	else 
@@ -12,7 +14,7 @@ is_running() {
 }
 
 wait_start() { 
-	echo "Starting..."
+	echo "[==== SETUP ====] Starting Jenkins..."
 	while ! is_running 
 	do
 		sleep 1
@@ -20,7 +22,7 @@ wait_start() {
 }
 
 wait_stop() { 
-	echo "Stoping..."
+	echo "[==== SETUP ====] Stopping Jenkins..."
 	while is_running  
 	do
 		sleep 1
@@ -44,33 +46,33 @@ java -jar jenkins-cli.jar -s $server safe-restart
 wait_stop
 wait_start
 
-sleep 20
+sleep 5
 java -jar jenkins-cli.jar -s $server install-plugin workflow-aggregator
 java -jar jenkins-cli.jar -s $server install-plugin git
 sleep 2
-echo "Stoping..."
+echo "[==== SETUP ====] Stopping Jenkins..."
 java -jar jenkins-cli.jar -s $server safe-restart
 wait_start
 
-echo "Setting Jenkins configurations"
-java -jar jenkins-cli.jar -s $server create-job tm4j-cucumber < setup/tm4j-cucumber.xml
-echo "Creating a cucumber job"
-java -jar jenkins-cli.jar -s $server create-job tm4j-junit < setup/tm4j-junit.xml
-echo "Creating a pipeline job for cucumber"
-java -jar jenkins-cli.jar -s $server create-job tm4j-cucumber-pipeline < setup/tm4j-cucumber-pipeline.xml
-echo "Creating a pipeline job for cucumber without fatures"
-java -jar jenkins-cli.jar -s $server create-job tm4j-cucumber-pipeline-download-feature < setup/tm4j-cucumber-pipeline-download-feature.xml
-echo "Creating a junit job"
+echo "[==== SETUP ====] Setting Jenkins configurations"
+echo "[==== SETUP ====] Creating jobs"
+java -jar jenkins-cli.jar -s $server create-job tm4j-junit-integration-example-legacy-version < setup/tm4j-junit-integration-example-legacy-version.xml
+java -jar jenkins-cli.jar -s $server create-job zephyrscale-cucumber-calculator-example < setup/zephyrscale-cucumber-calculator-example.xml
+java -jar jenkins-cli.jar -s $server create-job zephyrscale-cucumber-integration-example < setup/zephyrscale-cucumber-integration-example.xml
+java -jar jenkins-cli.jar -s $server create-job zephyrscale-cucumber-integration-example-pipeline < setup/zephyrscale-cucumber-integration-example-pipeline.xml
+java -jar jenkins-cli.jar -s $server create-job zephyrscale-junit-integration-example < setup/zephyrscale-junit-integration-example.xml
+
 cp setup/com.adaptavist.tm4j.jenkins.extensions.configuration.Tm4jGlobalConfiguration.xml work/
-echo "Restarting..."
+
+echo "[==== SETUP ====] Restarting Jenkins..."
 java -jar jenkins-cli.jar -s $server safe-restart
 wait_start
 
-echo "Shutdown"
+echo "[==== SETUP ====] Shutdown Jenkins"
 java -jar jenkins-cli.jar -s $server safe-shutdown
 
 sleep 2
-echo "Jenkins stoped"
-echo "Setup finished"
-echo "Execute run.sh to run Jenkins";
+echo "[==== SETUP ====] Jenkins stopped"
+echo "[==== SETUP ====] Setup finished"
+echo "[==== SETUP ====] Execute run.sh to run Jenkins";
 rm jenkins-cli.jar
