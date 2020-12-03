@@ -54,7 +54,7 @@ public class FormHelper {
     public ListBoxModel fillServerAddressItems(List<Instance> jiraInstances) {
         ListBoxModel modelbox = new ListBoxModel();
         if (jiraInstances == null || jiraInstances.isEmpty()) {
-            modelbox.add(ADD_TM4J_GLOBAL_CONFIG);
+            modelbox.add(ADD_ZEPHYR_SCALE_GLOBAL_CONFIG);
             return modelbox;
         }
         for (Instance server : jiraInstances) {
@@ -66,7 +66,7 @@ public class FormHelper {
     public ListBoxModel fillFormat() {
         ListBoxModel modelbox = new ListBoxModel();
         modelbox.add(CUCUMBER);
-        modelbox.add(TM4J_OUTPUT_RESULT_FOR_JUNIT);
+        modelbox.add(ZEPHYR_SCALE_OUTPUT_RESULT_FOR_JUNIT);
         return modelbox;
     }
 

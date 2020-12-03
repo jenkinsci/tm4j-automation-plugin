@@ -39,8 +39,8 @@ public class Tm4jJiraRestClient {
         }
     }
 
-    public void uploadCustomFormatFile(String directory, String filePath, String projectKey, Boolean autoCreateTestCases, final PrintStream logger) throws Exception {
-        File file = new FileReader().getZip(directory, filePath);
+    public void uploadCustomFormatFile(String directory, String projectKey, Boolean autoCreateTestCases, final PrintStream logger) throws Exception {
+        File file = new FileReader().getZipForCustomFormat(directory);
         HttpResponse<JsonNode> jsonResponse = jiraInstance.publishCustomFormatBuildResult(projectKey, autoCreateTestCases, file);
         processUploadingResultsResponse(jsonResponse, logger);
         if (!file.delete()) {
@@ -84,7 +84,7 @@ public class Tm4jJiraRestClient {
             String testCycleKey = (String) testRun.get("key");
             String testCycleUrl = (String) testRun.get("url");
             logger.printf("%s Test Cycle created with the following KEY: %s. %s %n", INFO, testCycleKey, testCycleUrl);
-            logger.printf("%s Test results published to Test Management for Jira successfully.%n", INFO);
+            logger.printf("%s Test results published to Zephyr Scale successfully.%n", INFO);
         } else if (isClientError(jsonResponse)) {
             processErrorMessages(jsonResponse, logger);
             logger.printf("%s Test Cycle was not created %n", ERROR);
