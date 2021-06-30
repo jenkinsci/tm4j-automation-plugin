@@ -71,3 +71,13 @@ for [Zephyr Scale Server/DC here](https://support.smartbear.com/zephyr-scale-ser
 ## Support
 
 For any issues or enquiries please get in touch with the Zephyr Scale team at SmartBear using the [support portal](https://smartbear.atlassian.net/servicedesk/customer/portals).
+
+
+## Running the Zephyr Scale Jenkins plugin locally
+
+You can try the plugin on you local machine before getting it installed on your production Jenkins instance.
+
+After cloning this repository, these are the 2 steps you should follow:
+1. Run `./setup.sh`: this step will download and setup Jenkins on your local machine
+2. Run `./run.sh`: this will run Jenkins with the Zephyr Scale plugin installed
+
