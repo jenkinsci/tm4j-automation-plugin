@@ -18,6 +18,7 @@ import java.text.ParseException;
 public class JiraCloudInstance implements Instance {
 
     private static final String CUCUMBER_ENDPOINT = "{0}/v2/automations/executions/cucumber";
+    private static final String JUNIT_ENDPOINT = "{0}/v2/automations/executions/junit";
     private static final String CUSTOM_FORMAT_ENDPOINT = "{0}/v2/automations/executions/custom";
     private static final String FEATURE_FILES_ENDPOINT = "{0}/v2/automations/testcases";
     private static final String TM4J_HEALTH_CHECK = "{0}/v2/healthcheck";
@@ -80,6 +81,14 @@ public class JiraCloudInstance implements Instance {
     @Override
     public HttpResponse<JsonNode> publishCustomFormatBuildResult(String projectKey, Boolean autoCreateTestCases, File zip) throws UnirestException {
         String url = MessageFormat.format(CUSTOM_FORMAT_ENDPOINT, TM4J_API_BASE_URL);
+        HttpClient httpClient = HttpClientBuilder.create().disableCookieManagement().build();
+        Unirest.setHttpClient(httpClient);
+        return exportResultsFile(projectKey, autoCreateTestCases, zip, url);
+    }
+
+    @Override
+    public HttpResponse<JsonNode> publishJUnitFormatBuildResult(String projectKey, Boolean autoCreateTestCases, File zip) throws UnirestException {
+        String url = MessageFormat.format(JUNIT_ENDPOINT, TM4J_API_BASE_URL);
         HttpClient httpClient = HttpClientBuilder.create().disableCookieManagement().build();
         Unirest.setHttpClient(httpClient);
         return exportResultsFile(projectKey, autoCreateTestCases, zip, url);

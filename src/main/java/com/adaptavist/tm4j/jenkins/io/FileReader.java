@@ -52,7 +52,7 @@ public class FileReader {
     }
 
     private File createZip(List<File> files) throws IOException {
-        File zip = File.createTempFile("tm4j", "zip");
+        File zip = File.createTempFile("tm4j", ".zip");
         ZipOutputStream out = new ZipOutputStream(new FileOutputStream(zip));
         for (File file : files) {
             out.putNextEntry(new ZipEntry(file.getPath()));

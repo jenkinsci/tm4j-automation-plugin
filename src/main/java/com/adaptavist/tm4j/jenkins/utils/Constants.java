@@ -13,6 +13,7 @@ public class Constants {
     public static final String SERVER_URL_IS_REQUIRED = "Server URL is required";
     public static final String PLEASE_ENTER_THE_USERNAME = "Please enter the username";
     public static final String ZEPHYR_SCALE_OUTPUT_RESULT_FOR_JUNIT = "Zephyr Scale Output Result For JUnit";
+    public static final String JUNIT_RESULT_FILE = "JUnit XML Result File";
     public static final String CUCUMBER = "Cucumber";
     public static final String CUSTOM_FORMAT_FILE_LEGACY = "tm4j_result.json";
     public static final String CUSTOM_FORMAT_FILE = "zephyrscale_result.json";

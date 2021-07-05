@@ -80,4 +80,5 @@ You can try the plugin on you local machine before getting it installed on your 
 After cloning this repository, these are the 2 steps you should follow:
 1. Run `./setup.sh`: this step will download and setup Jenkins on your local machine
 2. Run `./run.sh`: this will run Jenkins with the Zephyr Scale plugin installed
+3. Browse to http://localhost:8080/jenkins to access Jenkins
 
