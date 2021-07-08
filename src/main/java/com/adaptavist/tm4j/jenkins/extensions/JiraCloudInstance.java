@@ -137,6 +137,7 @@ public class JiraCloudInstance implements Instance {
     private HttpResponse<JsonNode> exportResultsFile(String projectKey, Boolean autoCreateTestCases, File zip, String url) throws UnirestException {
         return Unirest.post(url)
                 .header("Authorization", "Bearer " + getDecryptedJwt())
+                .header("zscale-source", "Jenkins Plugin")
                 .queryString("autoCreateTestCases", autoCreateTestCases)
                 .queryString("projectKey", projectKey)
                 .field("file", zip)
