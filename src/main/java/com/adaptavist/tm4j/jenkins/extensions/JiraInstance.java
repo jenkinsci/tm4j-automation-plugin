@@ -85,6 +85,11 @@ public class JiraInstance implements Instance {
         return importBuildResultsFile(autoCreateTestCases, zip, url);
     }
 
+    @Override
+    public HttpResponse<JsonNode> publishJUnitFormatBuildResult(String projectKey, Boolean autoCreateTestCases, File zip) throws UnirestException {
+        throw new RuntimeException("Not implemented for Zephyr Scale Server/DC");
+    }
+
     public String getServerAddress() {
         return serverAddress;
     }

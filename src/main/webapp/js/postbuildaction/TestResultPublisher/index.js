@@ -17,8 +17,10 @@
             if  (target.value === 'Cucumber') {
                 filePath.value = currentPath ? currentPath : 'target/cucumber/*.json';
                 filePath.disabled = false;
-            }
-            else {
+            } else if (target.value == 'JUnit XML Result File') {
+                filePath.value = 'target/surefire-reports/*.xml';
+                filePath.disabled = false;
+            } else {
                 filePath.value = 'zephyrscale_result.json';
                 filePath.disabled = true;
             }

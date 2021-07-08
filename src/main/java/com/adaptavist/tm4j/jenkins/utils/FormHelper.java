@@ -67,6 +67,7 @@ public class FormHelper {
         ListBoxModel modelbox = new ListBoxModel();
         modelbox.add(CUCUMBER);
         modelbox.add(ZEPHYR_SCALE_OUTPUT_RESULT_FOR_JUNIT);
+        modelbox.add(JUNIT_RESULT_FILE);
         return modelbox;
     }
 

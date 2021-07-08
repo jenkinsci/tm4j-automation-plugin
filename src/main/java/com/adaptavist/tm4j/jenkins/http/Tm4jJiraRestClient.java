@@ -48,6 +48,15 @@ public class Tm4jJiraRestClient {
         }
     }
 
+    public void uploadJUnitXmlResultFile(String directory, String filePath, String projectKey, Boolean autoCreateTestCases, PrintStream logger) throws Exception {
+        File file = new FileReader().getZip(directory, filePath);
+        HttpResponse<JsonNode> jsonResponse = jiraInstance.publishJUnitFormatBuildResult(projectKey, autoCreateTestCases, file);
+        processUploadingResultsResponse(jsonResponse, logger);
+        if (!file.delete()) {
+            logger.printf("%s The generated ZIP file couldn't be deleted. Please check folder permissions and delete the file manually: " + file.getAbsolutePath() + " %n", INFO);
+        }
+    }
+
     public void importFeatureFiles(File rootDir, FilePath workspace, String targetPath, String projectKey, final PrintStream logger) throws Exception {
         try {
             HttpResponse<String> httpResponse = jiraInstance.downloadFeatureFile(projectKey);
