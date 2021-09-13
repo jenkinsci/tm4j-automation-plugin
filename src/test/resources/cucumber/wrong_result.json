@@ -1,0 +1,71 @@
+{
+  "elements": [
+    {
+      "line": 4,
+      "name": "Add a number",
+      "description": "",
+      "id": "calculator;add-a-number",
+      "type": "scenario",
+      "keyword": "Scenario",
+      "steps": [
+        {
+          "result": {
+            "duration": 73347560,
+            "status": "passed"
+          },
+          "line": 5,
+          "name": "a calculator I just turned on",
+          "match": {
+            "location": "CucumberSteps.a_calculator_I_just_turned_on()"
+          },
+          "keyword": "Given "
+        },
+        {
+          "result": {
+            "duration": 991666,
+            "status": "passed"
+          },
+          "line": 6,
+          "name": "I add 4 and 4",
+          "match": {
+            "arguments": [
+              {
+                "val": "4",
+                "offset": 6
+              },
+              {
+                "val": "4",
+                "offset": 12
+              }
+            ],
+            "location": "CucumberSteps.numbers_are_added(long,long)"
+          },
+          "keyword": "And "
+        },
+        {
+          "result": {
+            "duration": 840246,
+            "status": "passed"
+          },
+          "line": 7,
+          "name": "the result is 8",
+          "match": {
+            "arguments": [
+              {
+                "val": "8",
+                "offset": 14
+              }
+            ],
+            "location": "CucumberSteps.the_result_is(long)"
+          },
+          "keyword": "Then "
+        }
+      ],
+      "tags": [
+        {
+          "name": "@TestCaseKey\u003dJP-T1"
+        }
+      ]
+    }
+  ]
+}

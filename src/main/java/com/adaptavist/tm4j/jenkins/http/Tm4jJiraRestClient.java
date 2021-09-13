@@ -30,8 +30,16 @@ public class Tm4jJiraRestClient {
         jiraInstance = getTm4jInstance(jiraInstances, name);
     }
 
-    public void uploadCucumberFile(String directory, String filePath, String projectKey, Boolean autoCreateTestCases, final PrintStream logger) throws Exception {
-        File file = new FileReader().getZip(directory, filePath);
+    public void uploadCucumberFile(String directory, String filePath, String projectKey, Boolean autoCreateTestCases,
+                                   final PrintStream logger) throws Exception {
+        FileReader fileReader = new FileReader();
+        File file;
+        if(filePath.endsWith("json")){
+            file = fileReader.getJsonCucumberZip(directory, filePath);
+        } else {
+           file = fileReader.getZip(directory, filePath);
+        }
+
         HttpResponse<JsonNode> jsonResponse = jiraInstance.publishCucumberFormatBuildResult(projectKey, autoCreateTestCases, file);
         processUploadingResultsResponse(jsonResponse, logger);
         if (!file.delete()) {
@@ -39,7 +47,8 @@ public class Tm4jJiraRestClient {
         }
     }
 
-    public void uploadCustomFormatFile(String directory, String projectKey, Boolean autoCreateTestCases, final PrintStream logger) throws Exception {
+    public void uploadCustomFormatFile(String directory, String projectKey, Boolean autoCreateTestCases,
+                                       final PrintStream logger) throws Exception {
         File file = new FileReader().getZipForCustomFormat(directory);
         HttpResponse<JsonNode> jsonResponse = jiraInstance.publishCustomFormatBuildResult(projectKey, autoCreateTestCases, file);
         processUploadingResultsResponse(jsonResponse, logger);
@@ -48,7 +57,8 @@ public class Tm4jJiraRestClient {
         }
     }
 
-    public void uploadJUnitXmlResultFile(String directory, String filePath, String projectKey, Boolean autoCreateTestCases, PrintStream logger) throws Exception {
+    public void uploadJUnitXmlResultFile(String directory, String filePath, String projectKey, Boolean autoCreateTestCases,
+                                         PrintStream logger) throws Exception {
         File file = new FileReader().getZip(directory, filePath);
         HttpResponse<JsonNode> jsonResponse = jiraInstance.publishJUnitFormatBuildResult(projectKey, autoCreateTestCases, file);
         processUploadingResultsResponse(jsonResponse, logger);

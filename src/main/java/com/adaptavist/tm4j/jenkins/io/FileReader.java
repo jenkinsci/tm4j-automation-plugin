@@ -11,9 +11,12 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import static com.adaptavist.tm4j.jenkins.cucumber.CucumberFileUtil.deleteTmpFiles;
+import static com.adaptavist.tm4j.jenkins.cucumber.CucumberFileUtil.filterCucumberFiles;
 import static com.adaptavist.tm4j.jenkins.utils.Constants.CUSTOM_FORMAT_FILE;
 import static com.adaptavist.tm4j.jenkins.utils.Constants.CUSTOM_FORMAT_FILE_LEGACY;
 
@@ -21,6 +24,17 @@ public class FileReader {
 
     public File getZip(String directory, String pattern) throws Exception {
         return createZip(findFiles(directory, pattern));
+    }
+
+    public File getJsonCucumberZip(String directory, String pattern) throws Exception {
+        List<File> files = findFiles(directory, pattern);
+        List<File> newFiles = files.stream()
+                .map(file -> filterCucumberFiles(file, directory))
+                .collect(Collectors.toList());
+
+        final File zip = createZip(newFiles);
+        deleteTmpFiles(directory);
+        return zip;
     }
 
     public File getZipForCustomFormat(String directory) throws Exception {
@@ -65,7 +79,7 @@ public class FileReader {
 
     private File getCustomFileFormat(String directory) throws FileNotFoundException {
         final File file = new File(directory + CUSTOM_FORMAT_FILE);
-        if (file.exists()){
+        if (file.exists()) {
             return file;
         }
         final File legacy = new File(directory + CUSTOM_FORMAT_FILE_LEGACY);

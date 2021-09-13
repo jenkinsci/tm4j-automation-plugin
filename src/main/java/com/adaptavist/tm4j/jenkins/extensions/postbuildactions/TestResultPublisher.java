@@ -92,7 +92,7 @@ public class TestResultPublisher extends Notifier implements SimpleBuildStep {
         }
     }
 
-    private String getDirectory(FilePath workspace, Run run) throws IOException, InterruptedException {
+    private String getDirectory(FilePath workspace, Run<?, ?> run) throws IOException, InterruptedException {
         if (workspace.isRemote()){
             FilePath path = new FilePath(run.getRootDir());
             workspace.copyRecursiveTo(this.filePath, path);
