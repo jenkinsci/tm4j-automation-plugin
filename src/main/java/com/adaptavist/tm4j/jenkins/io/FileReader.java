@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,14 +27,14 @@ public class FileReader {
         return createZip(findFiles(directory, pattern));
     }
 
-    public File getJsonCucumberZip(String directory, String pattern) throws Exception {
+    public File getJsonCucumberZip(String directory, String pattern, final PrintStream logger) throws Exception {
         List<File> files = findFiles(directory, pattern);
         List<File> newFiles = files.stream()
-                .map(file -> filterCucumberFiles(file, directory))
+                .map(file -> filterCucumberFiles(file, directory, logger))
                 .collect(Collectors.toList());
 
         final File zip = createZip(newFiles);
-        deleteTmpFiles(directory);
+        deleteTmpFiles(directory, logger);
         return zip;
     }
 

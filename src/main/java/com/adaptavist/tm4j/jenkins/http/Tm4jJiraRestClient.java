@@ -35,7 +35,7 @@ public class Tm4jJiraRestClient {
         FileReader fileReader = new FileReader();
         File file;
         if(filePath.endsWith("json")){
-            file = fileReader.getJsonCucumberZip(directory, filePath);
+            file = fileReader.getJsonCucumberZip(directory, filePath, logger);
         } else {
            file = fileReader.getZip(directory, filePath);
         }

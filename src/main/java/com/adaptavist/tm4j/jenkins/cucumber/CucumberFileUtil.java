@@ -7,11 +7,13 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
 
+import static com.adaptavist.tm4j.jenkins.utils.Constants.INFO;
+
 public class CucumberFileUtil {
 
-    public static File filterCucumberFiles(File file, String directory) {
+    public static File filterCucumberFiles(File file, String directory, final PrintStream logger) {
         String tmpDirectoryName = getTmpDirectory(directory);
-        return filterCucumberFiles(file, tmpDirectoryName, false);
+        return filterCucumberFiles(file, tmpDirectoryName, false, logger);
     }
 
     private static String getTmpDirectory(String directory) {
@@ -20,11 +22,14 @@ public class CucumberFileUtil {
         return tmpDirectoryName + "target/cucumber_tmp/";
     }
 
-    public static File filterCucumberFiles(File file, String tmpDirectory, boolean withFormat) {
+    public static File filterCucumberFiles(File file, String tmpDirectory, boolean withFormat, final PrintStream logger) {
         File directory = new File(tmpDirectory);
 
         if (!directory.exists()) {
-            directory.mkdir();
+            if (!directory.mkdir()) {
+                throw new RuntimeException(String.format("The directory '%s' couldn't be created. Please check " +
+                        "folder permissions and try again", tmpDirectory));
+            }
         }
 
         File newFile = new File(tmpDirectory + file.getName());
@@ -43,20 +48,39 @@ public class CucumberFileUtil {
             }
             return newFile;
         } catch (IOException exception) {
-            throw new RuntimeException("Exception while parsing file " + file.getName(), exception);
+            deleteTmpFile(newFile, logger);
+            throw new RuntimeException(String.format("Exception while parsing file: %s ", file.getName()), exception);
+        } catch (IllegalStateException exception) {
+            deleteTmpFile(newFile, logger);
+            throw exception;
         }
     }
 
-    public static boolean deleteTmpFiles(String directory) {
+    private static void deleteTmpFile(File file, final PrintStream logger) {
+        if (file.exists()) {
+            if (!file.delete()) {
+                logger.printf("%s The generated file couldn't be deleted. Please check folder permissions " +
+                        "and delete the file manually: %s %n", INFO, file.getAbsolutePath());
+            }
+        }
+    }
+
+    public static void deleteTmpFiles(String directory, final PrintStream logger) {
         String tmpDirectory = getTmpDirectory(directory);
         File directoryFile = new File(tmpDirectory);
         File[] allContents = directoryFile.listFiles();
         if (allContents != null) {
             for (File file : allContents) {
-                file.delete();
+                if (!file.delete()) {
+                    logger.printf("%s The generated file couldn't be deleted. Please check folder permissions " +
+                            "and delete the file manually: %s %n", INFO, file.getAbsolutePath());
+                }
             }
         }
-        return directoryFile.delete();
+        if (!directoryFile.delete()) {
+            logger.printf("%s The generated  file couldn't be deleted. Please check folder permissions and " +
+                    "delete the directory manually: %s  %n", INFO, directoryFile.getAbsolutePath());
+        }
     }
 
 }
