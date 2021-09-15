@@ -1,0 +1,50 @@
+[
+  {
+    "line": 1,
+    "elements": [
+      {
+        "line": null,
+        "name": null,
+        "description": "",
+        "id": "calculator;add-a-number",
+        "type": "scenario",
+        "keyword": "Scenario",
+        "steps": [
+          {
+            "result": {
+              "duration": 73347560,
+              "status": "passed"
+            },
+            "line": 5,
+            "name": "a calculator I just turned on",
+            "keyword": "Given "
+          },
+          {
+            "result": {
+              "duration": 991666,
+              "status": "passed"
+            },
+            "line": 6,
+            "name": "I add 4 and 4",
+            "keyword": "And "
+          },
+          {
+            "result": {
+              "duration": 840246,
+              "status": "passed"
+            },
+            "line": 7,
+            "name": "the result is 8",
+            "keyword": "Then "
+          }
+        ]
+      }
+    ],
+    "name": "Calculator",
+    "description": null,
+    "id": "calculator",
+    "keyword": "Feature",
+    "uri": "src/test/resources/features/CalculatorTest.feature",
+    "tags": []
+  }
+]

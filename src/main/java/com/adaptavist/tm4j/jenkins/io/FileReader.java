@@ -1,5 +1,6 @@
 package com.adaptavist.tm4j.jenkins.io;
 
+import com.adaptavist.tm4j.jenkins.cucumber.CucumberFileProcessor;
 import org.apache.commons.io.FileUtils;
 import org.apache.tools.ant.DirectoryScanner;
 
@@ -16,8 +17,6 @@ import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import static com.adaptavist.tm4j.jenkins.cucumber.CucumberFileUtil.deleteTmpFiles;
-import static com.adaptavist.tm4j.jenkins.cucumber.CucumberFileUtil.filterCucumberFiles;
 import static com.adaptavist.tm4j.jenkins.utils.Constants.CUSTOM_FORMAT_FILE;
 import static com.adaptavist.tm4j.jenkins.utils.Constants.CUSTOM_FORMAT_FILE_LEGACY;
 
@@ -28,13 +27,15 @@ public class FileReader {
     }
 
     public File getJsonCucumberZip(String directory, String pattern, final PrintStream logger) throws Exception {
+        CucumberFileProcessor cucumberFileProcessor = new CucumberFileProcessor(logger, directory);
+
         List<File> files = findFiles(directory, pattern);
         List<File> newFiles = files.stream()
-                .map(file -> filterCucumberFiles(file, directory, logger))
+                .map(cucumberFileProcessor::filterCucumberFile)
                 .collect(Collectors.toList());
 
         final File zip = createZip(newFiles);
-        deleteTmpFiles(directory, logger);
+        cucumberFileProcessor.deleteTmpFilesAndFolder();
         return zip;
     }
 

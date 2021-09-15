@@ -1,5 +1,6 @@
 package com.adaptavist.tm4j.jenkins.cucumber;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 
@@ -9,11 +10,18 @@ import java.nio.file.FileSystems;
 
 import static com.adaptavist.tm4j.jenkins.utils.Constants.INFO;
 
-public class CucumberFileUtil {
+public class CucumberFileProcessor {
 
-    public static File filterCucumberFiles(File file, String directory, final PrintStream logger) {
-        String tmpDirectoryName = getTmpDirectory(directory);
-        return filterCucumberFiles(file, tmpDirectoryName, false, logger);
+    private final PrintStream logger;
+    private String tmpDirectory;
+
+    public CucumberFileProcessor(PrintStream logger, String directory) {
+        this.logger = logger;
+        this.tmpDirectory = getTmpDirectory(directory);
+    }
+
+    public File filterCucumberFile(File file) {
+        return filterCucumberFile(file, false);
     }
 
     private static String getTmpDirectory(String directory) {
@@ -22,7 +30,12 @@ public class CucumberFileUtil {
         return tmpDirectoryName + "target/cucumber_tmp/";
     }
 
-    public static File filterCucumberFiles(File file, String tmpDirectory, boolean withFormat, final PrintStream logger) {
+    void setTmpDirectory(String directory){
+        this.tmpDirectory = directory;
+    }
+
+    @VisibleForTesting
+    File filterCucumberFile(File file, boolean withFormat) {
         File directory = new File(tmpDirectory);
 
         if (!directory.exists()) {
@@ -47,26 +60,23 @@ public class CucumberFileUtil {
                 }
             }
             return newFile;
-        } catch (IOException exception) {
-            deleteTmpFile(newFile, logger);
+        } catch (IllegalStateException | IOException exception) {
+            deleteTmpFileAfterError(newFile);
             throw new RuntimeException(String.format("Exception while parsing file: %s ", file.getName()), exception);
-        } catch (IllegalStateException exception) {
-            deleteTmpFile(newFile, logger);
-            throw exception;
         }
     }
 
-    private static void deleteTmpFile(File file, final PrintStream logger) {
+    private  void deleteTmpFileAfterError(File file) {
         if (file.exists()) {
             if (!file.delete()) {
-                logger.printf("%s The generated file couldn't be deleted. Please check folder permissions " +
+                logger.printf("%s The generated file couldn't be deleted after error. Please check folder permissions " +
                         "and delete the file manually: %s %n", INFO, file.getAbsolutePath());
             }
         }
     }
 
-    public static void deleteTmpFiles(String directory, final PrintStream logger) {
-        String tmpDirectory = getTmpDirectory(directory);
+    public void deleteTmpFilesAndFolder() {
+        String tmpDirectory = getTmpDirectory(this.tmpDirectory);
         File directoryFile = new File(tmpDirectory);
         File[] allContents = directoryFile.listFiles();
         if (allContents != null) {
@@ -78,8 +88,8 @@ public class CucumberFileUtil {
             }
         }
         if (!directoryFile.delete()) {
-            logger.printf("%s The generated  file couldn't be deleted. Please check folder permissions and " +
-                    "delete the directory manually: %s  %n", INFO, directoryFile.getAbsolutePath());
+            logger.printf("%s The generated directory couldn't be deleted. Please check folder permissions and " +
+                    "delete the directory manually: %s %n", INFO, directoryFile.getAbsolutePath());
         }
     }
 

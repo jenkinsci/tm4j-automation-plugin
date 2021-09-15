@@ -30,17 +30,17 @@ public class CucumberReportParser {
         while (reader.hasNext()) {
             String tag = reader.nextName();
             if ("name".equals(tag)) {
-                writer.name("name").value(reader.nextString());
+                writer.name("name").value(nextString());
             } else if ("keyword".equals(tag)) {
-                writer.name("keyword").value(reader.nextString());
+                writer.name("keyword").value(nextString());
             } else if ("uri".equals(tag)) {
-                writer.name("uri").value(reader.nextString());
+                writer.name("uri").value(nextString());
             } else if ("line".equals(tag)) {
-                writer.name("line").value(reader.nextInt());
+                writer.name("line").value(nextLong());
             } else if ("description".equals(tag)) {
-                writer.name("description").value(reader.nextString());
+                writer.name("description").value(nextString());
             } else if ("id".equals(tag)) {
-                writer.name("id").value(reader.nextString());
+                writer.name("id").value(nextString());
             } else if ("tags".equals(tag) && reader.peek() != JsonToken.NULL) {
                 parseTags();
             } else if ("elements".equals(tag) && reader.peek() != JsonToken.NULL) {
@@ -66,9 +66,9 @@ public class CucumberReportParser {
         while (reader.hasNext()) {
             String tag = reader.nextName();
             if ("line".equals(tag)) {
-                writer.name("line").value(reader.nextInt());
+                writer.name("line").value(nextLong());
             } else if ("name".equals(tag)) {
-                writer.name("name").value(reader.nextString());
+                writer.name("name").value(nextString());
             } else {
                 reader.skipValue();
             }
@@ -90,17 +90,17 @@ public class CucumberReportParser {
         while (reader.hasNext()) {
             String tag = reader.nextName();
             if ("line".equals(tag)) {
-                writer.name("line").value(reader.nextLong());
+                writer.name("line").value(nextLong());
             } else if ("name".equals(tag)) {
-                writer.name("name").value(reader.nextString());
+                writer.name("name").value(nextString());
             } else if ("description".equals(tag)) {
-                writer.name("description").value(reader.nextString());
+                writer.name("description").value(nextString());
             } else if ("id".equals(tag)) {
-                writer.name("id").value(reader.nextString());
+                writer.name("id").value(nextString());
             } else if ("type".equals(tag)) {
-                writer.name("type").value(reader.nextString());
+                writer.name("type").value(nextString());
             } else if ("keyword".equals(tag)) {
-                writer.name("keyword").value(reader.nextString());
+                writer.name("keyword").value(nextString());
             } else if ("steps".equals(tag) && reader.peek() != JsonToken.NULL) {
                 parseSteps();
             } else if ("tags".equals(tag) && reader.peek() != JsonToken.NULL) {
@@ -126,13 +126,13 @@ public class CucumberReportParser {
         while (reader.hasNext()) {
             String tag = reader.nextName();
             if ("line".equals(tag)) {
-                writer.name("line").value(reader.nextLong());
+                writer.name("line").value(nextLong());
             } else if ("name".equals(tag)) {
-                writer.name("name").value(reader.nextString());
+                writer.name("name").value(nextString());
             } else if ("keyword".equals(tag)) {
-                writer.name("keyword").value(reader.nextString());
+                writer.name("keyword").value(nextString());
             } else if ("hidden".equals(tag)) {
-                writer.name("hidden").value(reader.nextBoolean());
+                writer.name("hidden").value(nextBoolean());
             } else if ("result".equals(tag)) {
                 writer.name("result");
                 parseResult();
@@ -148,16 +148,40 @@ public class CucumberReportParser {
         while (reader.hasNext()) {
             String tag = reader.nextName();
             if ("status".equals(tag)) {
-                writer.name("status").value(reader.nextString());
+                writer.name("status").value(nextString());
             } else if ("duration".equals(tag)) {
-                writer.name("duration").value(reader.nextLong());
+                writer.name("duration").value(nextLong());
             } else if ("error_message".equals(tag)) {
-                writer.name("error_message").value(reader.nextString());
+                writer.name("error_message").value(nextString());
             } else {
                 reader.skipValue();
             }
         }
         endObject();
+    }
+
+    private Long nextLong() throws java.io.IOException {
+        if(reader.peek() != JsonToken.NULL){
+            return reader.nextLong();
+        }
+        reader.nextNull();
+        return null;
+    }
+
+    private String nextString() throws java.io.IOException {
+        if(reader.peek() != JsonToken.NULL){
+            return reader.nextString();
+        }
+        reader.nextNull();
+        return null;
+    }
+
+    private Boolean nextBoolean() throws java.io.IOException {
+        if(reader.peek() != JsonToken.NULL){
+            return reader.nextBoolean();
+        }
+        reader.nextNull();
+        return null;
     }
 
     private void beginObject() throws IOException {
