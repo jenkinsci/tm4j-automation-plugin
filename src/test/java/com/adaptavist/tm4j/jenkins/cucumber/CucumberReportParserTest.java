@@ -11,8 +11,6 @@ import static org.junit.Assert.assertTrue;
 
 public class CucumberReportParserTest {
 
-
-
     private CucumberFileProcessor cucumberFileProcessor;
 
     @Before
@@ -20,7 +18,6 @@ public class CucumberReportParserTest {
         cucumberFileProcessor = new CucumberFileProcessor(System.out, "");
         cucumberFileProcessor.setTmpDirectory("tmp");
     }
-
 
     @Test
     public void shouldFilterFile() throws Exception {
