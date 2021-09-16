@@ -132,7 +132,7 @@ public class CucumberReportParser {
             } else if ("keyword".equals(tag)) {
                 writer.name("keyword").value(nextString());
             } else if ("hidden".equals(tag)) {
-                writer.name("hidden").value(nextBoolean());
+                writer.name("hidden").value(reader.nextBoolean());
             } else if ("result".equals(tag)) {
                 writer.name("result");
                 parseResult();
@@ -171,14 +171,6 @@ public class CucumberReportParser {
     private String nextString() throws java.io.IOException {
         if(reader.peek() != JsonToken.NULL){
             return reader.nextString();
-        }
-        reader.nextNull();
-        return null;
-    }
-
-    private Boolean nextBoolean() throws java.io.IOException {
-        if(reader.peek() != JsonToken.NULL){
-            return reader.nextBoolean();
         }
         reader.nextNull();
         return null;
