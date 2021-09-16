@@ -21,8 +21,8 @@ public class FileWriterTest {
     private File targetDir;
     private File zipFile;
     private FileWriter fileWriter;
-    private File rootDir = new File("");
-    private FilePath workspace = new FilePath(new File(""));
+    private final File rootDir = new File("");
+    private final FilePath workspace = new FilePath(new File(""));
 
     @Before
     public void setUp() throws Exception {

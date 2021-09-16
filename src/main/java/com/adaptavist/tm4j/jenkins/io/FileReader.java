@@ -1,5 +1,6 @@
 package com.adaptavist.tm4j.jenkins.io;
 
+import com.adaptavist.tm4j.jenkins.cucumber.CucumberFileProcessor;
 import org.apache.commons.io.FileUtils;
 import org.apache.tools.ant.DirectoryScanner;
 
@@ -7,10 +8,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -21,6 +24,19 @@ public class FileReader {
 
     public File getZip(String directory, String pattern) throws Exception {
         return createZip(findFiles(directory, pattern));
+    }
+
+    public File getJsonCucumberZip(String directory, String pattern, final PrintStream logger) throws Exception {
+        CucumberFileProcessor cucumberFileProcessor = new CucumberFileProcessor(logger, directory);
+
+        List<File> files = findFiles(directory, pattern);
+        List<File> newFiles = files.stream()
+                .map(cucumberFileProcessor::filterCucumberFile)
+                .collect(Collectors.toList());
+
+        final File zip = createZip(newFiles);
+        cucumberFileProcessor.deleteTmpFilesAndFolder();
+        return zip;
     }
 
     public File getZipForCustomFormat(String directory) throws Exception {
@@ -65,7 +81,7 @@ public class FileReader {
 
     private File getCustomFileFormat(String directory) throws FileNotFoundException {
         final File file = new File(directory + CUSTOM_FORMAT_FILE);
-        if (file.exists()){
+        if (file.exists()) {
             return file;
         }
         final File legacy = new File(directory + CUSTOM_FORMAT_FILE_LEGACY);
