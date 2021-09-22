@@ -8,22 +8,22 @@ is_running() {
 	if [ 200 == $(curl -o /dev/null -s -w "%{http_code}\n" $server/jnlpJars/jenkins-cli.jar) ]
 	then
 		true
-	else 
+	else
 		false
 	fi
 }
 
-wait_start() { 
+wait_start() {
 	echo "[==== SETUP ====] Starting Jenkins..."
-	while ! is_running 
+	while ! is_running
 	do
 		sleep 1
 	done
 }
 
-wait_stop() { 
+wait_stop() {
 	echo "[==== SETUP ====] Stopping Jenkins..."
-	while is_running  
+	while is_running
 	do
 		sleep 1
 	done
@@ -56,11 +56,11 @@ wait_start
 
 echo "[==== SETUP ====] Setting Jenkins configurations"
 echo "[==== SETUP ====] Creating jobs"
-java -jar jenkins-cli.jar -s $server create-job tm4j-junit-integration-example-legacy-version < setup/tm4j-junit-integration-example-legacy-version.xml
-java -jar jenkins-cli.jar -s $server create-job zephyrscale-cucumber-calculator-example < setup/zephyrscale-cucumber-calculator-example.xml
-java -jar jenkins-cli.jar -s $server create-job zephyrscale-cucumber-integration-example < setup/zephyrscale-cucumber-integration-example.xml
-java -jar jenkins-cli.jar -s $server create-job zephyrscale-cucumber-integration-example-pipeline < setup/zephyrscale-cucumber-integration-example-pipeline.xml
-java -jar jenkins-cli.jar -s $server create-job zephyrscale-junit-integration-example < setup/zephyrscale-junit-integration-example.xml
+java -jar jenkins-cli.jar -s $server create-job zephyr-scale-junit-integration-example-legacy-version < setup/zephyr-scale-junit-integration-example-legacy-version.xml
+java -jar jenkins-cli.jar -s $server create-job zephyr-scale-cucumber-calculator-example < setup/zephyr-scale-cucumber-calculator-example.xml
+java -jar jenkins-cli.jar -s $server create-job zephyr-scale-cucumber-integration-example < setup/zephyr-scale-cucumber-integration-example.xml
+java -jar jenkins-cli.jar -s $server create-job zephyr-scale-cucumber-integration-example-pipeline < setup/zephyr-scale-cucumber-integration-example-pipeline.xml
+java -jar jenkins-cli.jar -s $server create-job zephyr-scale-junit-integration-example < setup/zephyr-scale-junit-integration-example.xml
 
 cp setup/com.adaptavist.tm4j.jenkins.extensions.configuration.Tm4jGlobalConfiguration.xml work/
 

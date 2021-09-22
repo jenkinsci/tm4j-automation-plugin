@@ -18,7 +18,7 @@
     stages {
         stage(&apos;Preparation&apos;) {
             steps {
-                git &apos;https://bitbucket.org/smartbeartm4j/tm4j-cucumber-integration-example.git&apos;
+                git ([url: &apos;https://github.com/SmartBear/zephyr-scale-cucumber-integration-example.git&apos;, branch: &apos;main&apos;])
             }
         }
         stage(&apos;Clean Work Space&apos;){
@@ -34,9 +34,9 @@
     }
     post {
         always {
-            publishTestResults serverAddress: &apos;http://localhost:2990/jira&apos;, 
-                    projectKey: &apos;JQA&apos;, filePath:&apos;target/cucumber/*.json&apos;, 
-                    format: &apos;Cucumber&apos;, 
+            publishTestResults serverAddress: &apos;http://localhost:2990/jira&apos;,
+                    projectKey: &apos;JQA&apos;, filePath:&apos;target/cucumber/*.json&apos;,
+                    format: &apos;Cucumber&apos;,
                     autoCreateTestCases: false
         }
     }
