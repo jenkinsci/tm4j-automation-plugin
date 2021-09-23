@@ -33,10 +33,10 @@ public class FileWriter {
     private void extractToRemoteNode(File rootDir, FilePath workspace, String targetPath) throws IOException, InterruptedException {
         String targetFeatureFilesPath = rootDir.getPath() + "/" + targetPath;
         extractToLocalNode(targetFeatureFilesPath);
-        FilePath master = new FilePath(new File(targetFeatureFilesPath));
-        FilePath slave = new FilePath(workspace.getChannel(), workspace.getRemote() + "/" + targetPath);
-        slave.deleteContents();
-        master.copyRecursiveTo("**/*.feature", slave);
+        FilePath localNodeFilePath = new FilePath(new File(targetFeatureFilesPath));
+        FilePath remoteNodeFilePath = new FilePath(workspace.getChannel(), workspace.getRemote() + "/" + targetPath);
+        remoteNodeFilePath.deleteContents();
+        localNodeFilePath.copyRecursiveTo("**/*.feature", remoteNodeFilePath);
     }
 
     private String getTargetFeatureFilesPath(String targetPath, String remote) {
