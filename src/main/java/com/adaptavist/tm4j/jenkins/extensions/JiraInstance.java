@@ -1,17 +1,15 @@
 package com.adaptavist.tm4j.jenkins.extensions;
 
+import static com.adaptavist.tm4j.jenkins.utils.UnirestUtils.setUnirestHttpClient;
+import static java.lang.String.format;
+
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import hudson.util.Secret;
-import org.apache.http.client.HttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-
 import java.io.File;
 import java.text.MessageFormat;
-
-import static java.lang.String.format;
 
 public class JiraInstance implements Instance {
 
@@ -27,14 +25,14 @@ public class JiraInstance implements Instance {
     public JiraInstance() {
     }
 
-    public JiraInstance(String serverAddress, String username, Secret password) {
+    public JiraInstance(final String serverAddress, final String username, final Secret password) {
         this.serverAddress = serverAddress;
         this.username = username;
         this.password = password;
     }
 
     @Override
-    public Boolean cloud() {
+    public final Boolean cloud() {
         return false;
     }
 
@@ -44,49 +42,60 @@ public class JiraInstance implements Instance {
     }
 
     @Override
-    public Boolean isValidCredentials() {
+    public final Boolean isValidCredentials() {
         try {
-            String url = MessageFormat.format(TM4J_HEALTH_CHECK, serverAddress);
-            HttpClient httpClient = HttpClientBuilder.create().disableCookieManagement().build();
-            Unirest.setHttpClient(httpClient);
-            HttpResponse<String> response = Unirest.get(url)
-                    .basicAuth(username, this.getPlainTextPassword())
-                    .asString();
+            setUnirestHttpClient();
+
+            final String url = MessageFormat.format(TM4J_HEALTH_CHECK, serverAddress);
+
+            final HttpResponse<String> response = Unirest.get(url)
+                .basicAuth(username, this.getPlainTextPassword())
+                .asString();
+
             return response.getStatus() == 200;
         } catch (UnirestException e) {
             e.printStackTrace();
         }
+
         return false;
     }
 
     @Override
-    public HttpResponse<String> downloadFeatureFile(String projectKey) throws UnirestException {
-        String url = MessageFormat.format(FEATURE_FILES_ENDPOINT, serverAddress);
-        HttpClient httpClient = HttpClientBuilder.create().disableCookieManagement().build();
-        Unirest.setHttpClient(httpClient);
-        String tql = format("testCase.projectKey = '%s'", projectKey);
+    public HttpResponse<String> downloadFeatureFile(final String projectKey) throws UnirestException {
+        setUnirestHttpClient();
+
+        final String url = MessageFormat.format(FEATURE_FILES_ENDPOINT, serverAddress);
+
+        final String tql = format("testCase.projectKey = '%s'", projectKey);
 
         return Unirest.get(url).basicAuth(username, this.getPlainTextPassword()).queryString("tql", tql).asString();
     }
 
     @Override
-    public HttpResponse<JsonNode> publishCucumberFormatBuildResult(String projectKey, Boolean autoCreateTestCases, File zip) throws UnirestException {
-        String url = MessageFormat.format(CUCUMBER_ENDPOINT, serverAddress, projectKey);
-        HttpClient httpClient = HttpClientBuilder.create().disableCookieManagement().build();
-        Unirest.setHttpClient(httpClient);
+    public HttpResponse<JsonNode> publishCucumberFormatBuildResult(final String projectKey, final Boolean autoCreateTestCases,
+                                                                   final File zip, final CustomTestCycle customTestCycle)
+        throws UnirestException {
+        setUnirestHttpClient();
+
+        final String url = MessageFormat.format(CUCUMBER_ENDPOINT, serverAddress, projectKey);
+
         return importBuildResultsFile(autoCreateTestCases, zip, url);
     }
 
     @Override
-    public HttpResponse<JsonNode> publishCustomFormatBuildResult(String projectKey, Boolean autoCreateTestCases, File zip) throws UnirestException {
-        String url = MessageFormat.format(CUSTOM_FORMAT_ENDPOINT, serverAddress, projectKey);
-        HttpClient httpClient = HttpClientBuilder.create().disableCookieManagement().build();
-        Unirest.setHttpClient(httpClient);
+    public HttpResponse<JsonNode> publishCustomFormatBuildResult(final String projectKey, final Boolean autoCreateTestCases, final File zip,
+                                                                 final CustomTestCycle customTestCycle)
+        throws UnirestException {
+        setUnirestHttpClient();
+
+        final String url = MessageFormat.format(CUSTOM_FORMAT_ENDPOINT, serverAddress, projectKey);
+
         return importBuildResultsFile(autoCreateTestCases, zip, url);
     }
 
     @Override
-    public HttpResponse<JsonNode> publishJUnitFormatBuildResult(String projectKey, Boolean autoCreateTestCases, File zip) throws UnirestException {
+    public HttpResponse<JsonNode> publishJUnitFormatBuildResult(final String projectKey, final Boolean autoCreateTestCases, final File zip,
+                                                                final CustomTestCycle customTestCycle) throws UnirestException {
         throw new RuntimeException("Not implemented for Zephyr Scale Server/DC");
     }
 
@@ -114,16 +123,16 @@ public class JiraInstance implements Instance {
         this.password = password;
     }
 
-    private HttpResponse<JsonNode> importBuildResultsFile(Boolean autoCreateTestCases, File zip, String url) throws UnirestException {
+    private HttpResponse<JsonNode> importBuildResultsFile(final Boolean autoCreateTestCases, final File zip, String url)
+        throws UnirestException {
         return Unirest.post(url)
-                .basicAuth(username, this.getPlainTextPassword())
-                .queryString("autoCreateTestCases", autoCreateTestCases)
-                .field("file", zip)
-                .asJson();
+            .basicAuth(username, this.getPlainTextPassword())
+            .queryString("autoCreateTestCases", autoCreateTestCases)
+            .field("file", zip)
+            .asJson();
     }
 
     private String getPlainTextPassword() {
         return Secret.toString(password);
     }
-
 }
