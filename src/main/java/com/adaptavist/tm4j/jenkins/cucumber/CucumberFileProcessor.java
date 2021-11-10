@@ -76,7 +76,6 @@ public class CucumberFileProcessor {
     }
 
     public void deleteTmpFilesAndFolder() {
-        String tmpDirectory = getTmpDirectory(this.tmpDirectory);
         File directoryFile = new File(tmpDirectory);
         File[] allContents = directoryFile.listFiles();
         if (allContents != null) {
