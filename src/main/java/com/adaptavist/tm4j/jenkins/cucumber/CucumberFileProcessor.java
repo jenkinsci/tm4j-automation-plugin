@@ -39,7 +39,7 @@ public class CucumberFileProcessor {
         File directory = new File(tmpDirectory);
 
         if (!directory.exists()) {
-            if (!directory.mkdir()) {
+            if (!directory.mkdirs()) {
                 throw new RuntimeException(String.format("The directory '%s' couldn't be created. Please check " +
                         "folder permissions and try again", tmpDirectory));
             }
