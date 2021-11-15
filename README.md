@@ -82,3 +82,16 @@ After cloning this repository, these are the 2 steps you should follow:
 2. Run `./run.sh`: this will run Jenkins with the Zephyr Scale plugin installed
 3. Browse to http://localhost:8080/jenkins to access Jenkins
 
+## Trigger pipeline manually for forked pull requests
+
+Eventually, CircleCi doesn't trigger the pipeline from pull requests of forked repositories. 
+If that happens block us to merge the pull request. 
+It's possible to trigger the pipeline manually running the following command:
+
+```
+curl --request POST \
+  --url https://circleci.com/api/v2/project/gh/jenkinsci/tm4j-automation-plugin/pipeline \
+  --header 'Circle-Token: {CIRCLE_TOKEN}' \
+  --header 'content-type: application/json' \
+  --data '{"branch":"pull/{PULL_REQUEST_NUMBER}/head"}'
+```
