@@ -17,57 +17,57 @@ public class CustomTestCycle {
 
     @DataBoundConstructor
     public CustomTestCycle(
-        final String testCycleName,
-        final String testCycleDescription,
-        final String testCycleJiraProjectVersionId,
-        final String testCycleFolderId,
-        final String testCycleCustomFields
+        final String name,
+        final String description,
+        final String jiraProjectVersion,
+        final String folderId,
+        final String customFields
     ) {
-        this.name = testCycleName;
-        this.description = testCycleDescription;
-        this.jiraProjectVersion = convertToLongIfValid(testCycleJiraProjectVersionId);
-        this.folderId = convertToLongIfValid(testCycleFolderId);
-        this.customFields = convertCustomFieldsToMapIfValid(testCycleCustomFields);
+        this.name = setStringIfNotBlank(name);
+        this.description = setStringIfNotBlank(description);
+        this.jiraProjectVersion = jiraProjectVersion(jiraProjectVersion);
+        this.folderId = jiraProjectVersion(folderId);
+        this.customFields = convertCustomFieldsToMapIfValid(customFields);
     }
 
     public String getName() {
         return name;
     }
 
-    public String getTestCycleName() {
-        return this.getName();
-    }
+//    public String getTestCycleName() {
+//        return this.getName();
+//    }
 
     public String getDescription() {
         return description;
     }
 
-    public String getTestCycleDescription() {
-        return this.getDescription();
+//    public String getTestCycleDescription() {
+//        return this.getDescription();
+//    }
+
+//    public Long getJiraProjectVersion() {
+//        return jiraProjectVersion;
+//    }
+
+    public String getJiraProjectVersion() {
+        return this.jiraProjectVersion == null ? null : this.jiraProjectVersion.toString();
     }
 
-    public Long getJiraProjectVersion() {
-        return jiraProjectVersion;
+//    public Long getFolderId() {
+//        return folderId;
+//    }
+
+    public String getFolderId() {
+        return this.folderId == null ? null : this.folderId.toString();
     }
 
-    public String getTestCycleJiraProjectVersionId() {
-        return this.getJiraProjectVersion() == null ? null : this.getJiraProjectVersion().toString();
-    }
+//    public Map<String, Object> getCustomFields() {
+//        return this.customFields;
+//    }
 
-    public Long getFolderId() {
-        return folderId;
-    }
-
-    public String getTestCycleFolderId() {
-        return this.getFolderId() == null ? null : this.getFolderId().toString();
-    }
-
-    public Map<String, Object> getCustomFields() {
-        return this.customFields;
-    }
-
-    public String getTestCycleCustomFields() {
-        return this.getCustomFields().isEmpty() ? null : GsonUtils.getInstance().toJson(this.getCustomFields());
+    public String getCustomFields() {
+        return this.customFields.isEmpty() ? null : GsonUtils.getInstance().toJson(this.customFields);
     }
 
     public boolean isEmpty() {
@@ -78,7 +78,13 @@ public class CustomTestCycle {
             && (folderId == null || folderId == 0);
     }
 
-    private Long convertToLongIfValid(final String value) {
+    private String setStringIfNotBlank(final String value) {
+        return isBlank(value)
+            ? null
+            : value;
+    }
+
+    private Long jiraProjectVersion(final String value) {
         try {
             return Long.valueOf(value);
         } catch (final NumberFormatException e) {
