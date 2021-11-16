@@ -1,6 +1,7 @@
 package com.adaptavist.tm4j.jenkins.cucumber;
 
 import org.apache.commons.io.FileUtils;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -16,7 +17,12 @@ public class CucumberReportParserTest {
     @Before
     public void setUp(){
         cucumberFileProcessor = new CucumberFileProcessor(System.out, "");
-        cucumberFileProcessor.setTmpDirectory("tmp");
+        cucumberFileProcessor.setTmpDirectory("tmp/subdir");
+    }
+
+    @After
+    public void tearDown(){
+        cucumberFileProcessor.deleteTmpFilesAndFolder();
     }
 
     @Test
