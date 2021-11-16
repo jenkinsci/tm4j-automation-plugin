@@ -72,20 +72,20 @@ public class CustomTestCycle {
 
     private Map<String, Object> convertCustomFieldsToMapIfValid(final String customFieldsJson) {
         try {
-            final Map<String, Object> temp = GsonUtils.getInstance()
-                .fromJson(
-                    customFieldsJson,
-                    new TypeToken<Map<String, Object>>() {
-                    }.getType()
-                );
-
             /*
             For security reasons, Jenkins doesn't allow us to marshal
             properties that are instances of any type of Gson classes.
             That's why we need to convert Gson's LinkedTreeMap to a
             HashMap. See https://jenkins.io/redirect/class-filter
              */
-            return new HashMap<>(temp);
+            return new HashMap<>(
+                GsonUtils.getInstance()
+                    .fromJson(
+                        customFieldsJson,
+                        new TypeToken<Map<String, Object>>() {
+                        }.getType()
+                    )
+            );
         } catch (final Exception e) {
             return new HashMap<>();
         }
