@@ -26,23 +26,23 @@
         <table>
             <f:optionalBlock field="customTestCycle" name="customTestCycle" checked="${instance.customizeTestCycle}"
                              title="Customize the created test cycle (Zephyr Scale Cloud only)">
-                <f:entry title="Name" field="name" >
+                <f:entry title="Name" field="testCycleName" >
                     <f:textbox field="name" placeholder="e.g. Jenkins Build"/>
                 </f:entry>
 
-                <f:entry title="Description" field="description">
+                <f:entry title="Description" field="testCycleDescription">
                     <f:textbox field="description" placeholder="e.g. Results from Jenkins Build"/>
                 </f:entry>
 
-                <f:entry title="Jira Project Version ID" field="jiraProjectVersion">
+                <f:entry title="Jira Project Version ID" field="testCycleJiraProjectVersionId">
                     <f:textbox field="jiraProjectVersion" placeholder="e.g. 10001"/>
                 </f:entry>
 
-                <f:entry title="Folder ID" field="folderId">
+                <f:entry title="Folder ID" field="testCycleFolderId">
                     <f:textbox field="folderId" placeholder="e.g. 3040527"/>
                 </f:entry>
 
-                <f:entry title="Custom Fields" field="customFields">
+                <f:entry title="Custom Fields" field="testCycleCustomFields">
                     <f:textbox field="customFields" placeholder="e.g. {&quot;checkbox&quot;: true}"/>
                 </f:entry>
             </f:optionalBlock>
