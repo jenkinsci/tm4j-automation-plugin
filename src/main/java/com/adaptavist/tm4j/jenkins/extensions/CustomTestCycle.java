@@ -31,43 +31,29 @@ public class CustomTestCycle {
     }
 
     public String getName() {
-        return name;
+        return this.name;
     }
-
-//    public String getTestCycleName() {
-//        return this.getName();
-//    }
 
     public String getDescription() {
-        return description;
+        return this.description;
     }
-
-//    public String getTestCycleDescription() {
-//        return this.getDescription();
-//    }
-
-//    public Long getJiraProjectVersion() {
-//        return jiraProjectVersion;
-//    }
 
     public String getJiraProjectVersion() {
-        return this.jiraProjectVersion == null ? null : this.jiraProjectVersion.toString();
+        return this.jiraProjectVersion == null
+            ? null
+            : this.jiraProjectVersion.toString();
     }
-
-//    public Long getFolderId() {
-//        return folderId;
-//    }
 
     public String getFolderId() {
-        return this.folderId == null ? null : this.folderId.toString();
+        return this.folderId == null
+            ? null
+            : this.folderId.toString();
     }
 
-//    public Map<String, Object> getCustomFields() {
-//        return this.customFields;
-//    }
-
     public String getCustomFields() {
-        return this.customFields.isEmpty() ? null : GsonUtils.getInstance().toJson(this.customFields);
+        return this.customFields.isEmpty()
+            ? null
+            : GsonUtils.getInstance().toJson(this.customFields);
     }
 
     public boolean isEmpty() {

@@ -207,33 +207,23 @@ public class TestResultPublisher extends Notifier implements SimpleBuildStep {
     }
 
     public String getName() {
-        return this.customizeTestCycle
-            ? this.customTestCycle.getName()
-            : null;
+        return this.customTestCycle.getName();
     }
 
     public String getDescription() {
-        return this.customizeTestCycle
-            ? this.customTestCycle.getDescription()
-            : null;
+        return this.customTestCycle.getDescription();
     }
 
     public String getJiraProjectVersion() {
-        return this.customizeTestCycle
-            ? this.customTestCycle.getJiraProjectVersion()
-            : null;
+        return this.customTestCycle.getJiraProjectVersion();
     }
 
     public String getFolderId() {
-        return this.customizeTestCycle
-            ? this.customTestCycle.getFolderId()
-            : null;
+        return this.customTestCycle.getFolderId();
     }
 
     public String getCustomFields() {
-        return (this.customizeTestCycle && this.customTestCycle.getCustomFields() != null && !this.customTestCycle.getCustomFields().isEmpty())
-            ? GsonUtils.getInstance().toJson(this.customTestCycle.getCustomFields())
-            : null;
+        return this.customTestCycle.getCustomFields();
     }
 
     public CustomTestCycle getCustomTestCycle() {
