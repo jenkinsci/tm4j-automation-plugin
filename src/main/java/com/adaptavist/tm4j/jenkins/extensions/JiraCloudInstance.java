@@ -23,7 +23,7 @@ public class JiraCloudInstance implements Instance {
     private static final String CUSTOM_FORMAT_ENDPOINT = "{0}/v2/automations/executions/custom";
     private static final String FEATURE_FILES_ENDPOINT = "{0}/v2/automations/testcases";
     private static final String TM4J_HEALTH_CHECK = "{0}/v2/healthcheck";
-    private static final String TM4J_API_BASE_URL = "https://api.zephyrscale.smartbear.com";
+    private static final String TM4J_API_BASE_URL = "https://api.zephyrscale-stage.smartbear.com";
 
     private Secret jwt;
     private String name;
