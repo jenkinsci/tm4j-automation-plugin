@@ -9,11 +9,11 @@ import java.util.Map;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 public class CustomTestCycle {
-    private final String name;
-    private final String description;
-    private final Long jiraProjectVersion;
-    private final Long folderId;
-    private final Map<String, Object> customFields;
+    protected final String name;
+    protected final String description;
+    protected final Long jiraProjectVersion;
+    protected final Long folderId;
+    protected final Map<String, Object> customFields;
 
     @DataBoundConstructor
     public CustomTestCycle(
