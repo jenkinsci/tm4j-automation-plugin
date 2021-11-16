@@ -34,20 +34,40 @@ public class CustomTestCycle {
         return name;
     }
 
+    public String getTestCycleName() {
+        return this.getName();
+    }
+
     public String getDescription() {
         return description;
+    }
+
+    public String getTestCycleDescription() {
+        return this.getDescription();
     }
 
     public Long getJiraProjectVersion() {
         return jiraProjectVersion;
     }
 
+    public String getTestCycleJiraProjectVersionId() {
+        return this.getJiraProjectVersion() == null ? null : this.getJiraProjectVersion().toString();
+    }
+
     public Long getFolderId() {
         return folderId;
     }
 
+    public String getTestCycleFolderId() {
+        return this.getFolderId() == null ? null : this.getFolderId().toString();
+    }
+
     public Map<String, Object> getCustomFields() {
         return this.customFields;
+    }
+
+    public String getTestCycleCustomFields() {
+        return this.getCustomFields().isEmpty() ? null : GsonUtils.getInstance().toJson(this.getCustomFields());
     }
 
     public boolean isEmpty() {
@@ -59,10 +79,6 @@ public class CustomTestCycle {
     }
 
     private Long convertToLongIfValid(final String value) {
-        if (isBlank(value)) {
-            return null;
-        }
-
         try {
             return Long.valueOf(value);
         } catch (final NumberFormatException e) {

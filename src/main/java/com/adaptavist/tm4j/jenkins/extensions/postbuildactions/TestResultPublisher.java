@@ -236,6 +236,10 @@ public class TestResultPublisher extends Notifier implements SimpleBuildStep {
             : null;
     }
 
+    public CustomTestCycle getCustomTestCycle() {
+        return this.customTestCycle;
+    }
+
     @Symbol("publishTestResults")
     @Extension
     public static final class DescriptorImpl extends BuildStepDescriptor<Publisher> {
