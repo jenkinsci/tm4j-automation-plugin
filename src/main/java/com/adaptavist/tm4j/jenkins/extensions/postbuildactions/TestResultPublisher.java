@@ -11,7 +11,6 @@ import com.adaptavist.tm4j.jenkins.extensions.Instance;
 import com.adaptavist.tm4j.jenkins.extensions.configuration.Tm4jGlobalConfiguration;
 import com.adaptavist.tm4j.jenkins.http.Tm4jJiraRestClient;
 import com.adaptavist.tm4j.jenkins.utils.FormHelper;
-import com.adaptavist.tm4j.jenkins.utils.GsonUtils;
 import com.adaptavist.tm4j.jenkins.utils.Validator;
 import hudson.EnvVars;
 import hudson.Extension;
@@ -100,16 +99,10 @@ public class TestResultPublisher extends Notifier implements SimpleBuildStep {
     private void handlePublishException(final PrintStream logger, final Run<?, ?> run, final Exception exception) {
         run.setResult(Result.FAILURE);
 
-        logger.printf("%s There was an error trying to publish test results to Zephyr Scale. Error details: %n", ERROR);
+        logger.printf("%s There was an error while publishing test results to Zephyr Scale and they were not sent. Error details: %n",
+            ERROR);
 
-        for (StackTraceElement trace : exception.getStackTrace()) {
-            logger.printf(" %s  %n", trace.toString());
-        }
-
-        logger.printf(" %s  %n", exception.getMessage());
-        logger.printf("%s Tests results have not been sent to Zephyr Scale %n", ERROR);
-
-        throw new RuntimeException();
+        throw new RuntimeException(exception);
     }
 
     private void validateFieldsAndUploadResults(PrintStream logger, List<Instance> jiraInstances, String directory) throws Exception {
