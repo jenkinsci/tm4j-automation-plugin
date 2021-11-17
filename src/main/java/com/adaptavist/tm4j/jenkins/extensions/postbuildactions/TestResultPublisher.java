@@ -1,12 +1,18 @@
 package com.adaptavist.tm4j.jenkins.extensions.postbuildactions;
 
+import static com.adaptavist.tm4j.jenkins.utils.Constants.CUCUMBER;
+import static com.adaptavist.tm4j.jenkins.utils.Constants.ERROR;
+import static com.adaptavist.tm4j.jenkins.utils.Constants.INFO;
+import static com.adaptavist.tm4j.jenkins.utils.Constants.JUNIT_RESULT_FILE;
+import static com.adaptavist.tm4j.jenkins.utils.Constants.NAME_POST_BUILD_ACTION;
+
+import com.adaptavist.tm4j.jenkins.extensions.CustomTestCycle;
 import com.adaptavist.tm4j.jenkins.extensions.Instance;
 import com.adaptavist.tm4j.jenkins.extensions.configuration.Tm4jGlobalConfiguration;
 import com.adaptavist.tm4j.jenkins.http.Tm4jJiraRestClient;
-import com.adaptavist.tm4j.jenkins.utils.Constants;
 import com.adaptavist.tm4j.jenkins.utils.FormHelper;
 import com.adaptavist.tm4j.jenkins.utils.Validator;
-
+import hudson.EnvVars;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
@@ -20,6 +26,11 @@ import hudson.tasks.Notifier;
 import hudson.tasks.Publisher;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.util.List;
+import javax.annotation.Nonnull;
+import javax.inject.Inject;
 import jenkins.tasks.SimpleBuildStep;
 import net.sf.json.JSONObject;
 import org.jenkinsci.Symbol;
@@ -28,16 +39,10 @@ import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.verb.POST;
 
-import javax.annotation.Nonnull;
-import javax.inject.Inject;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.util.List;
-
-import static com.adaptavist.tm4j.jenkins.utils.Constants.*;
-
 public class TestResultPublisher extends Notifier implements SimpleBuildStep {
 
+    private final Boolean customizeTestCycle;
+    private final CustomTestCycle customTestCycle;
     private String serverAddress;
     private String projectKey;
     private String filePath;
@@ -45,12 +50,21 @@ public class TestResultPublisher extends Notifier implements SimpleBuildStep {
     private Boolean autoCreateTestCases;
 
     @DataBoundConstructor
-    public TestResultPublisher(String serverAddress, String projectKey, String filePath, Boolean autoCreateTestCases, String format) {
+    public TestResultPublisher(
+        final String serverAddress,
+        final String projectKey,
+        final String filePath,
+        final Boolean autoCreateTestCases,
+        final String format,
+        final CustomTestCycle customTestCycle
+    ) {
         this.serverAddress = serverAddress;
         this.projectKey = projectKey;
         this.filePath = filePath;
         this.autoCreateTestCases = autoCreateTestCases;
         this.format = format;
+        this.customizeTestCycle = customTestCycle != null;
+        this.customTestCycle = customTestCycle;
     }
 
     @Override
@@ -59,45 +73,80 @@ public class TestResultPublisher extends Notifier implements SimpleBuildStep {
     }
 
     @Override
-    public void perform(@Nonnull Run<?, ?> run, @Nonnull FilePath workspace, @Nonnull Launcher launcher, TaskListener listener) {
+    public void perform(
+        @Nonnull Run<?, ?> run,
+        @Nonnull FilePath workspace,
+        @Nonnull EnvVars envVars,
+        @Nonnull Launcher launcher,
+        TaskListener listener
+    ) {
         final PrintStream logger = listener.getLogger();
+        publishResults(logger, run, workspace);
+    }
+
+    private void publishResults(final PrintStream logger, final Run<?, ?> run, final FilePath workspace) {
         logger.printf("%s Publishing test results...%n", INFO);
-        List<Instance> jiraInstances = getDescriptor().getJiraInstances();
+
         try {
-            perform(logger, jiraInstances, getDirectory(workspace, run));
-        } catch (Exception e) {
-            run.setResult(Result.FAILURE);
-            logger.printf("%s There was an error trying to publish test results to Zephyr Scale. Error details: %n", ERROR);
-            for (StackTraceElement trace : e.getStackTrace()) {
-                logger.printf(" %s  %n", trace.toString());
-            }
-            logger.printf(" %s  %n", e.getMessage());
-            logger.printf("%s Tests results have not been sent to Zephyr Scale %n", ERROR);
-            throw new RuntimeException();
+            final String directory = getDirectory(workspace, run);
+            final List<Instance> jiraInstances = getDescriptor().getJiraInstances();
+            validateFieldsAndUploadResults(logger, jiraInstances, directory);
+        } catch (final Exception e) {
+            handlePublishException(logger, run, e);
         }
     }
 
-    private void perform(PrintStream logger, List<Instance> jiraInstances, String directory) throws Exception {
-        new Validator().validateProjectKey(this.projectKey)
-                    .validateFilePath(this.filePath)
-                    .validateFormat(this.format)
-                    .validateServerAddress(this.serverAddress);
-        Tm4jJiraRestClient tm4jJiraRestClient = new Tm4jJiraRestClient(jiraInstances, this.serverAddress);
-        if (Constants.CUCUMBER.equals(this.format)) {
-            tm4jJiraRestClient.uploadCucumberFile(directory, this.filePath, this.projectKey, this.autoCreateTestCases, logger);
-        } else if (JUNIT_RESULT_FILE.equals(this.format)) {
-            tm4jJiraRestClient.uploadJUnitXmlResultFile(directory, this.filePath, this.projectKey, this.autoCreateTestCases, logger);
-        } else {
-            tm4jJiraRestClient.uploadCustomFormatFile(directory, this.projectKey, this.autoCreateTestCases, logger);
+    private void handlePublishException(final PrintStream logger, final Run<?, ?> run, final Exception exception) {
+        run.setResult(Result.FAILURE);
+
+        logger.printf("%s There was an error while publishing test results to Zephyr Scale and they were not sent. Error details: %n",
+            ERROR);
+
+        throw new RuntimeException(exception);
+    }
+
+    private void validateFieldsAndUploadResults(PrintStream logger, List<Instance> jiraInstances, String directory) throws Exception {
+        validateFields();
+
+        Tm4jJiraRestClient tm4jJiraRestClient = new Tm4jJiraRestClient(logger, jiraInstances, this.serverAddress);
+
+        uploadResultsFile(tm4jJiraRestClient, directory);
+
+    }
+
+    private void validateFields() throws Exception {
+        new Validator()
+            .validateProjectKey(this.projectKey)
+            .validateFilePath(this.filePath)
+            .validateFormat(this.format)
+            .validateServerAddress(this.serverAddress);
+    }
+
+    private void uploadResultsFile(Tm4jJiraRestClient tm4jJiraRestClient, String directory) throws Exception {
+        if (CUCUMBER.equals(this.format)) {
+            tm4jJiraRestClient.uploadCucumberFile(directory, this.filePath, this.projectKey, this.autoCreateTestCases,
+                this.customTestCycle);
+
+            return;
         }
+
+        if (JUNIT_RESULT_FILE.equals(this.format)) {
+            tm4jJiraRestClient.uploadJUnitXmlResultFile(directory, this.filePath, this.projectKey, this.autoCreateTestCases,
+                this.customTestCycle);
+
+            return;
+        }
+
+        tm4jJiraRestClient.uploadCustomFormatFile(directory, this.projectKey, this.autoCreateTestCases, this.customTestCycle);
     }
 
     private String getDirectory(FilePath workspace, Run<?, ?> run) throws IOException, InterruptedException {
-        if (workspace.isRemote()){
+        if (workspace.isRemote()) {
             FilePath path = new FilePath(run.getRootDir());
             workspace.copyRecursiveTo(this.filePath, path);
             return run.getRootDir() + "/";
         }
+
         return workspace.getRemote() + "/";
     }
 
@@ -144,6 +193,34 @@ public class TestResultPublisher extends Notifier implements SimpleBuildStep {
 
     public void setAutoCreateTestCases(Boolean autoCreateTestCases) {
         this.autoCreateTestCases = autoCreateTestCases;
+    }
+
+    public Boolean getCustomizeTestCycle() {
+        return customizeTestCycle;
+    }
+
+    public String getName() {
+        return this.customTestCycle.getName();
+    }
+
+    public String getDescription() {
+        return this.customTestCycle.getDescription();
+    }
+
+    public String getJiraProjectVersion() {
+        return this.customTestCycle.getJiraProjectVersion();
+    }
+
+    public String getFolderId() {
+        return this.customTestCycle.getFolderId();
+    }
+
+    public String getCustomFields() {
+        return this.customTestCycle.getCustomFields();
+    }
+
+    public CustomTestCycle getCustomTestCycle() {
+        return this.customTestCycle;
     }
 
     @Symbol("publishTestResults")

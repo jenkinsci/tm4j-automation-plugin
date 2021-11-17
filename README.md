@@ -51,10 +51,17 @@ pipeline {
     post {
         always {
             publishTestResults serverAddress: 'http://localhost:2990/jira',
-                    projectKey: 'WEB',
-                    filePath:'target/cucumber/*.json',
-                    format: 'Cucumber',
-                    autoCreateTestCases: false
+            projectKey: 'WEB', 
+            format: 'Cucumber', 
+            filePath: 'target/cucumber/*.json', 
+            autoCreateTestCases: false, 
+              customTestCycle: [
+                name: 'Jenkins Build',
+                description: 'Results from Jenkins Build', 
+                jiraProjectVersion: '10001', 
+                folderId: '3040527', 
+                customFields: '{"number":50,"single-choice":"option1","checkbox":true,"userpicker":"5f8b5cf2ddfdcb0b8d1028bb","single-line":"a text line","datepicker":"2020-01-25","decimal":10.55,"multi-choice":["choice1","choice3"],"multi-line":"first line<br />second line"}'
+              ]
         }
     }
 }

@@ -1,0 +1,30 @@
+<div>
+    Use this to set the test cycle's custom fields.
+
+    <br /><br />
+    The value should be a JSON object where the keys are the test cycle
+    custom field name and the values are the respective custom field
+    values.
+
+    <br /><br />
+    Here's an example:
+
+    <br />
+    <pre><code>
+        {
+            "single-choice": "option1",
+            "checkbox": true,
+            "userpicker": "5f8b5cf2ddfdcb0b8d1028bb",
+            "single-line": "a text line",
+            "datepicker": "2020-01-25",
+            "decimal": 10.55,
+            "number": 50,
+            "multi-choice": ["choice1","choice2"],
+            "multi-line": "first line&lt;br /&gt;second line"
+        }
+    </code></pre>
+
+    <br /><br />
+    If there's a parsing error while parsing the JSON, the value will be
+    ignored and this field will then be empty upon page reload.
+</div>

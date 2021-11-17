@@ -14,15 +14,40 @@
         <f:select id="tm4jAutomationPostBuildActionFormatSelect"/>
     </f:entry>
 
-
     <f:entry title="File path" field="filePath">
         <f:textbox field="filePath" id="tm4jAutomationPostBuildActionFilePath" checkMethod="post"/>
     </f:entry>
 
-
     <f:entry title="Automatically create non-existing test cases" field="autoCreateTestCases">
         <f:checkbox field="autoCreateTestCases"/>
     </f:entry>
+
+    <f:block>
+        <table>
+            <f:optionalBlock field="customTestCycle" name="customTestCycle" checked="${instance.customizeTestCycle}"
+                             title="Customize the created test cycle (Zephyr Scale Cloud only)">
+                <f:entry title="Name" field="testCycleName" >
+                    <f:textbox field="name" placeholder="e.g. Jenkins Build"/>
+                </f:entry>
+
+                <f:entry title="Description" field="testCycleDescription">
+                    <f:textbox field="description" placeholder="e.g. Results from Jenkins Build"/>
+                </f:entry>
+
+                <f:entry title="Jira Project Version ID" field="testCycleJiraProjectVersionId">
+                    <f:textbox field="jiraProjectVersion" placeholder="e.g. 10001"/>
+                </f:entry>
+
+                <f:entry title="Folder ID" field="testCycleFolderId">
+                    <f:textbox field="folderId" placeholder="e.g. 3040527"/>
+                </f:entry>
+
+                <f:entry title="Custom Fields" field="testCycleCustomFields">
+                    <f:textbox field="customFields" placeholder="e.g. {&quot;checkbox&quot;: true}"/>
+                </f:entry>
+            </f:optionalBlock>
+        </table>
+    </f:block>
 
     <script src="${rootURL}/plugin/tm4j-automation/js/postbuildaction/TestResultPublisher/index.js"/>
 </j:jelly>
