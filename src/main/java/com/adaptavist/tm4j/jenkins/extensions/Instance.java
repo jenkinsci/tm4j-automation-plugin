@@ -14,13 +14,13 @@ public interface Instance {
     Boolean isValidCredentials();
 
     HttpResponse<JsonNode> publishCucumberFormatBuildResult(final String projectKey, final Boolean autoCreateTestCases, final File zip,
-                                                            final CustomTestCycle customTestCycle) throws UnirestException;
+                                                            final ExpandedCustomTestCycle expandedCustomTestCycle) throws UnirestException;
 
     HttpResponse<JsonNode> publishCustomFormatBuildResult(final String projectKey, final Boolean autoCreateTestCases, final File zip,
-                                                          final CustomTestCycle customTestCycle) throws UnirestException;
+                                                          final ExpandedCustomTestCycle expandedCustomTestCycle) throws UnirestException;
 
     HttpResponse<JsonNode> publishJUnitFormatBuildResult(final String projectKey, final Boolean autoCreateTestCases, final File zip,
-                                                         final CustomTestCycle customTestCycle) throws UnirestException;
+                                                         final ExpandedCustomTestCycle expandedCustomTestCycle) throws UnirestException;
 
     HttpResponse<String> downloadFeatureFile(final String projectKey) throws UnirestException;
 

@@ -22,6 +22,7 @@ import com.mashape.unirest.request.GetRequest;
 import com.mashape.unirest.request.HttpRequest;
 import com.mashape.unirest.request.HttpRequestWithBody;
 import com.mashape.unirest.request.body.MultipartBody;
+import hudson.EnvVars;
 import hudson.util.Secret;
 import java.io.File;
 import org.apache.http.client.HttpClient;
@@ -56,7 +57,7 @@ public class JiraCloudInstanceTest {
     private static final String VALID_JWT_WITHOUT_BASE_URL =
         "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2MzcxNDkyNzMsImV4cCI6MTYzNzE1Mjg3MywiaXNzIjoiY29tLmthbm9haC50ZXN0LW1hbmFnZXIiLCJzdWIiOiJjbGllbnQta2V5IiwiY29udGV4dCI6eyJ1c2VyIjp7ImFjY291bnRJZCI6IjRmN2I3ZGYxZGRmZWRjOWI3ZTA5MzdiYiJ9fX0.ZJBPnhJx_BwjYtIsFC3FnseIDziHV0uI4VxOECMFdiM";
 
-    private static CustomTestCycle getCustomTestCycle(final String name) {
+    private static ExpandedCustomTestCycle getExpandedCustomTestCycle(final String name) {
         final String description = "Description";
         final String jiraProjectVersion = "10001";
         final String folderId = "1234";
@@ -64,7 +65,9 @@ public class JiraCloudInstanceTest {
         final String customFields =
             "{\"number\":50,\"single-choice\":\"option1\",\"checkbox\":true,\"userpicker\":\"5f8b5cf2ddfdcb0b8d1028bb\",\"single-line\":\"a text line\",\"datepicker\":\"2021-12-31\",\"decimal\":10.5,\"multi-choice\":[\"choice1\",\"choice2\"],\"multi-line\":\"first line<br />second line\"}";
 
-        return new CustomTestCycle(name, description, jiraProjectVersion, folderId, customFields);
+        final CustomTestCycle customTestCycle = new CustomTestCycle(name, description, jiraProjectVersion, folderId, customFields);
+
+        return new ExpandedCustomTestCycle(customTestCycle, new EnvVars());
     }
 
     @Test
@@ -127,7 +130,7 @@ public class JiraCloudInstanceTest {
     public void publishCucumberFormatBuildResult_withCustomTestCycle() throws UnirestException {
         try (final MockedStatic<Unirest> unirest = mockStatic(Unirest.class)) {
             final File zip = mock(File.class);
-            final CustomTestCycle customTestCycle = getCustomTestCycle("Cucumber Build");
+            final ExpandedCustomTestCycle expandedCustomTestCycle = getExpandedCustomTestCycle("Cucumber Build");
             final HttpClient httpClient = mock(HttpClient.class);
 
             final JiraCloudInstance jiraCloudInstance = getValidJiraCloudInstance();
@@ -145,12 +148,12 @@ public class JiraCloudInstanceTest {
             when(httpRequestWithBody.queryString("projectKey", PROJECT_KEY)).thenReturn(httpRequestWithBody);
             when(httpRequestWithBody.field("file", zip)).thenReturn(multipartBody);
 
-            when(multipartBody.field("testCycle", GsonUtils.getInstance().toJson(customTestCycle), "application/json")).thenReturn(
+            when(multipartBody.field("testCycle", GsonUtils.getInstance().toJson(expandedCustomTestCycle), "application/json")).thenReturn(
                 multipartBody);
 
             when(multipartBody.asJson()).thenReturn(httpResponseJsonNode);
 
-            jiraCloudInstance.publishCucumberFormatBuildResult(PROJECT_KEY, true, zip, customTestCycle);
+            jiraCloudInstance.publishCucumberFormatBuildResult(PROJECT_KEY, true, zip, expandedCustomTestCycle);
 
             verifyNoMoreInteractions(zip);
             verifyNoMoreInteractions(httpClient);
@@ -201,7 +204,7 @@ public class JiraCloudInstanceTest {
     public void publishCustomFormatBuildResult_withCustomTestCycle() throws UnirestException {
         try (final MockedStatic<Unirest> unirest = mockStatic(Unirest.class)) {
             final File zip = mock(File.class);
-            final CustomTestCycle customTestCycle = getCustomTestCycle("Custom Format Build");
+            final ExpandedCustomTestCycle expandedCustomTestCycle = getExpandedCustomTestCycle("Custom Format Build");
             final HttpClient httpClient = mock(HttpClient.class);
 
             final JiraCloudInstance jiraCloudInstance = getValidJiraCloudInstance();
@@ -219,12 +222,13 @@ public class JiraCloudInstanceTest {
             when(httpRequestWithBody.queryString("projectKey", PROJECT_KEY)).thenReturn(httpRequestWithBody);
             when(httpRequestWithBody.field("file", zip)).thenReturn(multipartBody);
 
-            when(multipartBody.field("testCycle", GsonUtils.getInstance().toJson(customTestCycle), "application/json")).thenReturn(
+            when(multipartBody.field("testCycle", GsonUtils.getInstance().toJson(expandedCustomTestCycle), "application/json")).thenReturn(
                 multipartBody);
 
             when(multipartBody.asJson()).thenReturn(httpResponse);
 
-            HttpResponse<JsonNode> actualResponse = jiraCloudInstance.publishCustomFormatBuildResult(PROJECT_KEY, true, zip, customTestCycle);
+            HttpResponse<JsonNode> actualResponse =
+                jiraCloudInstance.publishCustomFormatBuildResult(PROJECT_KEY, true, zip, expandedCustomTestCycle);
 
             assertThat(actualResponse).isEqualTo(httpResponse);
 
@@ -277,7 +281,7 @@ public class JiraCloudInstanceTest {
     public void publishJUnitFormatBuildResult_withCustomTestCycle() throws UnirestException {
         try (final MockedStatic<Unirest> unirest = mockStatic(Unirest.class)) {
             final File zip = mock(File.class);
-            final CustomTestCycle customTestCycle = getCustomTestCycle("JUnit Build");
+            final ExpandedCustomTestCycle expandedCustomTestCycle = getExpandedCustomTestCycle("JUnit Build");
             final HttpClient httpClient = mock(HttpClient.class);
 
             final JiraCloudInstance jiraCloudInstance = getValidJiraCloudInstance();
@@ -295,12 +299,13 @@ public class JiraCloudInstanceTest {
             when(httpRequestWithBody.queryString("projectKey", PROJECT_KEY)).thenReturn(httpRequestWithBody);
             when(httpRequestWithBody.field("file", zip)).thenReturn(multipartBody);
 
-            when(multipartBody.field("testCycle", GsonUtils.getInstance().toJson(customTestCycle), "application/json")).thenReturn(
+            when(multipartBody.field("testCycle", GsonUtils.getInstance().toJson(expandedCustomTestCycle), "application/json")).thenReturn(
                 multipartBody);
 
             when(multipartBody.asJson()).thenReturn(httpResponse);
 
-            HttpResponse<JsonNode> actualResponse = jiraCloudInstance.publishJUnitFormatBuildResult(PROJECT_KEY, true, zip, customTestCycle);
+            HttpResponse<JsonNode> actualResponse =
+                jiraCloudInstance.publishJUnitFormatBuildResult(PROJECT_KEY, true, zip, expandedCustomTestCycle);
 
             assertThat(actualResponse).isEqualTo(httpResponse);
 

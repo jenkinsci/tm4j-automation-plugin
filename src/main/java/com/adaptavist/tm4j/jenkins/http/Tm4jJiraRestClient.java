@@ -4,7 +4,7 @@ import static com.adaptavist.tm4j.jenkins.utils.Constants.ERROR;
 import static com.adaptavist.tm4j.jenkins.utils.Constants.INFO;
 
 import com.adaptavist.tm4j.jenkins.exception.NoTestCasesFoundException;
-import com.adaptavist.tm4j.jenkins.extensions.CustomTestCycle;
+import com.adaptavist.tm4j.jenkins.extensions.ExpandedCustomTestCycle;
 import com.adaptavist.tm4j.jenkins.extensions.Instance;
 import com.adaptavist.tm4j.jenkins.io.FileReader;
 import com.adaptavist.tm4j.jenkins.io.FileWriter;
@@ -32,7 +32,7 @@ public class Tm4jJiraRestClient {
     }
 
     public void uploadCucumberFile(final String directory, final String filePath, final String projectKey,
-                                   final Boolean autoCreateTestCases, final CustomTestCycle customTestCycle
+                                   final Boolean autoCreateTestCases, final ExpandedCustomTestCycle expandedCustomTestCycle
     ) throws Exception {
 
         final FileReader fileReader = new FileReader();
@@ -45,7 +45,7 @@ public class Tm4jJiraRestClient {
             projectKey,
             autoCreateTestCases,
             file,
-            customTestCycle
+            expandedCustomTestCycle
         );
 
         processUploadingResultsResponse(jsonResponse);
@@ -54,7 +54,7 @@ public class Tm4jJiraRestClient {
     }
 
     public void uploadCustomFormatFile(final String directory, final String projectKey, final Boolean autoCreateTestCases,
-                                       final CustomTestCycle customTestCycle) throws Exception {
+                                       final ExpandedCustomTestCycle expandedCustomTestCycle) throws Exception {
 
         File file = new FileReader().getZipForCustomFormat(directory);
 
@@ -62,7 +62,7 @@ public class Tm4jJiraRestClient {
             projectKey,
             autoCreateTestCases,
             file,
-            customTestCycle
+            expandedCustomTestCycle
         );
 
         processUploadingResultsResponse(jsonResponse);
@@ -71,7 +71,7 @@ public class Tm4jJiraRestClient {
     }
 
     public void uploadJUnitXmlResultFile(final String directory, final String filePath, final String projectKey,
-                                         final Boolean autoCreateTestCases, final CustomTestCycle customTestCycle)
+                                         final Boolean autoCreateTestCases, final ExpandedCustomTestCycle expandedCustomTestCycle)
         throws Exception {
 
         File file = new FileReader().getZip(directory, filePath);
@@ -80,7 +80,7 @@ public class Tm4jJiraRestClient {
             projectKey,
             autoCreateTestCases,
             file,
-            customTestCycle
+            expandedCustomTestCycle
         );
 
         processUploadingResultsResponse(jsonResponse);
