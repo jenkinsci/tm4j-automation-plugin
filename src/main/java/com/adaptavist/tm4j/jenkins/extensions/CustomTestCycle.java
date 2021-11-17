@@ -2,19 +2,15 @@ package com.adaptavist.tm4j.jenkins.extensions;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
 
-import com.adaptavist.tm4j.jenkins.utils.GsonUtils;
-import com.google.gson.reflect.TypeToken;
 import hudson.EnvVars;
-import java.util.HashMap;
-import java.util.Map;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 public class CustomTestCycle {
     protected String name;
     protected String description;
-    protected Long jiraProjectVersion;
-    protected Long folderId;
-    protected Map<String, Object> customFields;
+    protected String jiraProjectVersion;
+    protected String folderId;
+    protected String customFields;
 
     @DataBoundConstructor
     public CustomTestCycle(
@@ -24,11 +20,11 @@ public class CustomTestCycle {
         final String folderId,
         final String customFields
     ) {
-        this.name = setStringIfNotBlank(name);
-        this.description = setStringIfNotBlank(description);
-        this.jiraProjectVersion = jiraProjectVersion(jiraProjectVersion);
-        this.folderId = jiraProjectVersion(folderId);
-        this.customFields = convertCustomFieldsToMapIfValid(customFields);
+        this.name = name;
+        this.description = description;
+        this.jiraProjectVersion = jiraProjectVersion;
+        this.folderId = folderId;
+        this.customFields = customFields;
     }
 
     public String getName() {
@@ -40,78 +36,27 @@ public class CustomTestCycle {
     }
 
     public String getJiraProjectVersion() {
-        return this.jiraProjectVersion == null
-            ? null
-            : this.jiraProjectVersion.toString();
+        return this.jiraProjectVersion;
     }
 
     public String getFolderId() {
-        return this.folderId == null
-            ? null
-            : this.folderId.toString();
+        return this.folderId;
     }
 
     public String getCustomFields() {
-        return this.customFields.isEmpty()
-            ? null
-            : GsonUtils.getInstance().toJson(this.customFields);
+        return this.customFields;
     }
 
     public boolean isEmpty() {
         return isBlank(name)
             && isBlank(description)
-            && (customFields == null || customFields.size() == 0)
-            && (jiraProjectVersion == null || jiraProjectVersion == 0)
-            && (folderId == null || folderId == 0);
+            && isBlank(customFields)
+            && isBlank(jiraProjectVersion)
+            && isBlank(folderId);
     }
 
-    public void expandEnvVars(final EnvVars envVars) {
-        final String expandedName = envVars.expand(this.getName());
-        final String expandedDescription = envVars.expand(this.getDescription());
-        final String expandedJiraProjectVersion = envVars.expand(this.getJiraProjectVersion());
-        final String expandedFolderId = envVars.expand(this.getFolderId());
-        final String expandedCustomFields = envVars.expand(this.getCustomFields());
-
-        this.name = setStringIfNotBlank(expandedName);
-        this.description = setStringIfNotBlank(expandedDescription);
-        this.jiraProjectVersion = jiraProjectVersion(expandedJiraProjectVersion);
-        this.folderId = jiraProjectVersion(expandedFolderId);
-        this.customFields = convertCustomFieldsToMapIfValid(expandedCustomFields);
-    }
-
-    private String setStringIfNotBlank(final String value) {
-        return isBlank(value)
-            ? null
-            : value;
-    }
-
-    private Long jiraProjectVersion(final String value) {
-        try {
-            return Long.valueOf(value);
-        } catch (final NumberFormatException e) {
-            return null;
-        }
-    }
-
-    private Map<String, Object> convertCustomFieldsToMapIfValid(final String customFieldsJson) {
-        try {
-            /*
-            For security reasons, Jenkins doesn't allow us to marshal
-            properties that are instances of any type of Gson classes.
-            That's why we need to convert Gson's LinkedTreeMap to a
-            HashMap. See https://jenkins.io/redirect/class-filter
-             */
-            return new HashMap<>(
-                GsonUtils.getInstance()
-                    .fromJson(
-                        customFieldsJson,
-                        new TypeToken<Map<String, Object>>() {
-                        }.getType()
-                    )
-            );
-        } catch (final Exception e) {
-            return new HashMap<>();
-        }
+    public ExpandedCustomTestCycle expandEnvVars(final EnvVars envVars) {
+        return new ExpandedCustomTestCycle(this, envVars);
     }
 
     @Override

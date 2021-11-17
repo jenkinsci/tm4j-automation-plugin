@@ -72,7 +72,7 @@ public class JiraInstance implements Instance {
 
     @Override
     public HttpResponse<JsonNode> publishCucumberFormatBuildResult(final String projectKey, final Boolean autoCreateTestCases,
-                                                                   final File zip, final CustomTestCycle customTestCycle)
+                                                                   final File zip, final ExpandedCustomTestCycle expandedCustomTestCycle)
         throws UnirestException {
 
         final String url = MessageFormat.format(CUCUMBER_ENDPOINT, serverAddress, projectKey);
@@ -82,7 +82,7 @@ public class JiraInstance implements Instance {
 
     @Override
     public HttpResponse<JsonNode> publishCustomFormatBuildResult(final String projectKey, final Boolean autoCreateTestCases, final File zip,
-                                                                 final CustomTestCycle customTestCycle)
+                                                                 final ExpandedCustomTestCycle expandedCustomTestCycle)
         throws UnirestException {
 
         final String url = MessageFormat.format(CUSTOM_FORMAT_ENDPOINT, serverAddress, projectKey);
@@ -92,7 +92,7 @@ public class JiraInstance implements Instance {
 
     @Override
     public HttpResponse<JsonNode> publishJUnitFormatBuildResult(final String projectKey, final Boolean autoCreateTestCases, final File zip,
-                                                                final CustomTestCycle customTestCycle) throws UnirestException {
+                                                                final ExpandedCustomTestCycle expandedCustomTestCycle) throws UnirestException {
         throw new RuntimeException("Not implemented for Zephyr Scale Server/DC");
     }
 

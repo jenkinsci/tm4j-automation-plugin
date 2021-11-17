@@ -23,7 +23,7 @@ public class JiraCloudInstance implements Instance {
     private static final String CUSTOM_FORMAT_ENDPOINT = "{0}/v2/automations/executions/custom";
     private static final String FEATURE_FILES_ENDPOINT = "{0}/v2/automations/testcases";
     private static final String HEALTH_CHECK_ENDPOINT = "{0}/v2/healthcheck";
-    private static final String API_BASE_URL = "https://api.zephyrscale.smartbear.com";
+    private static final String API_BASE_URL = "https://api.zephyrscale-stage.smartbear.com";
 
     private Secret jwt;
     private String name;
@@ -73,26 +73,28 @@ public class JiraCloudInstance implements Instance {
 
     @Override
     public HttpResponse<JsonNode> publishCucumberFormatBuildResult(final String projectKey, final Boolean autoCreateTestCases,
-                                                                   final File zip, final CustomTestCycle customTestCycle)
+                                                                   final File zip, final ExpandedCustomTestCycle expandedCustomTestCycle)
         throws UnirestException {
 
         String url = MessageFormat.format(CUCUMBER_ENDPOINT, API_BASE_URL);
-        return exportResultsFile(url, projectKey, autoCreateTestCases, zip, customTestCycle);
+        return exportResultsFile(url, projectKey, autoCreateTestCases, zip, expandedCustomTestCycle);
     }
 
     @Override
     public HttpResponse<JsonNode> publishCustomFormatBuildResult(final String projectKey, final Boolean autoCreateTestCases, final File zip,
-                                                                 final CustomTestCycle customTestCycle) throws UnirestException {
+                                                                 final ExpandedCustomTestCycle expandedCustomTestCycle)
+        throws UnirestException {
 
         String url = MessageFormat.format(CUSTOM_FORMAT_ENDPOINT, API_BASE_URL);
-        return exportResultsFile(url, projectKey, autoCreateTestCases, zip, customTestCycle);
+        return exportResultsFile(url, projectKey, autoCreateTestCases, zip, expandedCustomTestCycle);
     }
 
     @Override
     public HttpResponse<JsonNode> publishJUnitFormatBuildResult(final String projectKey, final Boolean autoCreateTestCases, final File zip,
-                                                                final CustomTestCycle customTestCycle) throws UnirestException {
+                                                                final ExpandedCustomTestCycle expandedCustomTestCycle)
+        throws UnirestException {
         String url = MessageFormat.format(JUNIT_ENDPOINT, API_BASE_URL);
-        return exportResultsFile(url, projectKey, autoCreateTestCases, zip, customTestCycle);
+        return exportResultsFile(url, projectKey, autoCreateTestCases, zip, expandedCustomTestCycle);
     }
 
     @Override
@@ -134,7 +136,8 @@ public class JiraCloudInstance implements Instance {
     }
 
     private HttpResponse<JsonNode> exportResultsFile(final String url, final String projectKey, final Boolean autoCreateTestCases,
-                                                     final File zip, final CustomTestCycle customTestCycle) throws UnirestException {
+                                                     final File zip, final ExpandedCustomTestCycle expandedCustomTestCycle)
+        throws UnirestException {
         final MultipartBody body = Unirest.post(url)
             .header("Authorization", "Bearer " + getDecryptedJwt())
             .header("zscale-source", "Jenkins Plugin")
@@ -142,8 +145,8 @@ public class JiraCloudInstance implements Instance {
             .queryString("projectKey", projectKey)
             .field("file", zip);
 
-        if (customTestCycle != null && !customTestCycle.isEmpty()) {
-            body.field("testCycle", GsonUtils.getInstance().toJson(customTestCycle), "application/json");
+        if (expandedCustomTestCycle != null && !expandedCustomTestCycle.isEmpty()) {
+            body.field("testCycle", GsonUtils.getInstance().toJson(expandedCustomTestCycle), "application/json");
         }
 
         return body.asJson();

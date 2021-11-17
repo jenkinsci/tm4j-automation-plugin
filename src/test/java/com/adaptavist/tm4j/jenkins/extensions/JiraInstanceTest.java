@@ -18,6 +18,7 @@ import com.mashape.unirest.request.GetRequest;
 import com.mashape.unirest.request.HttpRequest;
 import com.mashape.unirest.request.HttpRequestWithBody;
 import com.mashape.unirest.request.body.MultipartBody;
+import hudson.EnvVars;
 import hudson.util.Secret;
 import java.io.File;
 import java.util.stream.Stream;
@@ -46,7 +47,7 @@ public class JiraInstanceTest {
     private static final String FEATURE_FILES_ENDPOINT = "rest/atm/1.0/automation/testcases";
     private static final String HEALTH_CHECK_ENDPOINT = "rest/atm/1.0/healthcheck/";
 
-    private static CustomTestCycle getCustomTestCycle() {
+    private static ExpandedCustomTestCycle getExpandedTestCycle() {
         final String description = "Description";
         final String jiraProjectVersion = "10001";
         final String folderId = "1234";
@@ -54,12 +55,13 @@ public class JiraInstanceTest {
         final String customFields =
             "{\"number\":50,\"single-choice\":\"option1\",\"checkbox\":true,\"userpicker\":\"5f8b5cf2ddfdcb0b8d1028bb\",\"single-line\":\"a text line\",\"datepicker\":\"2021-12-31\",\"decimal\":10.5,\"multi-choice\":[\"choice1\",\"choice2\"],\"multi-line\":\"first line<br />second line\"}";
 
-        return new CustomTestCycle("Custom Build", description, jiraProjectVersion, folderId, customFields);
+        final CustomTestCycle customTestCycle =  new CustomTestCycle("Custom Build", description, jiraProjectVersion, folderId, customFields);
+        return new ExpandedCustomTestCycle(customTestCycle, new EnvVars());
     }
 
     private static Stream<Arguments> customTestCycleArgumentProvider() {
         return Stream.of(
-            arguments(getCustomTestCycle())
+            arguments(getExpandedTestCycle())
         );
     }
 
@@ -208,7 +210,7 @@ public class JiraInstanceTest {
     @ParameterizedTest
     @NullSource
     @MethodSource("customTestCycleArgumentProvider")
-    public void publishCucumberFormatBuildResult(final CustomTestCycle customTestCycle) throws UnirestException {
+    public void publishCucumberFormatBuildResult(final ExpandedCustomTestCycle expandedCustomTestCycle) throws UnirestException {
         try (final MockedStatic<Unirest> unirest = mockStatic(Unirest.class)) {
             final File zip = mock(File.class);
             final HttpClient httpClient = mock(HttpClient.class);
@@ -227,7 +229,7 @@ public class JiraInstanceTest {
             when(httpRequestWithBody.field("file", zip)).thenReturn(multipartBody);
             when(multipartBody.asJson()).thenReturn(httpResponse);
 
-            HttpResponse<JsonNode> actualResponse = jiraInstance.publishCucumberFormatBuildResult(PROJECT_KEY, true, zip, customTestCycle);
+            HttpResponse<JsonNode> actualResponse = jiraInstance.publishCucumberFormatBuildResult(PROJECT_KEY, true, zip, expandedCustomTestCycle);
 
             assertThat(actualResponse).isEqualTo(httpResponse);
 
@@ -242,7 +244,7 @@ public class JiraInstanceTest {
     @ParameterizedTest
     @NullSource
     @MethodSource("customTestCycleArgumentProvider")
-    public void publishCustomFormatBuildResult(final CustomTestCycle customTestCycle) throws UnirestException {
+    public void publishCustomFormatBuildResult(final ExpandedCustomTestCycle expandedCustomTestCycle) throws UnirestException {
         try (final MockedStatic<Unirest> unirest = mockStatic(Unirest.class)) {
             final File zip = mock(File.class);
             final HttpClient httpClient = mock(HttpClient.class);
@@ -261,7 +263,7 @@ public class JiraInstanceTest {
             when(httpRequestWithBody.field("file", zip)).thenReturn(multipartBody);
             when(multipartBody.asJson()).thenReturn(httpResponse);
 
-            HttpResponse<JsonNode> actualResponse = jiraInstance.publishCustomFormatBuildResult(PROJECT_KEY, true, zip, customTestCycle);
+            HttpResponse<JsonNode> actualResponse = jiraInstance.publishCustomFormatBuildResult(PROJECT_KEY, true, zip, expandedCustomTestCycle);
 
             assertThat(actualResponse).isEqualTo(httpResponse);
 

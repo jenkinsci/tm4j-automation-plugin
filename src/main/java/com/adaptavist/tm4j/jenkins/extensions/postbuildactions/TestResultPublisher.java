@@ -7,6 +7,7 @@ import static com.adaptavist.tm4j.jenkins.utils.Constants.JUNIT_RESULT_FILE;
 import static com.adaptavist.tm4j.jenkins.utils.Constants.NAME_POST_BUILD_ACTION;
 
 import com.adaptavist.tm4j.jenkins.extensions.CustomTestCycle;
+import com.adaptavist.tm4j.jenkins.extensions.ExpandedCustomTestCycle;
 import com.adaptavist.tm4j.jenkins.extensions.Instance;
 import com.adaptavist.tm4j.jenkins.extensions.configuration.Tm4jGlobalConfiguration;
 import com.adaptavist.tm4j.jenkins.http.Tm4jJiraRestClient;
@@ -81,17 +82,16 @@ public class TestResultPublisher extends Notifier implements SimpleBuildStep {
         TaskListener listener
     ) {
         final PrintStream logger = listener.getLogger();
-        this.customTestCycle.expandEnvVars(envVars);
-        publishResults(logger, run, workspace);
+        publishResults(logger, run, workspace, envVars);
     }
 
-    private void publishResults(final PrintStream logger, final Run<?, ?> run, final FilePath workspace) {
+    private void publishResults(final PrintStream logger, final Run<?, ?> run, final FilePath workspace, final EnvVars envVars) {
         logger.printf("%s Publishing test results...%n", INFO);
 
         try {
             final String directory = getDirectory(workspace, run);
             final List<Instance> jiraInstances = getDescriptor().getJiraInstances();
-            validateFieldsAndUploadResults(logger, jiraInstances, directory);
+            validateFieldsAndUploadResults(logger, envVars, jiraInstances, directory);
         } catch (final Exception e) {
             handlePublishException(logger, run, e);
         }
@@ -106,12 +106,12 @@ public class TestResultPublisher extends Notifier implements SimpleBuildStep {
         throw new RuntimeException(exception);
     }
 
-    private void validateFieldsAndUploadResults(PrintStream logger, List<Instance> jiraInstances, String directory) throws Exception {
+    private void validateFieldsAndUploadResults(PrintStream logger, final EnvVars envVars, List<Instance> jiraInstances, String directory) throws Exception {
         validateFields();
 
         Tm4jJiraRestClient tm4jJiraRestClient = new Tm4jJiraRestClient(logger, jiraInstances, this.serverAddress);
 
-        uploadResultsFile(tm4jJiraRestClient, directory);
+        uploadResultsFile(tm4jJiraRestClient, directory, envVars);
 
     }
 
@@ -123,22 +123,24 @@ public class TestResultPublisher extends Notifier implements SimpleBuildStep {
             .validateServerAddress(this.serverAddress);
     }
 
-    private void uploadResultsFile(Tm4jJiraRestClient tm4jJiraRestClient, String directory) throws Exception {
+    private void uploadResultsFile(Tm4jJiraRestClient tm4jJiraRestClient, String directory, final EnvVars envVars) throws Exception {
+        final ExpandedCustomTestCycle expandedCustomTestCycle = this.customTestCycle.expandEnvVars(envVars);
+
         if (CUCUMBER.equals(this.format)) {
             tm4jJiraRestClient.uploadCucumberFile(directory, this.filePath, this.projectKey, this.autoCreateTestCases,
-                this.customTestCycle);
+                expandedCustomTestCycle);
 
             return;
         }
 
         if (JUNIT_RESULT_FILE.equals(this.format)) {
             tm4jJiraRestClient.uploadJUnitXmlResultFile(directory, this.filePath, this.projectKey, this.autoCreateTestCases,
-                this.customTestCycle);
+                expandedCustomTestCycle);
 
             return;
         }
 
-        tm4jJiraRestClient.uploadCustomFormatFile(directory, this.projectKey, this.autoCreateTestCases, this.customTestCycle);
+        tm4jJiraRestClient.uploadCustomFormatFile(directory, this.projectKey, this.autoCreateTestCases, expandedCustomTestCycle);
     }
 
     private String getDirectory(FilePath workspace, Run<?, ?> run) throws IOException, InterruptedException {
