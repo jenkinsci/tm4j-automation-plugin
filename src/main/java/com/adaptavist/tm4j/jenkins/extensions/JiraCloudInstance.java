@@ -1,7 +1,5 @@
 package com.adaptavist.tm4j.jenkins.extensions;
 
-import static com.adaptavist.tm4j.jenkins.utils.UnirestUtils.setUnirestHttpClient;
-
 import com.adaptavist.tm4j.jenkins.exception.InvalidJwtException;
 import com.adaptavist.tm4j.jenkins.utils.GsonUtils;
 import com.mashape.unirest.http.HttpResponse;
@@ -15,6 +13,8 @@ import java.io.File;
 import java.text.MessageFormat;
 import java.text.ParseException;
 import net.minidev.json.JSONObject;
+import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 
 public class JiraCloudInstance implements Instance {
 
@@ -22,19 +22,19 @@ public class JiraCloudInstance implements Instance {
     private static final String JUNIT_ENDPOINT = "{0}/v2/automations/executions/junit";
     private static final String CUSTOM_FORMAT_ENDPOINT = "{0}/v2/automations/executions/custom";
     private static final String FEATURE_FILES_ENDPOINT = "{0}/v2/automations/testcases";
-    private static final String TM4J_HEALTH_CHECK = "{0}/v2/healthcheck";
-    private static final String TM4J_API_BASE_URL = "https://api.zephyrscale-stage.smartbear.com";
+    private static final String HEALTH_CHECK_ENDPOINT = "{0}/v2/healthcheck";
+    private static final String API_BASE_URL = "https://api.zephyrscale-stage.smartbear.com";
 
     private Secret jwt;
     private String name;
 
     public JiraCloudInstance() {
-
+        setUnirestHttpClient(getNewHttpClient());
     }
 
     public JiraCloudInstance(Secret jwt) {
-        this.jwt = jwt;
-        this.name = getBaseUrl();
+        setJwt(jwt);
+        setUnirestHttpClient(getNewHttpClient());
     }
 
     @Override
@@ -58,13 +58,12 @@ public class JiraCloudInstance implements Instance {
     @Override
     public Boolean isValidCredentials() {
         try {
-            setUnirestHttpClient();
-
-            final String url = MessageFormat.format(TM4J_HEALTH_CHECK, TM4J_API_BASE_URL);
+            final String url = MessageFormat.format(HEALTH_CHECK_ENDPOINT, API_BASE_URL);
 
             final HttpResponse<String> response = Unirest.get(url)
                 .header("Authorization", "Bearer " + getDecryptedJwt())
                 .asString();
+
             return response.getStatus() == 200;
         } catch (UnirestException e) {
             e.printStackTrace();
@@ -77,38 +76,28 @@ public class JiraCloudInstance implements Instance {
                                                                    final File zip, final CustomTestCycle customTestCycle)
         throws UnirestException {
 
-        setUnirestHttpClient();
-
-        String url = MessageFormat.format(CUCUMBER_ENDPOINT, TM4J_API_BASE_URL);
-
+        String url = MessageFormat.format(CUCUMBER_ENDPOINT, API_BASE_URL);
         return exportResultsFile(url, projectKey, autoCreateTestCases, zip, customTestCycle);
     }
 
     @Override
     public HttpResponse<JsonNode> publishCustomFormatBuildResult(final String projectKey, final Boolean autoCreateTestCases, final File zip,
                                                                  final CustomTestCycle customTestCycle) throws UnirestException {
-        setUnirestHttpClient();
 
-        String url = MessageFormat.format(CUSTOM_FORMAT_ENDPOINT, TM4J_API_BASE_URL);
-
+        String url = MessageFormat.format(CUSTOM_FORMAT_ENDPOINT, API_BASE_URL);
         return exportResultsFile(url, projectKey, autoCreateTestCases, zip, customTestCycle);
     }
 
     @Override
     public HttpResponse<JsonNode> publishJUnitFormatBuildResult(final String projectKey, final Boolean autoCreateTestCases, final File zip,
                                                                 final CustomTestCycle customTestCycle) throws UnirestException {
-        setUnirestHttpClient();
-
-        String url = MessageFormat.format(JUNIT_ENDPOINT, TM4J_API_BASE_URL);
-
+        String url = MessageFormat.format(JUNIT_ENDPOINT, API_BASE_URL);
         return exportResultsFile(url, projectKey, autoCreateTestCases, zip, customTestCycle);
     }
 
     @Override
     public HttpResponse<String> downloadFeatureFile(final String projectKey) throws UnirestException {
-        setUnirestHttpClient();
-
-        String url = MessageFormat.format(FEATURE_FILES_ENDPOINT, TM4J_API_BASE_URL);
+        String url = MessageFormat.format(FEATURE_FILES_ENDPOINT, API_BASE_URL);
 
         return Unirest.get(url)
             .header("Authorization", "Bearer " + getDecryptedJwt())
@@ -162,5 +151,13 @@ public class JiraCloudInstance implements Instance {
 
     private String getDecryptedJwt() {
         return jwt.getPlainText();
+    }
+
+    private HttpClient getNewHttpClient() {
+        return HttpClientBuilder.create().disableCookieManagement().build();
+    }
+
+    protected void setUnirestHttpClient(final HttpClient httpClient) {
+        Unirest.setHttpClient(httpClient);
     }
 }
