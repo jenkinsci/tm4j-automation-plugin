@@ -4,16 +4,17 @@ import static org.apache.commons.lang.StringUtils.isBlank;
 
 import com.adaptavist.tm4j.jenkins.utils.GsonUtils;
 import com.google.gson.reflect.TypeToken;
+import hudson.EnvVars;
 import java.util.HashMap;
 import java.util.Map;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 public class CustomTestCycle {
-    protected final String name;
-    protected final String description;
-    protected final Long jiraProjectVersion;
-    protected final Long folderId;
-    protected final Map<String, Object> customFields;
+    protected String name;
+    protected String description;
+    protected Long jiraProjectVersion;
+    protected Long folderId;
+    protected Map<String, Object> customFields;
 
     @DataBoundConstructor
     public CustomTestCycle(
@@ -62,6 +63,20 @@ public class CustomTestCycle {
             && (customFields == null || customFields.size() == 0)
             && (jiraProjectVersion == null || jiraProjectVersion == 0)
             && (folderId == null || folderId == 0);
+    }
+
+    public void expandEnvVars(final EnvVars envVars) {
+        final String expandedName = envVars.expand(this.getName());
+        final String expandedDescription = envVars.expand(this.getDescription());
+        final String expandedJiraProjectVersion = envVars.expand(this.getJiraProjectVersion());
+        final String expandedFolderId = envVars.expand(this.getFolderId());
+        final String expandedCustomFields = envVars.expand(this.getCustomFields());
+
+        this.name = setStringIfNotBlank(expandedName);
+        this.description = setStringIfNotBlank(expandedDescription);
+        this.jiraProjectVersion = jiraProjectVersion(expandedJiraProjectVersion);
+        this.folderId = jiraProjectVersion(expandedFolderId);
+        this.customFields = convertCustomFieldsToMapIfValid(expandedCustomFields);
     }
 
     private String setStringIfNotBlank(final String value) {

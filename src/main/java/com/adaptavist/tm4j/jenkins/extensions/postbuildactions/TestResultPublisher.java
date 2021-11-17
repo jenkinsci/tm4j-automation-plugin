@@ -81,6 +81,7 @@ public class TestResultPublisher extends Notifier implements SimpleBuildStep {
         TaskListener listener
     ) {
         final PrintStream logger = listener.getLogger();
+        this.customTestCycle.expandEnvVars(envVars);
         publishResults(logger, run, workspace);
     }
 
