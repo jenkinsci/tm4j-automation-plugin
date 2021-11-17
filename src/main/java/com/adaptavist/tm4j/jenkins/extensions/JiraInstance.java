@@ -1,6 +1,5 @@
 package com.adaptavist.tm4j.jenkins.extensions;
 
-import static com.adaptavist.tm4j.jenkins.utils.UnirestUtils.setUnirestHttpClient;
 import static java.lang.String.format;
 
 import com.mashape.unirest.http.HttpResponse;
@@ -10,22 +9,26 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 import hudson.util.Secret;
 import java.io.File;
 import java.text.MessageFormat;
+import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 
 public class JiraInstance implements Instance {
 
     private static final String CUCUMBER_ENDPOINT = "{0}/rest/atm/1.0/automation/execution/cucumber/{1}";
     private static final String CUSTOM_FORMAT_ENDPOINT = "{0}/rest/atm/1.0/automation/execution/{1}";
     private static final String FEATURE_FILES_ENDPOINT = "{0}/rest/atm/1.0/automation/testcases";
-    private static final String TM4J_HEALTH_CHECK = "{0}/rest/atm/1.0/healthcheck/";
+    private static final String HEALTH_CHECK_ENDPOINT = "{0}/rest/atm/1.0/healthcheck/";
 
     private String serverAddress;
     private String username;
     private Secret password;
 
     public JiraInstance() {
+        setUnirestHttpClient(getNewHttpClient());
     }
 
     public JiraInstance(final String serverAddress, final String username, final Secret password) {
+        setUnirestHttpClient(getNewHttpClient());
         this.serverAddress = serverAddress;
         this.username = username;
         this.password = password;
@@ -44,9 +47,7 @@ public class JiraInstance implements Instance {
     @Override
     public final Boolean isValidCredentials() {
         try {
-            setUnirestHttpClient();
-
-            final String url = MessageFormat.format(TM4J_HEALTH_CHECK, serverAddress);
+            final String url = MessageFormat.format(HEALTH_CHECK_ENDPOINT, serverAddress);
 
             final HttpResponse<String> response = Unirest.get(url)
                 .basicAuth(username, this.getPlainTextPassword())
@@ -62,8 +63,6 @@ public class JiraInstance implements Instance {
 
     @Override
     public HttpResponse<String> downloadFeatureFile(final String projectKey) throws UnirestException {
-        setUnirestHttpClient();
-
         final String url = MessageFormat.format(FEATURE_FILES_ENDPOINT, serverAddress);
 
         final String tql = format("testCase.projectKey = '%s'", projectKey);
@@ -75,7 +74,6 @@ public class JiraInstance implements Instance {
     public HttpResponse<JsonNode> publishCucumberFormatBuildResult(final String projectKey, final Boolean autoCreateTestCases,
                                                                    final File zip, final CustomTestCycle customTestCycle)
         throws UnirestException {
-        setUnirestHttpClient();
 
         final String url = MessageFormat.format(CUCUMBER_ENDPOINT, serverAddress, projectKey);
 
@@ -86,7 +84,6 @@ public class JiraInstance implements Instance {
     public HttpResponse<JsonNode> publishCustomFormatBuildResult(final String projectKey, final Boolean autoCreateTestCases, final File zip,
                                                                  final CustomTestCycle customTestCycle)
         throws UnirestException {
-        setUnirestHttpClient();
 
         final String url = MessageFormat.format(CUSTOM_FORMAT_ENDPOINT, serverAddress, projectKey);
 
@@ -134,5 +131,13 @@ public class JiraInstance implements Instance {
 
     private String getPlainTextPassword() {
         return Secret.toString(password);
+    }
+
+    private HttpClient getNewHttpClient() {
+        return HttpClientBuilder.create().disableCookieManagement().build();
+    }
+
+    protected void setUnirestHttpClient(final HttpClient httpClient) {
+        Unirest.setHttpClient(httpClient);
     }
 }

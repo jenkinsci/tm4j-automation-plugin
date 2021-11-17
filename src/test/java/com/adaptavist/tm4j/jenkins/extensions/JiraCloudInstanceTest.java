@@ -32,8 +32,8 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-@ExtendWith(MockitoExtension.class)
 @SuppressWarnings("unchecked")
+@ExtendWith(MockitoExtension.class)
 public class JiraCloudInstanceTest {
 
     private static final String PROJECT_KEY = "DEFAULT";
@@ -82,6 +82,7 @@ public class JiraCloudInstanceTest {
 
         assertThat(jiraCloudInstance.getJwt()).isEqualTo(secret);
         assertThat(jiraCloudInstance.name()).isEqualTo(BASE_URL);
+        assertThat(jiraCloudInstance.getCloudAddress()).isEqualTo(BASE_URL);
     }
 
     @Test
@@ -101,6 +102,7 @@ public class JiraCloudInstanceTest {
 
         assertThat(jiraCloudInstance.getJwt()).isEqualTo(secret);
         assertThat(jiraCloudInstance.name()).isNull();
+        assertThat(jiraCloudInstance.getCloudAddress()).isNull();
     }
 
     @Test
@@ -111,12 +113,14 @@ public class JiraCloudInstanceTest {
 
         assertThat(jiraCloudInstance.getJwt()).isEqualTo(secret);
         assertThat(jiraCloudInstance.name()).isNull();
+        assertThat(jiraCloudInstance.getCloudAddress()).isNull();
     }
 
     @Test
     public void isCloud() {
         final JiraCloudInstance jiraCloudInstance = new JiraCloudInstance();
         assertThat(jiraCloudInstance.cloud()).isTrue();
+        assertThat(jiraCloudInstance.getCloud()).isTrue();
     }
 
     @Test
@@ -167,7 +171,7 @@ public class JiraCloudInstanceTest {
 
             final HttpRequestWithBody httpRequestWithBody = mock(HttpRequestWithBody.class);
             final MultipartBody multipartBody = mock(MultipartBody.class);
-            final HttpResponse<JsonNode> httpResponseJsonNode = (HttpResponse<JsonNode>) mock(HttpResponse.class);
+            final HttpResponse<JsonNode> httpResponse = (HttpResponse<JsonNode>) mock(HttpResponse.class);
 
             unirest.when(() -> Unirest.post(endsWith(CUCUMBER_ENDPOINT))).thenReturn(httpRequestWithBody);
 
@@ -177,9 +181,11 @@ public class JiraCloudInstanceTest {
             when(httpRequestWithBody.queryString("projectKey", PROJECT_KEY)).thenReturn(httpRequestWithBody);
             when(httpRequestWithBody.field("file", zip)).thenReturn(multipartBody);
 
-            when(multipartBody.asJson()).thenReturn(httpResponseJsonNode);
+            when(multipartBody.asJson()).thenReturn(httpResponse);
 
-            jiraCloudInstance.publishCucumberFormatBuildResult(PROJECT_KEY, true, zip, null);
+            HttpResponse<JsonNode> actualResponse = jiraCloudInstance.publishCucumberFormatBuildResult(PROJECT_KEY, true, zip, null);
+
+            assertThat(actualResponse).isEqualTo(httpResponse);
 
             verify(multipartBody, never()).field(eq("testCycle"), anyString(), eq("application/json"));
 
@@ -187,7 +193,7 @@ public class JiraCloudInstanceTest {
             verifyNoMoreInteractions(httpClient);
             verifyNoMoreInteractions(httpRequestWithBody);
             verifyNoMoreInteractions(multipartBody);
-            verifyNoMoreInteractions(httpResponseJsonNode);
+            verifyNoMoreInteractions(httpResponse);
         }
     }
 
@@ -203,7 +209,7 @@ public class JiraCloudInstanceTest {
 
             final HttpRequestWithBody httpRequestWithBody = mock(HttpRequestWithBody.class);
             final MultipartBody multipartBody = mock(MultipartBody.class);
-            final HttpResponse<JsonNode> httpResponseJsonNode = (HttpResponse<JsonNode>) mock(HttpResponse.class);
+            final HttpResponse<JsonNode> httpResponse = (HttpResponse<JsonNode>) mock(HttpResponse.class);
 
             unirest.when(() -> Unirest.post(endsWith(CUSTOM_FORMAT_ENDPOINT))).thenReturn(httpRequestWithBody);
 
@@ -216,15 +222,17 @@ public class JiraCloudInstanceTest {
             when(multipartBody.field("testCycle", GsonUtils.getInstance().toJson(customTestCycle), "application/json")).thenReturn(
                 multipartBody);
 
-            when(multipartBody.asJson()).thenReturn(httpResponseJsonNode);
+            when(multipartBody.asJson()).thenReturn(httpResponse);
 
-            jiraCloudInstance.publishCustomFormatBuildResult(PROJECT_KEY, true, zip, customTestCycle);
+            HttpResponse<JsonNode> actualResponse = jiraCloudInstance.publishCustomFormatBuildResult(PROJECT_KEY, true, zip, customTestCycle);
+
+            assertThat(actualResponse).isEqualTo(httpResponse);
 
             verifyNoMoreInteractions(zip);
             verifyNoMoreInteractions(httpClient);
             verifyNoMoreInteractions(httpRequestWithBody);
             verifyNoMoreInteractions(multipartBody);
-            verifyNoMoreInteractions(httpResponseJsonNode);
+            verifyNoMoreInteractions(httpResponse);
         }
     }
 
@@ -239,7 +247,7 @@ public class JiraCloudInstanceTest {
 
             final HttpRequestWithBody httpRequestWithBody = mock(HttpRequestWithBody.class);
             final MultipartBody multipartBody = mock(MultipartBody.class);
-            final HttpResponse<JsonNode> httpResponseJsonNode = (HttpResponse<JsonNode>) mock(HttpResponse.class);
+            final HttpResponse<JsonNode> httpResponse = (HttpResponse<JsonNode>) mock(HttpResponse.class);
 
             unirest.when(() -> Unirest.post(endsWith(CUSTOM_FORMAT_ENDPOINT))).thenReturn(httpRequestWithBody);
 
@@ -249,9 +257,11 @@ public class JiraCloudInstanceTest {
             when(httpRequestWithBody.queryString("projectKey", PROJECT_KEY)).thenReturn(httpRequestWithBody);
             when(httpRequestWithBody.field("file", zip)).thenReturn(multipartBody);
 
-            when(multipartBody.asJson()).thenReturn(httpResponseJsonNode);
+            when(multipartBody.asJson()).thenReturn(httpResponse);
 
-            jiraCloudInstance.publishCustomFormatBuildResult(PROJECT_KEY, true, zip, null);
+            HttpResponse<JsonNode> actualResponse = jiraCloudInstance.publishCustomFormatBuildResult(PROJECT_KEY, true, zip, null);
+
+            assertThat(actualResponse).isEqualTo(httpResponse);
 
             verify(multipartBody, never()).field(eq("testCycle"), anyString(), eq("application/json"));
 
@@ -259,7 +269,7 @@ public class JiraCloudInstanceTest {
             verifyNoMoreInteractions(httpClient);
             verifyNoMoreInteractions(httpRequestWithBody);
             verifyNoMoreInteractions(multipartBody);
-            verifyNoMoreInteractions(httpResponseJsonNode);
+            verifyNoMoreInteractions(httpResponse);
         }
     }
 
@@ -275,7 +285,7 @@ public class JiraCloudInstanceTest {
 
             final HttpRequestWithBody httpRequestWithBody = mock(HttpRequestWithBody.class);
             final MultipartBody multipartBody = mock(MultipartBody.class);
-            final HttpResponse<JsonNode> httpResponseJsonNode = (HttpResponse<JsonNode>) mock(HttpResponse.class);
+            final HttpResponse<JsonNode> httpResponse = (HttpResponse<JsonNode>) mock(HttpResponse.class);
 
             unirest.when(() -> Unirest.post(endsWith(JUNIT_ENDPOINT))).thenReturn(httpRequestWithBody);
 
@@ -288,15 +298,17 @@ public class JiraCloudInstanceTest {
             when(multipartBody.field("testCycle", GsonUtils.getInstance().toJson(customTestCycle), "application/json")).thenReturn(
                 multipartBody);
 
-            when(multipartBody.asJson()).thenReturn(httpResponseJsonNode);
+            when(multipartBody.asJson()).thenReturn(httpResponse);
 
-            jiraCloudInstance.publishJUnitFormatBuildResult(PROJECT_KEY, true, zip, customTestCycle);
+            HttpResponse<JsonNode> actualResponse = jiraCloudInstance.publishJUnitFormatBuildResult(PROJECT_KEY, true, zip, customTestCycle);
+
+            assertThat(actualResponse).isEqualTo(httpResponse);
 
             verifyNoMoreInteractions(zip);
             verifyNoMoreInteractions(httpClient);
             verifyNoMoreInteractions(httpRequestWithBody);
             verifyNoMoreInteractions(multipartBody);
-            verifyNoMoreInteractions(httpResponseJsonNode);
+            verifyNoMoreInteractions(httpResponse);
         }
     }
 
@@ -311,7 +323,7 @@ public class JiraCloudInstanceTest {
 
             final HttpRequestWithBody httpRequestWithBody = mock(HttpRequestWithBody.class);
             final MultipartBody multipartBody = mock(MultipartBody.class);
-            final HttpResponse<JsonNode> httpResponseJsonNode = (HttpResponse<JsonNode>) mock(HttpResponse.class);
+            final HttpResponse<JsonNode> httpResponse = (HttpResponse<JsonNode>) mock(HttpResponse.class);
 
             unirest.when(() -> Unirest.post(endsWith(JUNIT_ENDPOINT))).thenReturn(httpRequestWithBody);
 
@@ -321,9 +333,11 @@ public class JiraCloudInstanceTest {
             when(httpRequestWithBody.queryString("projectKey", PROJECT_KEY)).thenReturn(httpRequestWithBody);
             when(httpRequestWithBody.field("file", zip)).thenReturn(multipartBody);
 
-            when(multipartBody.asJson()).thenReturn(httpResponseJsonNode);
+            when(multipartBody.asJson()).thenReturn(httpResponse);
 
-            jiraCloudInstance.publishJUnitFormatBuildResult(PROJECT_KEY, true, zip, null);
+            HttpResponse<JsonNode> actualResponse = jiraCloudInstance.publishJUnitFormatBuildResult(PROJECT_KEY, true, zip, null);
+
+            assertThat(actualResponse).isEqualTo(httpResponse);
 
             verify(multipartBody, never()).field(eq("testCycle"), anyString(), eq("application/json"));
 
@@ -331,7 +345,7 @@ public class JiraCloudInstanceTest {
             verifyNoMoreInteractions(httpClient);
             verifyNoMoreInteractions(httpRequestWithBody);
             verifyNoMoreInteractions(multipartBody);
-            verifyNoMoreInteractions(httpResponseJsonNode);
+            verifyNoMoreInteractions(httpResponse);
         }
     }
 
@@ -354,7 +368,8 @@ public class JiraCloudInstanceTest {
             when(getRequest.queryString("projectKey", PROJECT_KEY)).thenReturn(httpRequest);
             when(httpRequest.asString()).thenReturn(httpResponse);
 
-            jiraCloudInstance.downloadFeatureFile(PROJECT_KEY);
+            HttpResponse<String> actualResponse = jiraCloudInstance.downloadFeatureFile(PROJECT_KEY);
+            assertThat(actualResponse).isEqualTo(httpResponse);
 
             verifyNoMoreInteractions(httpClient);
             verifyNoMoreInteractions(getRequest);
