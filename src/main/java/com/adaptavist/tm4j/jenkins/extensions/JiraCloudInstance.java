@@ -16,7 +16,7 @@ import net.minidev.json.JSONObject;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 
-public class JiraCloudInstance implements Instance {
+public class JiraCloudInstance extends Instance {
 
     private static final String CUCUMBER_ENDPOINT = "{0}/v2/automations/executions/cucumber";
     private static final String JUNIT_ENDPOINT = "{0}/v2/automations/executions/junit";
@@ -149,7 +149,7 @@ public class JiraCloudInstance implements Instance {
             body.field("testCycle", GsonUtils.getInstance().toJson(expandedCustomTestCycle), "application/json");
         }
 
-        return body.asJson();
+        return this.getBodyAsJsonOrThrowExceptionWithBody(body);
     }
 
     private String getDecryptedJwt() {

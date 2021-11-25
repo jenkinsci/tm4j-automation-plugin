@@ -6,13 +6,14 @@ import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
+import com.mashape.unirest.request.body.MultipartBody;
 import hudson.util.Secret;
 import java.io.File;
 import java.text.MessageFormat;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 
-public class JiraInstance implements Instance {
+public class JiraInstance extends Instance {
 
     private static final String CUCUMBER_ENDPOINT = "{0}/rest/atm/1.0/automation/execution/cucumber/{1}";
     private static final String CUSTOM_FORMAT_ENDPOINT = "{0}/rest/atm/1.0/automation/execution/{1}";
@@ -92,7 +93,8 @@ public class JiraInstance implements Instance {
 
     @Override
     public HttpResponse<JsonNode> publishJUnitFormatBuildResult(final String projectKey, final Boolean autoCreateTestCases, final File zip,
-                                                                final ExpandedCustomTestCycle expandedCustomTestCycle) throws UnirestException {
+                                                                final ExpandedCustomTestCycle expandedCustomTestCycle)
+        throws UnirestException {
         throw new RuntimeException("Not implemented for Zephyr Scale Server/DC");
     }
 
@@ -122,11 +124,13 @@ public class JiraInstance implements Instance {
 
     private HttpResponse<JsonNode> importBuildResultsFile(final Boolean autoCreateTestCases, final File zip, String url)
         throws UnirestException {
-        return Unirest.post(url)
+
+        final MultipartBody body = Unirest.post(url)
             .basicAuth(username, this.getPlainTextPassword())
             .queryString("autoCreateTestCases", autoCreateTestCases)
-            .field("file", zip)
-            .asJson();
+            .field("file", zip);
+
+        return this.getBodyAsJsonOrThrowExceptionWithBody(body);
     }
 
     private String getPlainTextPassword() {
