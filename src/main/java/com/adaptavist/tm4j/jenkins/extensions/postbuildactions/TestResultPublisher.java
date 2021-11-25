@@ -106,7 +106,8 @@ public class TestResultPublisher extends Notifier implements SimpleBuildStep {
         throw new RuntimeException(exception);
     }
 
-    private void validateFieldsAndUploadResults(PrintStream logger, final EnvVars envVars, List<Instance> jiraInstances, String directory) throws Exception {
+    private void validateFieldsAndUploadResults(PrintStream logger, final EnvVars envVars, List<Instance> jiraInstances, String directory)
+        throws Exception {
         validateFields();
 
         Tm4jJiraRestClient tm4jJiraRestClient = new Tm4jJiraRestClient(logger, jiraInstances, this.serverAddress);
@@ -124,7 +125,9 @@ public class TestResultPublisher extends Notifier implements SimpleBuildStep {
     }
 
     private void uploadResultsFile(Tm4jJiraRestClient tm4jJiraRestClient, String directory, final EnvVars envVars) throws Exception {
-        final ExpandedCustomTestCycle expandedCustomTestCycle = this.customTestCycle.expandEnvVars(envVars);
+        final ExpandedCustomTestCycle expandedCustomTestCycle = this.customizeTestCycle
+            ? this.customTestCycle.expandEnvVars(envVars)
+            : null;
 
         if (CUCUMBER.equals(this.format)) {
             tm4jJiraRestClient.uploadCucumberFile(directory, this.filePath, this.projectKey, this.autoCreateTestCases,
