@@ -3,25 +3,39 @@ package com.adaptavist.tm4j.jenkins.extensions;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.exceptions.UnirestException;
+import com.mashape.unirest.request.body.MultipartBody;
 import java.io.File;
 
-public interface Instance {
+public abstract class Instance {
 
-    Boolean cloud();
+    public abstract Boolean cloud();
 
-    String name();
+    public abstract String name();
 
-    Boolean isValidCredentials();
+    public abstract Boolean isValidCredentials();
 
-    HttpResponse<JsonNode> publishCucumberFormatBuildResult(final String projectKey, final Boolean autoCreateTestCases, final File zip,
-                                                            final ExpandedCustomTestCycle expandedCustomTestCycle) throws UnirestException;
+    public abstract HttpResponse<JsonNode> publishCucumberFormatBuildResult(final String projectKey, final Boolean autoCreateTestCases,
+                                                                            final File zip,
+                                                                            final ExpandedCustomTestCycle expandedCustomTestCycle)
+        throws UnirestException;
 
-    HttpResponse<JsonNode> publishCustomFormatBuildResult(final String projectKey, final Boolean autoCreateTestCases, final File zip,
-                                                          final ExpandedCustomTestCycle expandedCustomTestCycle) throws UnirestException;
+    public abstract HttpResponse<JsonNode> publishCustomFormatBuildResult(final String projectKey, final Boolean autoCreateTestCases,
+                                                                          final File zip,
+                                                                          final ExpandedCustomTestCycle expandedCustomTestCycle)
+        throws UnirestException;
 
-    HttpResponse<JsonNode> publishJUnitFormatBuildResult(final String projectKey, final Boolean autoCreateTestCases, final File zip,
-                                                         final ExpandedCustomTestCycle expandedCustomTestCycle) throws UnirestException;
+    public abstract HttpResponse<JsonNode> publishJUnitFormatBuildResult(final String projectKey, final Boolean autoCreateTestCases,
+                                                                         final File zip,
+                                                                         final ExpandedCustomTestCycle expandedCustomTestCycle)
+        throws UnirestException;
 
-    HttpResponse<String> downloadFeatureFile(final String projectKey) throws UnirestException;
+    public abstract HttpResponse<String> downloadFeatureFile(final String projectKey) throws UnirestException;
 
+    protected HttpResponse<JsonNode> getBodyAsJsonOrThrowExceptionWithBody(final MultipartBody body) throws UnirestException {
+        try {
+            return body.asJson();
+        } catch (final UnirestException e) {
+            throw new RuntimeException(body.asString().getBody());
+        }
+    }
 }
