@@ -2,6 +2,7 @@ package com.adaptavist.tm4j.jenkins.extensions;
 
 import static java.lang.String.format;
 
+import com.adaptavist.tm4j.jenkins.utils.GsonUtils;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
@@ -78,7 +79,7 @@ public class JiraInstance extends Instance {
 
         final String url = MessageFormat.format(CUCUMBER_ENDPOINT, serverAddress, projectKey);
 
-        return importBuildResultsFile(autoCreateTestCases, zip, url);
+        return importBuildResultsFile(autoCreateTestCases, zip, url, expandedCustomTestCycle);
     }
 
     @Override
@@ -88,7 +89,7 @@ public class JiraInstance extends Instance {
 
         final String url = MessageFormat.format(CUSTOM_FORMAT_ENDPOINT, serverAddress, projectKey);
 
-        return importBuildResultsFile(autoCreateTestCases, zip, url);
+        return importBuildResultsFile(autoCreateTestCases, zip, url, expandedCustomTestCycle);
     }
 
     @Override
@@ -122,13 +123,18 @@ public class JiraInstance extends Instance {
         this.password = password;
     }
 
-    private HttpResponse<JsonNode> importBuildResultsFile(final Boolean autoCreateTestCases, final File zip, String url)
+    private HttpResponse<JsonNode> importBuildResultsFile(final Boolean autoCreateTestCases, final File zip, String url,
+                                                          final ExpandedCustomTestCycle expandedCustomTestCycle)
         throws UnirestException {
 
         final MultipartBody body = Unirest.post(url)
             .basicAuth(username, this.getPlainTextPassword())
             .queryString("autoCreateTestCases", autoCreateTestCases)
             .field("file", zip);
+
+        if (expandedCustomTestCycle != null && !expandedCustomTestCycle.isEmpty()) {
+            body.field("testCycle", GsonUtils.getInstance().toJson(expandedCustomTestCycle), "application/json");
+        }
 
         return this.getBodyAsJsonOrThrowExceptionWithBody(body);
     }
