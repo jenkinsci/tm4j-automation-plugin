@@ -4,12 +4,13 @@ import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.endsWith;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.never;
 
+import com.adaptavist.tm4j.jenkins.utils.GsonUtils;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
@@ -209,8 +210,7 @@ public class JiraInstanceTest {
 
     @ParameterizedTest
     @NullSource
-    @MethodSource("customTestCycleArgumentProvider")
-    public void publishCucumberFormatBuildResult(final ExpandedCustomTestCycle expandedCustomTestCycle) throws UnirestException {
+    public void publishCucumberFormatBuildResult_withoutCustomTestCycle(final ExpandedCustomTestCycle expandedCustomTestCycle) throws UnirestException {
         try (final MockedStatic<Unirest> unirest = mockStatic(Unirest.class)) {
             final File zip = mock(File.class);
             final HttpClient httpClient = mock(HttpClient.class);
@@ -229,9 +229,44 @@ public class JiraInstanceTest {
             when(httpRequestWithBody.field("file", zip)).thenReturn(multipartBody);
             when(multipartBody.asJson()).thenReturn(httpResponse);
 
-            HttpResponse<JsonNode> actualResponse = jiraInstance.publishCucumberFormatBuildResult(PROJECT_KEY, true, zip, expandedCustomTestCycle);
+            jiraInstance.publishCucumberFormatBuildResult(PROJECT_KEY, true, zip, expandedCustomTestCycle);
 
-            assertThat(actualResponse).isEqualTo(httpResponse);
+            verify(multipartBody, never()).field(eq("testCycle"), anyString(), eq("application/json"));
+
+            verifyNoMoreInteractions(zip);
+            verifyNoMoreInteractions(httpClient);
+            verifyNoMoreInteractions(httpRequestWithBody);
+            verifyNoMoreInteractions(multipartBody);
+            verifyNoMoreInteractions(httpResponse);
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("customTestCycleArgumentProvider")
+    public void publishCucumberFormatBuildResult(final ExpandedCustomTestCycle expandedCustomTestCycle) throws UnirestException {
+        try (final MockedStatic<Unirest> unirest = mockStatic(Unirest.class)) {
+            final File zip = mock(File.class);
+            final HttpClient httpClient = mock(HttpClient.class);
+
+            final JiraInstance jiraInstance = getValidJiraInstance();
+            jiraInstance.setUnirestHttpClient(httpClient);
+
+            final HttpRequestWithBody httpRequestWithBody = mock(HttpRequestWithBody.class);
+            final MultipartBody multipartBody = mock(MultipartBody.class);
+            final HttpResponse<JsonNode> httpResponse = (HttpResponse<JsonNode>) mock(HttpResponse.class);
+
+            unirest.when(() -> Unirest.post(endsWith(CUCUMBER_ENDPOINT))).thenReturn(httpRequestWithBody);
+
+            when(httpRequestWithBody.basicAuth(USERNAME, PASSWORD)).thenReturn(httpRequestWithBody);
+            when(httpRequestWithBody.queryString("autoCreateTestCases", true)).thenReturn(httpRequestWithBody);
+            when(httpRequestWithBody.field("file", zip)).thenReturn(multipartBody);
+            when(multipartBody.field("testCycle", GsonUtils.getInstance().toJson(expandedCustomTestCycle), "application/json")).thenReturn(
+                    multipartBody);
+            when(multipartBody.asJson()).thenReturn(httpResponse);
+
+            jiraInstance.publishCucumberFormatBuildResult(PROJECT_KEY, true, zip, expandedCustomTestCycle);
+
+            verify(multipartBody).field(eq("testCycle"), anyString(), eq("application/json"));
 
             verifyNoMoreInteractions(zip);
             verifyNoMoreInteractions(httpClient);
@@ -243,6 +278,40 @@ public class JiraInstanceTest {
 
     @ParameterizedTest
     @NullSource
+    public void publishCustomFormatBuildResult_withoutCustomTestCycle(final ExpandedCustomTestCycle expandedCustomTestCycle) throws UnirestException {
+        try (final MockedStatic<Unirest> unirest = mockStatic(Unirest.class)) {
+            final File zip = mock(File.class);
+            final HttpClient httpClient = mock(HttpClient.class);
+
+            final JiraInstance jiraInstance = getValidJiraInstance();
+            jiraInstance.setUnirestHttpClient(httpClient);
+
+            final HttpRequestWithBody httpRequestWithBody = mock(HttpRequestWithBody.class);
+            final MultipartBody multipartBody = mock(MultipartBody.class);
+            final HttpResponse<JsonNode> httpResponse = (HttpResponse<JsonNode>) mock(HttpResponse.class);
+
+            unirest.when(() -> Unirest.post(endsWith(CUSTOM_FORMAT_ENDPOINT))).thenReturn(httpRequestWithBody);
+
+            when(httpRequestWithBody.basicAuth(USERNAME, PASSWORD)).thenReturn(httpRequestWithBody);
+            when(httpRequestWithBody.queryString("autoCreateTestCases", true)).thenReturn(httpRequestWithBody);
+            when(httpRequestWithBody.field("file", zip)).thenReturn(multipartBody);
+            when(multipartBody.asJson()).thenReturn(httpResponse);
+
+            HttpResponse<JsonNode> actualResponse = jiraInstance.publishCustomFormatBuildResult(PROJECT_KEY, true, zip, expandedCustomTestCycle);
+
+            assertThat(actualResponse).isEqualTo(httpResponse);
+
+            verify(multipartBody, never()).field(eq("testCycle"), anyString(), eq("application/json"));
+
+            verifyNoMoreInteractions(zip);
+            verifyNoMoreInteractions(httpClient);
+            verifyNoMoreInteractions(httpRequestWithBody);
+            verifyNoMoreInteractions(multipartBody);
+            verifyNoMoreInteractions(httpResponse);
+        }
+    }
+
+    @ParameterizedTest
     @MethodSource("customTestCycleArgumentProvider")
     public void publishCustomFormatBuildResult(final ExpandedCustomTestCycle expandedCustomTestCycle) throws UnirestException {
         try (final MockedStatic<Unirest> unirest = mockStatic(Unirest.class)) {
@@ -266,6 +335,8 @@ public class JiraInstanceTest {
             HttpResponse<JsonNode> actualResponse = jiraInstance.publishCustomFormatBuildResult(PROJECT_KEY, true, zip, expandedCustomTestCycle);
 
             assertThat(actualResponse).isEqualTo(httpResponse);
+
+            verify(multipartBody).field(eq("testCycle"), anyString(), eq("application/json"));
 
             verifyNoMoreInteractions(zip);
             verifyNoMoreInteractions(httpClient);

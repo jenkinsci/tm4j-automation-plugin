@@ -25,7 +25,7 @@
     <f:block>
         <table>
             <f:optionalBlock field="customTestCycle" name="customTestCycle" checked="${instance.customizeTestCycle}"
-                             title="Customize the created test cycle (Zephyr Scale Cloud only)">
+                             title="Customize the created test cycle">
                 <f:entry title="Name" field="testCycleName" >
                     <f:textbox field="name" placeholder="e.g. Jenkins Build"/>
                 </f:entry>
