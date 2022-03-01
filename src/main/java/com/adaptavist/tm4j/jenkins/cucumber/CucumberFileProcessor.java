@@ -27,7 +27,7 @@ public class CucumberFileProcessor {
     private static String getTmpDirectory(String directory) {
         String fileSeparator = FileSystems.getDefault().getSeparator();
         String tmpDirectoryName = directory + (directory.endsWith(fileSeparator) ? "" : fileSeparator);
-        return tmpDirectoryName + "target/cucumber_tmp/";
+        return tmpDirectoryName + "target" + fileSeparator + "cucumber_tmp" + fileSeparator;
     }
 
     void setTmpDirectory(String directory){
