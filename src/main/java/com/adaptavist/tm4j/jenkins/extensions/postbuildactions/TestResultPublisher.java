@@ -29,6 +29,7 @@ import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.nio.file.FileSystems;
 import java.util.List;
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
@@ -42,7 +43,7 @@ import org.kohsuke.stapler.verb.POST;
 
 public class TestResultPublisher extends Notifier implements SimpleBuildStep {
 
-    private final Boolean customizeTestCycle;
+    private final boolean customizeTestCycle;
     private final CustomTestCycle customTestCycle;
     private String serverAddress;
     private String projectKey;
@@ -147,13 +148,14 @@ public class TestResultPublisher extends Notifier implements SimpleBuildStep {
     }
 
     private String getDirectory(FilePath workspace, Run<?, ?> run) throws IOException, InterruptedException {
+        final String fileSeparator = FileSystems.getDefault().getSeparator();
         if (workspace.isRemote()) {
             FilePath path = new FilePath(run.getRootDir());
             workspace.copyRecursiveTo(this.filePath, path);
-            return run.getRootDir() + "/";
+            return run.getRootDir() + fileSeparator;
         }
 
-        return workspace.getRemote() + "/";
+        return workspace.getRemote() + fileSeparator;
     }
 
     @Override
