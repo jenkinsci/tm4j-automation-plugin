@@ -130,6 +130,10 @@
                     <groupId>org.json</groupId>
                     <artifactId>json</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>org.jenkins-ci.main</groupId>
+                    <artifactId>jenkins-test-harness</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
     </dependencies>
