@@ -172,7 +172,7 @@ public class Tm4jGlobalConfiguration extends GlobalConfiguration {
     }
 
     public List<Instance> getJiraInstances() {
-        //Here no authentication is done on each instance as it has been done during configuration
+        //Here, no authentication is done on each instance as it has been done during configuration
         return this.jiraInstances.stream()
                 .map(formInstance -> {
                     if(formInstance.getValue().equals(CLOUD_TYPE)){
