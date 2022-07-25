@@ -119,6 +119,12 @@
             <artifactId>test-harness</artifactId>
             <version>${configuration-as-code.version}</version>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.json</groupId>
+                    <artifactId>json</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 
