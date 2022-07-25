@@ -113,6 +113,12 @@
             <artifactId>configuration-as-code</artifactId>
             <version>${configuration-as-code.version}</version>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.json</groupId>
+                    <artifactId>json</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>io.jenkins.configuration-as-code</groupId>
