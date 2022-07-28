@@ -20,7 +20,6 @@ import org.kohsuke.stapler.verb.POST;
 import javax.annotation.Nonnull;
 import java.text.MessageFormat;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static com.adaptavist.tm4j.jenkins.utils.Constants.ZEPHYR_SCALE_GLOBAL_CONFIGURATION;
 
@@ -48,11 +47,11 @@ public class Tm4jGlobalConfiguration extends GlobalConfiguration {
         Permissions.checkAdminPermission();
         request.bindParameters(this);
         List<FormInstance> newJiraInstances = new ArrayList<>();
-        System.out.println("Started");
+
         try {
             Object formJiraInstances = formData.get(JIRA_INSTANCES);
             JSONArray jiraInstancesList = new JSONArray();
-            System.out.println("Got to the block");
+
             if(formJiraInstances instanceof JSONArray) {
                 jiraInstancesList = formData.getJSONArray(JIRA_INSTANCES);
             } else {
@@ -63,6 +62,11 @@ public class Tm4jGlobalConfiguration extends GlobalConfiguration {
                 JSONObject instance = ((JSONObject)jiraInstance).getJSONObject("type");
                 FormInstance formInstance = new FormInstance();
                 formInstance.setValue(instance.getString("value"));
+
+                if(formInstance.getValue() == null) {
+                    throw new Exception(Constants.INVALID_INSTANCE_TYPE);
+                }
+
                 if (formInstance.getValue().equalsIgnoreCase(CLOUD_TYPE)) {
                     formInstance.setCloudAddress((String) instance.getOrDefault("cloudAddress", null));
                     formInstance.setJwt((String) instance.getOrDefault("jwt", null));
@@ -73,6 +77,7 @@ public class Tm4jGlobalConfiguration extends GlobalConfiguration {
                 } else {
                     throw new Exception(Constants.INVALID_INSTANCE_TYPE);
                 }
+
                 validate(formInstance);
                 newJiraInstances.add(formInstance);
 
@@ -85,7 +90,6 @@ public class Tm4jGlobalConfiguration extends GlobalConfiguration {
             throw new FormException(MessageFormat.format(Constants.ERROR_AT_GLOBAL_CONFIGURATIONS_OF_TEST_MANAGEMENT_FOR_JIRA, e.getMessage()), "testManagementForJira");
         }
         save();
-        System.out.println("Got to the end");
         return true;
     }
 
@@ -175,6 +179,10 @@ public class Tm4jGlobalConfiguration extends GlobalConfiguration {
         for (FormInstance instance : this.jiraInstances){
             try {
                 validate(instance);
+
+                if (instance.getValue() == null) {
+                    throw new Exception(Constants.INVALID_INSTANCE_TYPE);
+                }
 
                 if (instance.getValue().equals(CLOUD_TYPE)) {
                     instances.add(getCloudInstance(instance));
