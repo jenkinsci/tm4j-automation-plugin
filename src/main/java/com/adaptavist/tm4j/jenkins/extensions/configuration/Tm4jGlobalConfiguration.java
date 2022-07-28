@@ -63,14 +63,10 @@ public class Tm4jGlobalConfiguration extends GlobalConfiguration {
                 FormInstance formInstance = new FormInstance();
                 formInstance.setValue(instance.getString("value"));
 
-                if(formInstance.getValue() == null) {
-                    throw new Exception(Constants.INVALID_INSTANCE_TYPE);
-                }
-
-                if (formInstance.getValue().equalsIgnoreCase(CLOUD_TYPE)) {
+                if (CLOUD_TYPE.equalsIgnoreCase(formInstance.getValue())) {
                     formInstance.setCloudAddress((String) instance.getOrDefault("cloudAddress", null));
                     formInstance.setJwt((String) instance.getOrDefault("jwt", null));
-                } else if (formInstance.getValue().equalsIgnoreCase(SERVER_TYPE)) {
+                } else if (SERVER_TYPE.equalsIgnoreCase(formInstance.getValue())) {
                     formInstance.setServerAddress((String) instance.getOrDefault("serverAddress", null));
                     formInstance.setUsername((String) instance.getOrDefault("username", null));
                     formInstance.setPassword((String) instance.getOrDefault("password", null));
@@ -180,11 +176,7 @@ public class Tm4jGlobalConfiguration extends GlobalConfiguration {
             try {
                 validate(instance);
 
-                if (instance.getValue() == null) {
-                    throw new Exception(Constants.INVALID_INSTANCE_TYPE);
-                }
-
-                if (instance.getValue().equals(CLOUD_TYPE)) {
+                if (CLOUD_TYPE.equals(instance.getValue())) {
                     instances.add(getCloudInstance(instance));
                 } else {
                     instances.add(getServerInstance(instance));
@@ -228,9 +220,9 @@ public class Tm4jGlobalConfiguration extends GlobalConfiguration {
             throw new Exception(Constants.INVALID_INSTANCE_TYPE);
         }
 
-        if (formInstance.getValue().equals(CLOUD_TYPE)) {
+        if (CLOUD_TYPE.equalsIgnoreCase(formInstance.getValue())) {
             validateCloudInstance(formInstance);
-        } else if (formInstance.getValue().equals(SERVER_TYPE)) {
+        } else if (SERVER_TYPE.equalsIgnoreCase(formInstance.getValue())) {
             validateServerInstance(formInstance);
         } else {
             throw new Exception(Constants.INVALID_INSTANCE_TYPE);
