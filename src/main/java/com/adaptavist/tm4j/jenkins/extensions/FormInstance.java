@@ -5,6 +5,7 @@ import hudson.model.Descriptor;
 import jenkins.model.Jenkins;
 import org.kohsuke.stapler.DataBoundConstructor;
 
+import javax.annotation.CheckForNull;
 import java.io.Serializable;
 
 public class FormInstance implements Serializable, Describable<FormInstance> {
@@ -28,6 +29,7 @@ public class FormInstance implements Serializable, Describable<FormInstance> {
 
     public FormInstance() { }
 
+    @CheckForNull
     public String getValue() {
         return value;
     }
@@ -51,7 +53,6 @@ public class FormInstance implements Serializable, Describable<FormInstance> {
     public String getJwt() {
         return jwt;
     }
-
 
     public void setValue(String value) {
         this.value = value;

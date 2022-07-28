@@ -91,8 +91,8 @@ After cloning this repository, these are the 2 steps you should follow:
 
 ## Configuring the Zephyr Scale Jenkins plugin using Jenkins Configuration as Code (JCasC) plugin
 You can configure the plugin by following the steps below:
-1. Install the JCasC plugin by visiting the manage plugin page and installing the Configuration as Code plugin
-2. Configure you jira Instances by creating a yaml file with the following configuration
+1. Install the JCasC plugin by visiting the "manage plugins" page and installing the Configuration as Code plugin
+2. Configure your Jira instances by creating a yaml file with the following configuration
 ```yaml
 unclassified:
   zephyr-scale:
@@ -100,13 +100,17 @@ unclassified:
       - one:
         value: "server"
         serverAddress: "yourJiraServerAddress.com"
-        username: "yourJiraUsername"
+        username: "yourJiraServerUsername"
         password: "yourJiraServerPassword"
       - two:
         value: "cloud"
-        serverAddress: "yourJiraCloud.attlasian.net"
+        serverAddress: "yourJiraCloud.atlassian.net"
         jwt: "yourCloudToken"
         
 ```
-Note That you can configure as many Instances as you want by simply adding another `jiraInstances` list entry
+Note: 
+- For server configurations, set the `value` property to `server`, then provide the `serverAddress`, `username` and `password` 
+- For cloud configurations, set the `value` property to `cloud`, then set the `serverAddress` and the `jwt`. The jwt property can be generated [here](https://support.smartbear.com/zephyr-scale-cloud/docs/rest-api/generating-api-access-tokens.html)
+
+Note That you can configure as many instances as you want by simply adding another `jiraInstances` list entry
 

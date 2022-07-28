@@ -1,0 +1,7 @@
+unclassified:
+  zephyr-scale:
+    jiraInstances:
+      - one:
+        serverAddress: "http://localhost:2990/jira"
+        username: "user"
+        password: "1234"
