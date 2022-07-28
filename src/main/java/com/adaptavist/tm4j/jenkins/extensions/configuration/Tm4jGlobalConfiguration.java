@@ -169,16 +169,24 @@ public class Tm4jGlobalConfiguration extends GlobalConfiguration {
         if (Objects.isNull(jiraInstances)) {
             return Collections.emptyList();
         }
-        return this.jiraInstances.stream()
-                .map(formInstance -> {
 
-                    if (formInstance.getValue().equals(CLOUD_TYPE)) {
-                        return getCloudInstance(formInstance);
-                    } else {
-                        return getServerInstance(formInstance);
-                    }
-                })
-                .collect(Collectors.toList());
+        List<Instance> instances = new ArrayList<>();
+
+        for (FormInstance instance : this.jiraInstances){
+            try {
+                validate(instance);
+
+                if (instance.getValue().equals(CLOUD_TYPE)) {
+                    instances.add(getCloudInstance(instance));
+                } else {
+                    instances.add(getServerInstance(instance));
+                }
+
+            } catch (Exception e) {
+                return Collections.emptyList();
+            }
+        }
+        return instances;
     }
 
     @DataBoundSetter
@@ -207,6 +215,10 @@ public class Tm4jGlobalConfiguration extends GlobalConfiguration {
     }
 
     private void validate(FormInstance formInstance) throws Exception {
+
+        if(formInstance.getValue() == null) {
+            throw new Exception(Constants.INVALID_INSTANCE_TYPE);
+        }
 
         if (formInstance.getValue().equals(CLOUD_TYPE)) {
             validateCloudInstance(formInstance);
