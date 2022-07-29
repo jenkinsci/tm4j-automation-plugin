@@ -97,13 +97,11 @@ You can configure the plugin by following the steps below:
 unclassified:
   zephyr-scale:
     jiraInstances:
-      - one:
-        value: "server"
+      - value: "server"
         serverAddress: "yourJiraServerAddress.com"
         username: "yourJiraServerUsername"
         password: "yourJiraServerPassword"
-      - two:
-        value: "cloud"
+      - value: "cloud"
         cloudAddress: "yourJiraCloud.atlassian.net"
         jwt: "yourCloudToken"
         
