@@ -30,7 +30,7 @@ public class Tm4jGlobalConfiguration extends GlobalConfiguration {
     private static final String CLOUD_TYPE = "cloud";
     private static final String SERVER_TYPE = "server";
     private static final String JIRA_INSTANCES = "jiraInstances";
-    private Collection<FormInstance> jiraInstances;
+    private Collection<JiraInstance> jiraInstances;
 
     public Tm4jGlobalConfiguration() {
         load();
@@ -46,8 +46,7 @@ public class Tm4jGlobalConfiguration extends GlobalConfiguration {
     public boolean configure(StaplerRequest request, JSONObject formData) throws FormException {
         Permissions.checkAdminPermission();
         request.bindParameters(this);
-        List<FormInstance> newJiraInstances = new ArrayList<>();
-
+        List<JiraInstance> newJiraInstances = new ArrayList<>();
         try {
             Object formJiraInstances = formData.get(JIRA_INSTANCES);
             JSONArray jiraInstancesList = new JSONArray();
@@ -60,16 +59,16 @@ public class Tm4jGlobalConfiguration extends GlobalConfiguration {
 
             for (Object jiraInstance : jiraInstancesList.toArray()) {
                 JSONObject instance = ((JSONObject)jiraInstance).getJSONObject("type");
-                FormInstance formInstance = new FormInstance();
+                JiraInstance formInstance = new JiraInstance();
                 formInstance.setValue(instance.getString("value"));
 
                 if (CLOUD_TYPE.equalsIgnoreCase(formInstance.getValue())) {
                     formInstance.setCloudAddress((String) instance.getOrDefault("cloudAddress", null));
-                    formInstance.setJwt((String) instance.getOrDefault("jwt", null));
+                    formInstance.setJwt(Secret.fromString((String) instance.getOrDefault("jwt", null)));
                 } else if (SERVER_TYPE.equalsIgnoreCase(formInstance.getValue())) {
                     formInstance.setServerAddress((String) instance.getOrDefault("serverAddress", null));
                     formInstance.setUsername((String) instance.getOrDefault("username", null));
-                    formInstance.setPassword((String) instance.getOrDefault("password", null));
+                    formInstance.setPassword(Secret.fromString((String) instance.getOrDefault("password", null)));
                 } else {
                     throw new Exception(Constants.INVALID_INSTANCE_TYPE);
                 }
@@ -89,21 +88,21 @@ public class Tm4jGlobalConfiguration extends GlobalConfiguration {
         return true;
     }
 
-    private List<Instance> createJiraInstances(Collection<FormInstance> formJiraInstances) throws Exception {
+    private List<Instance> createJiraInstances(Collection<JiraInstance> formJiraInstances) throws Exception {
         List<Instance> newJiraInstances = new ArrayList<>();
 
         if (formJiraInstances == null) {
             return newJiraInstances;
         }
 
-        for(FormInstance instance: formJiraInstances){
+        for(JiraInstance instance: formJiraInstances){
             newJiraInstances.add(createInstance(instance));
         }
 
         return newJiraInstances;
     }
 
-    private Instance createInstance(FormInstance jsonJiraInstance) throws Exception {
+    private Instance createInstance(JiraInstance jsonJiraInstance) throws Exception {
         if (CLOUD_TYPE.equals(jsonJiraInstance.getValue())) {
             return createCloudInstance(jsonJiraInstance);
         } else {
@@ -111,21 +110,21 @@ public class Tm4jGlobalConfiguration extends GlobalConfiguration {
         }
     }
 
-    private JiraInstance createServerInstance(FormInstance formJiraInstance) throws Exception {
+    private JiraServerInstance createServerInstance(JiraInstance formJiraInstance) throws Exception {
 
-        JiraInstance jiraInstance = getServerInstance(formJiraInstance);
+        JiraServerInstance jiraServerInstance = getServerInstance(formJiraInstance);
 
-        if (jiraInstance.isValidCredentials()) {
-            return jiraInstance;
+        if (jiraServerInstance.isValidCredentials()) {
+            return jiraServerInstance;
         }
         throw new Exception(Constants.INVALID_CREDENTIALS);
     }
 
-    private JiraCloudInstance createCloudInstance(FormInstance formJiraInstance) throws Exception {
+    private JiraCloudInstance createCloudInstance(JiraInstance formJiraInstance) throws Exception {
 
-        JiraCloudInstance jiraInstance = new JiraCloudInstance();
-        String jwt = formJiraInstance.getJwt();
-        jiraInstance.setJwt(Secret.fromString(jwt));
+        JiraCloudInstance jiraInstance = getCloudInstance(formJiraInstance);
+        Secret jwt = formJiraInstance.getJwt();
+        jiraInstance.setJwt(jwt);
         if (jiraInstance.isValidCredentials()) {
             return jiraInstance;
         }
@@ -172,7 +171,7 @@ public class Tm4jGlobalConfiguration extends GlobalConfiguration {
 
         List<Instance> instances = new ArrayList<>();
 
-        for (FormInstance instance : this.jiraInstances){
+        for (JiraInstance instance : this.jiraInstances){
             try {
                 validate(instance);
 
@@ -190,65 +189,68 @@ public class Tm4jGlobalConfiguration extends GlobalConfiguration {
     }
 
     @DataBoundSetter
-    public void setJiraInstances(Collection<FormInstance> jiraInstances) {
+    public void setJiraInstances(Collection<JiraInstance> jiraInstances) {
         this.jiraInstances = jiraInstances;
     }
 
-    private JiraCloudInstance getCloudInstance(FormInstance formJiraInstance) {
-        JiraCloudInstance jiraInstance = new JiraCloudInstance();
-        String jwt = formJiraInstance.getJwt();
-        jiraInstance.setJwt(Secret.fromString(jwt));
-        return jiraInstance;
+    private JiraCloudInstance getCloudInstance(JiraInstance formJiraInstance) {
+        JiraCloudInstance jiraCloudInstance = new JiraCloudInstance();
+        jiraCloudInstance.setValue(CLOUD_TYPE);
+        Secret jwt = formJiraInstance.getJwt();
+        jiraCloudInstance.setJwt(jwt);
+        jiraCloudInstance.setCloudAddress(formJiraInstance.getCloudAddress());
+        return jiraCloudInstance;
     }
 
-    private JiraInstance getServerInstance(FormInstance formJiraInstance) {
-        JiraInstance jiraInstance = new JiraInstance();
+    private JiraServerInstance getServerInstance(JiraInstance formJiraInstance) {
+        JiraServerInstance jiraServerInstance = new JiraServerInstance();
         String serverAddress = formJiraInstance.getServerAddress();
         String username = formJiraInstance.getUsername();
-        String password = formJiraInstance.getPassword();
-        jiraInstance.setServerAddress(StringUtils.removeEnd(serverAddress.trim(), "/"));
-        jiraInstance.setUsername(username.trim());
-        jiraInstance.setPassword(Secret.fromString(password));
+        Secret password = formJiraInstance.getPassword();
+        jiraServerInstance.setServerAddress(StringUtils.removeEnd(serverAddress.trim(), "/"));
+        jiraServerInstance.setUsername(username.trim());
+        jiraServerInstance.setPassword(password);
+        jiraServerInstance.setValue(SERVER_TYPE);
 
-        return jiraInstance;
+        return jiraServerInstance;
 
     }
 
-    private void validate(FormInstance formInstance) throws Exception {
+    private void validate(JiraInstance jiraInstance) throws Exception {
 
-        if(formInstance.getValue() == null) {
+        if(jiraInstance.getValue() == null) {
             throw new Exception(Constants.INVALID_INSTANCE_TYPE);
         }
 
-        if (CLOUD_TYPE.equalsIgnoreCase(formInstance.getValue())) {
-            validateCloudInstance(formInstance);
-        } else if (SERVER_TYPE.equalsIgnoreCase(formInstance.getValue())) {
-            validateServerInstance(formInstance);
+        if (CLOUD_TYPE.equalsIgnoreCase(jiraInstance.getValue())) {
+            validateCloudInstance(jiraInstance);
+        } else if (SERVER_TYPE.equalsIgnoreCase(jiraInstance.getValue())) {
+            validateServerInstance(jiraInstance);
         } else {
             throw new Exception(Constants.INVALID_INSTANCE_TYPE);
         }
 
     }
 
-    private void validateServerInstance(FormInstance formInstance) throws Exception {
-        String serverAddress = formInstance.getServerAddress();
-        String username = formInstance.getUsername();
-        String password = formInstance.getPassword();
+    private void validateServerInstance(JiraInstance jiraInstance) throws Exception {
+        String serverAddress = jiraInstance.getServerAddress();
+        String username = jiraInstance.getUsername();
+        Secret password = jiraInstance.getPassword();
         if (StringUtils.isBlank(serverAddress)) {
             throw new Exception(Constants.PLEASE_ENTER_THE_SERVER_NAME);
         }
         if (StringUtils.isBlank(username)) {
             throw new Exception(Constants.PLEASE_ENTER_THE_USERNAME);
         }
-        if (StringUtils.isBlank(password)) {
+        if (StringUtils.isBlank(password.getPlainText())) {
             throw new Exception(Constants.PLEASE_ENTER_THE_PASSWORD);
         }
 
     }
 
-    private void validateCloudInstance(FormInstance formInstance) throws Exception {
-        String jwt = formInstance.getJwt();
-        if (StringUtils.isBlank(jwt)) {
+    private void validateCloudInstance(JiraInstance jiraInstance) throws Exception {
+        Secret jwt = jiraInstance.getJwt();
+        if (StringUtils.isBlank(jwt.getPlainText())) {
             throw new Exception(Constants.PLEASE_ENTER_THE_JWT);
         }
 

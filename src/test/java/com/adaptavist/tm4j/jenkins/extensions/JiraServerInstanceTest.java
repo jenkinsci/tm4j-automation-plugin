@@ -36,7 +36,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 @SuppressWarnings("unchecked")
 @ExtendWith(MockitoExtension.class)
-public class JiraInstanceTest {
+public class JiraServerInstanceTest {
 
     private static final String PROJECT_KEY = "DEFAULT";
     private static final String BASE_URL = "https://example.myorg.com";
@@ -68,29 +68,29 @@ public class JiraInstanceTest {
 
     @Test
     public void emptyConstructor() {
-        final JiraInstance jiraInstance = new JiraInstance();
+        final JiraServerInstance jiraServerInstance = new JiraServerInstance();
 
-        assertThat(jiraInstance.name()).isNull();
-        assertThat(jiraInstance.getServerAddress()).isNull();
-        assertThat(jiraInstance.getUsername()).isNull();
-        assertThat(jiraInstance.getPassword()).isNull();
+        assertThat(jiraServerInstance.name()).isNull();
+        assertThat(jiraServerInstance.getServerAddress()).isNull();
+        assertThat(jiraServerInstance.getUsername()).isNull();
+        assertThat(jiraServerInstance.getPassword()).isNull();
     }
 
     @Test
     public void constructorWithArguments() {
         final Secret secret = getSecret();
-        final JiraInstance jiraInstance = new JiraInstance(BASE_URL, USERNAME, secret);
+        final JiraServerInstance jiraServerInstance = new JiraServerInstance(BASE_URL, USERNAME, secret);
 
-        assertThat(jiraInstance.name()).isEqualTo(BASE_URL);
-        assertThat(jiraInstance.getServerAddress()).isEqualTo(BASE_URL);
-        assertThat(jiraInstance.getUsername()).isEqualTo(USERNAME);
-        assertThat(jiraInstance.getPassword()).isEqualTo(secret);
+        assertThat(jiraServerInstance.name()).isEqualTo(BASE_URL);
+        assertThat(jiraServerInstance.getServerAddress()).isEqualTo(BASE_URL);
+        assertThat(jiraServerInstance.getUsername()).isEqualTo(USERNAME);
+        assertThat(jiraServerInstance.getPassword()).isEqualTo(secret);
     }
 
     @Test
     public void isCloud() {
-        final JiraInstance jiraInstance = new JiraInstance();
-        assertThat(jiraInstance.cloud()).isFalse();
+        final JiraServerInstance jiraServerInstance = new JiraServerInstance();
+        assertThat(jiraServerInstance.cloud()).isFalse();
     }
 
     @Test
@@ -98,8 +98,8 @@ public class JiraInstanceTest {
         try (final MockedStatic<Unirest> unirest = mockStatic(Unirest.class)) {
             final HttpClient httpClient = mock(HttpClient.class);
 
-            final JiraInstance jiraInstance = getValidJiraInstance();
-            jiraInstance.setUnirestHttpClient(httpClient);
+            final JiraServerInstance jiraServerInstance = getValidJiraInstance();
+            jiraServerInstance.setUnirestHttpClient(httpClient);
 
             final GetRequest getRequest = mock(GetRequest.class);
             final HttpResponse<String> httpResponse = (HttpResponse<String>) mock(HttpResponse.class);
@@ -110,7 +110,7 @@ public class JiraInstanceTest {
             when(getRequest.asString()).thenReturn(httpResponse);
             when(httpResponse.getStatus()).thenReturn(200);
 
-            final Boolean validCredentials = jiraInstance.isValidCredentials();
+            final Boolean validCredentials = jiraServerInstance.isValidCredentials();
 
             assertThat(validCredentials).isTrue();
 
@@ -125,8 +125,8 @@ public class JiraInstanceTest {
         try (final MockedStatic<Unirest> unirest = mockStatic(Unirest.class)) {
             final HttpClient httpClient = mock(HttpClient.class);
 
-            final JiraInstance jiraInstance = getValidJiraInstance();
-            jiraInstance.setUnirestHttpClient(httpClient);
+            final JiraServerInstance jiraServerInstance = getValidJiraInstance();
+            jiraServerInstance.setUnirestHttpClient(httpClient);
 
             final GetRequest getRequest = mock(GetRequest.class);
             final HttpRequest httpRequest = mock(HttpRequest.class);
@@ -137,7 +137,7 @@ public class JiraInstanceTest {
             when(getRequest.basicAuth(USERNAME, PASSWORD)).thenReturn(getRequest);
             when(getRequest.asString()).thenThrow(new UnirestException("Request Failed"));
 
-            final Boolean validCredentials = jiraInstance.isValidCredentials();
+            final Boolean validCredentials = jiraServerInstance.isValidCredentials();
 
             assertThat(validCredentials).isFalse();
 
@@ -155,8 +155,8 @@ public class JiraInstanceTest {
         try (final MockedStatic<Unirest> unirest = mockStatic(Unirest.class)) {
             final HttpClient httpClient = mock(HttpClient.class);
 
-            final JiraInstance jiraInstance = getValidJiraInstance();
-            jiraInstance.setUnirestHttpClient(httpClient);
+            final JiraServerInstance jiraServerInstance = getValidJiraInstance();
+            jiraServerInstance.setUnirestHttpClient(httpClient);
 
             final GetRequest getRequest = mock(GetRequest.class);
             final HttpRequest httpRequest = mock(HttpRequest.class);
@@ -168,7 +168,7 @@ public class JiraInstanceTest {
             when(getRequest.asString()).thenReturn(httpResponse);
             when(httpResponse.getStatus()).thenReturn(statusCode);
 
-            final Boolean validCredentials = jiraInstance.isValidCredentials();
+            final Boolean validCredentials = jiraServerInstance.isValidCredentials();
 
             assertThat(validCredentials).isFalse();
 
@@ -184,8 +184,8 @@ public class JiraInstanceTest {
         try (final MockedStatic<Unirest> unirest = mockStatic(Unirest.class)) {
             final HttpClient httpClient = mock(HttpClient.class);
 
-            final JiraInstance jiraInstance = getValidJiraInstance();
-            jiraInstance.setUnirestHttpClient(httpClient);
+            final JiraServerInstance jiraServerInstance = getValidJiraInstance();
+            jiraServerInstance.setUnirestHttpClient(httpClient);
 
             final GetRequest getRequest = mock(GetRequest.class);
             final HttpRequest httpRequest = mock(HttpRequest.class);
@@ -197,7 +197,7 @@ public class JiraInstanceTest {
             when(getRequest.queryString("tql", format("testCase.projectKey = '%s'", PROJECT_KEY))).thenReturn(httpRequest);
             when(httpRequest.asString()).thenReturn(httpResponse);
 
-            HttpResponse<String> actualResponse = jiraInstance.downloadFeatureFile(PROJECT_KEY);
+            HttpResponse<String> actualResponse = jiraServerInstance.downloadFeatureFile(PROJECT_KEY);
 
             assertThat(actualResponse).isEqualTo(httpResponse);
 
@@ -215,8 +215,8 @@ public class JiraInstanceTest {
             final File zip = mock(File.class);
             final HttpClient httpClient = mock(HttpClient.class);
 
-            final JiraInstance jiraInstance = getValidJiraInstance();
-            jiraInstance.setUnirestHttpClient(httpClient);
+            final JiraServerInstance jiraServerInstance = getValidJiraInstance();
+            jiraServerInstance.setUnirestHttpClient(httpClient);
 
             final HttpRequestWithBody httpRequestWithBody = mock(HttpRequestWithBody.class);
             final MultipartBody multipartBody = mock(MultipartBody.class);
@@ -229,7 +229,7 @@ public class JiraInstanceTest {
             when(httpRequestWithBody.field("file", zip)).thenReturn(multipartBody);
             when(multipartBody.asJson()).thenReturn(httpResponse);
 
-            jiraInstance.publishCucumberFormatBuildResult(PROJECT_KEY, true, zip, expandedCustomTestCycle);
+            jiraServerInstance.publishCucumberFormatBuildResult(PROJECT_KEY, true, zip, expandedCustomTestCycle);
 
             verify(multipartBody, never()).field(eq("testCycle"), anyString(), eq("application/json"));
 
@@ -248,8 +248,8 @@ public class JiraInstanceTest {
             final File zip = mock(File.class);
             final HttpClient httpClient = mock(HttpClient.class);
 
-            final JiraInstance jiraInstance = getValidJiraInstance();
-            jiraInstance.setUnirestHttpClient(httpClient);
+            final JiraServerInstance jiraServerInstance = getValidJiraInstance();
+            jiraServerInstance.setUnirestHttpClient(httpClient);
 
             final HttpRequestWithBody httpRequestWithBody = mock(HttpRequestWithBody.class);
             final MultipartBody multipartBody = mock(MultipartBody.class);
@@ -264,7 +264,7 @@ public class JiraInstanceTest {
                     multipartBody);
             when(multipartBody.asJson()).thenReturn(httpResponse);
 
-            jiraInstance.publishCucumberFormatBuildResult(PROJECT_KEY, true, zip, expandedCustomTestCycle);
+            jiraServerInstance.publishCucumberFormatBuildResult(PROJECT_KEY, true, zip, expandedCustomTestCycle);
 
             verify(multipartBody).field(eq("testCycle"), anyString(), eq("application/json"));
 
@@ -283,8 +283,8 @@ public class JiraInstanceTest {
             final File zip = mock(File.class);
             final HttpClient httpClient = mock(HttpClient.class);
 
-            final JiraInstance jiraInstance = getValidJiraInstance();
-            jiraInstance.setUnirestHttpClient(httpClient);
+            final JiraServerInstance jiraServerInstance = getValidJiraInstance();
+            jiraServerInstance.setUnirestHttpClient(httpClient);
 
             final HttpRequestWithBody httpRequestWithBody = mock(HttpRequestWithBody.class);
             final MultipartBody multipartBody = mock(MultipartBody.class);
@@ -297,7 +297,7 @@ public class JiraInstanceTest {
             when(httpRequestWithBody.field("file", zip)).thenReturn(multipartBody);
             when(multipartBody.asJson()).thenReturn(httpResponse);
 
-            HttpResponse<JsonNode> actualResponse = jiraInstance.publishCustomFormatBuildResult(PROJECT_KEY, true, zip, expandedCustomTestCycle);
+            HttpResponse<JsonNode> actualResponse = jiraServerInstance.publishCustomFormatBuildResult(PROJECT_KEY, true, zip, expandedCustomTestCycle);
 
             assertThat(actualResponse).isEqualTo(httpResponse);
 
@@ -318,8 +318,8 @@ public class JiraInstanceTest {
             final File zip = mock(File.class);
             final HttpClient httpClient = mock(HttpClient.class);
 
-            final JiraInstance jiraInstance = getValidJiraInstance();
-            jiraInstance.setUnirestHttpClient(httpClient);
+            final JiraServerInstance jiraServerInstance = getValidJiraInstance();
+            jiraServerInstance.setUnirestHttpClient(httpClient);
 
             final HttpRequestWithBody httpRequestWithBody = mock(HttpRequestWithBody.class);
             final MultipartBody multipartBody = mock(MultipartBody.class);
@@ -332,7 +332,7 @@ public class JiraInstanceTest {
             when(httpRequestWithBody.field("file", zip)).thenReturn(multipartBody);
             when(multipartBody.asJson()).thenReturn(httpResponse);
 
-            HttpResponse<JsonNode> actualResponse = jiraInstance.publishCustomFormatBuildResult(PROJECT_KEY, true, zip, expandedCustomTestCycle);
+            HttpResponse<JsonNode> actualResponse = jiraServerInstance.publishCustomFormatBuildResult(PROJECT_KEY, true, zip, expandedCustomTestCycle);
 
             assertThat(actualResponse).isEqualTo(httpResponse);
 
@@ -348,17 +348,17 @@ public class JiraInstanceTest {
 
     @Test
     public void publishJUnitFormatBuildResult() {
-        final JiraInstance jiraInstance = getValidJiraInstance();
+        final JiraServerInstance jiraServerInstance = getValidJiraInstance();
         final File zip = mock(File.class);
 
         assertThatExceptionOfType(RuntimeException.class)
-            .isThrownBy(() -> jiraInstance.publishJUnitFormatBuildResult(PROJECT_KEY, true, zip, null))
+            .isThrownBy(() -> jiraServerInstance.publishJUnitFormatBuildResult(PROJECT_KEY, true, zip, null))
             .withMessage("Not implemented for Zephyr Scale Server/DC");
 
     }
 
-    private JiraInstance getValidJiraInstance() {
-        return new JiraInstance(BASE_URL, USERNAME, getSecret());
+    private JiraServerInstance getValidJiraInstance() {
+        return new JiraServerInstance(BASE_URL, USERNAME, getSecret());
     }
 
     private Secret getSecret() {

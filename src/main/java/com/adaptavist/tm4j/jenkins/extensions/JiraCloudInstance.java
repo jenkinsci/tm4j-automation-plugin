@@ -25,6 +25,7 @@ public class JiraCloudInstance extends Instance {
     private static final String HEALTH_CHECK_ENDPOINT = "{0}/v2/healthcheck";
     private static final String API_BASE_URL = "https://api.zephyrscale.smartbear.com";
 
+    private String cloudAddress;
     private Secret jwt;
     private String name;
 
@@ -35,6 +36,12 @@ public class JiraCloudInstance extends Instance {
     public JiraCloudInstance(Secret jwt) {
         setJwt(jwt);
         setUnirestHttpClient(getNewHttpClient());
+    }
+
+    public JiraCloudInstance(String cloudAddress, Secret jwt) {
+        super.setCloudAddress(cloudAddress);
+        this.cloudAddress = cloudAddress;
+        this.jwt = jwt;
     }
 
     @Override
