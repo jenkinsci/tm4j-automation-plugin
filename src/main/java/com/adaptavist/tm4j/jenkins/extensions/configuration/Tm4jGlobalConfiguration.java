@@ -164,7 +164,6 @@ public class Tm4jGlobalConfiguration extends GlobalConfiguration {
 
     public List<Instance> getJiraInstances() {
         //Here, no authentication is done on each instance as it has been done during configuration
-
         if (Objects.isNull(jiraInstances)) {
             return Collections.emptyList();
         }
@@ -196,9 +195,9 @@ public class Tm4jGlobalConfiguration extends GlobalConfiguration {
     private JiraCloudInstance getCloudInstance(JiraInstance formJiraInstance) {
         JiraCloudInstance jiraCloudInstance = new JiraCloudInstance();
         jiraCloudInstance.setValue(CLOUD_TYPE);
+        jiraCloudInstance.setCloudAddress(formJiraInstance.getCloudAddress());
         Secret jwt = formJiraInstance.getJwt();
         jiraCloudInstance.setJwt(jwt);
-        jiraCloudInstance.setCloudAddress(formJiraInstance.getCloudAddress());
         return jiraCloudInstance;
     }
 
