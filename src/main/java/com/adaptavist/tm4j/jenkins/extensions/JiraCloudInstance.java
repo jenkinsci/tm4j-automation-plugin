@@ -122,6 +122,7 @@ public class JiraCloudInstance extends Instance {
     public void setJwt(Secret jwt) {
         this.jwt = jwt;
         this.name = getBaseUrl();
+        this.cloudAddress = getBaseUrl();
     }
 
     public Boolean getCloud() {
