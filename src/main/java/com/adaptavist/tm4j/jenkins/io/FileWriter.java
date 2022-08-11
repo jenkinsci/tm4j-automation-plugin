@@ -72,7 +72,11 @@ public class FileWriter {
 
     private void saveFeatureFile(InputStream zipInputStream, String targetFeatureFilesPath, ZipEntry zipEntry) throws IOException {
         byte[] buffer = new byte[2048];
-        FileOutputStream fileOutputStream = new FileOutputStream(targetFeatureFilesPath + "/" + zipEntry.getName());
+        final File zipEntryFile = new File(targetFeatureFilesPath, zipEntry.getName());
+        if (!zipEntryFile.toPath().normalize().startsWith(targetFeatureFilesPath)) {
+            throw new RuntimeException("Bad zip entry");
+        }
+        FileOutputStream fileOutputStream = new FileOutputStream(zipEntryFile);
         BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(fileOutputStream, buffer.length);
         int length;
         while ((length = zipInputStream.read(buffer, 0, buffer.length)) >= 0) {
