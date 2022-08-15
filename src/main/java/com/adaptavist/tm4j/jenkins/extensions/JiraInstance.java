@@ -1,14 +1,11 @@
 package com.adaptavist.tm4j.jenkins.extensions;
 
-import hudson.Extension;
 import hudson.model.Describable;
 import hudson.model.Descriptor;
-import hudson.util.FormValidation;
 import hudson.util.Secret;
 import jenkins.model.Jenkins;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
-import org.kohsuke.stapler.QueryParameter;
 
 import javax.annotation.CheckForNull;
 import java.io.Serializable;
@@ -19,7 +16,6 @@ public class JiraInstance implements Serializable, Describable<JiraInstance> {
     private String serverAddress;
     private String username;
     private Secret password;
-    private String cloudAddress;
     private Secret jwt;
 
     @DataBoundConstructor
@@ -46,10 +42,6 @@ public class JiraInstance implements Serializable, Describable<JiraInstance> {
         return password;
     }
 
-    public String getCloudAddress() {
-        return cloudAddress;
-    }
-
     public Secret getJwt() {
         return jwt;
     }
@@ -74,10 +66,6 @@ public class JiraInstance implements Serializable, Describable<JiraInstance> {
         this.password = password;
     }
 
-    @DataBoundSetter
-    public void setCloudAddress(String cloudAddress) {
-        this.cloudAddress = cloudAddress;
-    }
 
     @DataBoundSetter
     public void setJwt(Secret jwt) {

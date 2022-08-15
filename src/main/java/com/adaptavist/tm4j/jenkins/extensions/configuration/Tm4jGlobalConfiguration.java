@@ -61,9 +61,7 @@ public class Tm4jGlobalConfiguration extends GlobalConfiguration {
                 JSONObject instance = ((JSONObject)jiraInstance).getJSONObject("type");
                 JiraInstance formInstance = new JiraInstance();
                 formInstance.setValue(instance.getString("value"));
-
                 if (CLOUD_TYPE.equalsIgnoreCase(formInstance.getValue())) {
-                    formInstance.setCloudAddress((String) instance.getOrDefault("cloudAddress", null));
                     formInstance.setJwt(Secret.fromString((String) instance.getOrDefault("jwt", null)));
                 } else if (SERVER_TYPE.equalsIgnoreCase(formInstance.getValue())) {
                     formInstance.setServerAddress((String) instance.getOrDefault("serverAddress", null));
@@ -195,7 +193,6 @@ public class Tm4jGlobalConfiguration extends GlobalConfiguration {
     private JiraCloudInstance getCloudInstance(JiraInstance formJiraInstance) {
         JiraCloudInstance jiraCloudInstance = new JiraCloudInstance();
         jiraCloudInstance.setValue(CLOUD_TYPE);
-        jiraCloudInstance.setCloudAddress(formJiraInstance.getCloudAddress());
         Secret jwt = formJiraInstance.getJwt();
         jiraCloudInstance.setJwt(jwt);
         return jiraCloudInstance;

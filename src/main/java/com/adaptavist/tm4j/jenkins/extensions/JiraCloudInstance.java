@@ -38,12 +38,6 @@ public class JiraCloudInstance extends Instance {
         setUnirestHttpClient(getNewHttpClient());
     }
 
-    public JiraCloudInstance(String cloudAddress, Secret jwt) {
-        this.cloudAddress = cloudAddress;
-        this.jwt = jwt;
-        this.name = getBaseUrl();
-    }
-
     @Override
     public Boolean cloud() {
         return true;
@@ -136,7 +130,7 @@ public class JiraCloudInstance extends Instance {
                 return (String) ((JSONObject) context).get("baseUrl");
             }
 
-            return this.cloudAddress;
+            return null;
 
         } catch (ParseException e) {
             throw new InvalidJwtException(e);
