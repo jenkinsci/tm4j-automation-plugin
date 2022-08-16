@@ -62,7 +62,7 @@ public class JiraServerInstance extends Instance {
 
             return response.getStatus() == 200;
         } catch (UnirestException e) {
-            LOGGER.log(Level.WARNING, "Invalid server instance credentials");
+            LOGGER.log(Level.WARNING, "Invalid server instance credentials", e);
         }
 
         return false;

@@ -74,7 +74,7 @@ public class JiraCloudInstance extends Instance {
 
             return response.getStatus() == 200;
         } catch (UnirestException e) {
-            LOGGER.log(Level.WARNING, "Invalid cloud instance credentials");
+            LOGGER.log(Level.WARNING, "Invalid cloud instance credentials", e);
         }
         return false;
     }
