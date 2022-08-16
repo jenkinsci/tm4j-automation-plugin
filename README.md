@@ -109,5 +109,6 @@ Note:
 - For server configurations, set the `value` property to `server`, then provide the `serverAddress`, `username` and `password` 
 - For cloud configurations, set the `value` property to `cloud`, then set the `jwt`. The jwt property can be generated [here](https://support.smartbear.com/zephyr-scale-cloud/docs/rest-api/generating-api-access-tokens.html)
 
+If any of these are configured incorrectly, no instances will be created.
 Note That you can configure as many instances as you want by simply adding another `jiraInstances` list entry
 
