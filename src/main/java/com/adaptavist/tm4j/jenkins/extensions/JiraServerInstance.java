@@ -11,6 +11,9 @@ import com.mashape.unirest.request.body.MultipartBody;
 import hudson.util.Secret;
 import java.io.File;
 import java.text.MessageFormat;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 
@@ -20,6 +23,8 @@ public class JiraServerInstance extends Instance {
     private static final String CUSTOM_FORMAT_ENDPOINT = "{0}/rest/atm/1.0/automation/execution/{1}";
     private static final String FEATURE_FILES_ENDPOINT = "{0}/rest/atm/1.0/automation/testcases";
     private static final String HEALTH_CHECK_ENDPOINT = "{0}/rest/atm/1.0/healthcheck/";
+
+    private static final Logger LOGGER = Logger.getLogger(JiraServerInstance.class.getName());
 
     private String serverAddress;
     private String username;
@@ -57,7 +62,7 @@ public class JiraServerInstance extends Instance {
 
             return response.getStatus() == 200;
         } catch (UnirestException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.WARNING, "Invalid server instance credentials");
         }
 
         return false;
