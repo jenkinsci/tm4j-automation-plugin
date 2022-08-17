@@ -3,7 +3,7 @@ package com.adaptavist.tm4j.jenkins.utils;
 import com.adaptavist.tm4j.jenkins.exception.InvalidJwtException;
 import com.adaptavist.tm4j.jenkins.extensions.Instance;
 import com.adaptavist.tm4j.jenkins.extensions.JiraCloudInstance;
-import com.adaptavist.tm4j.jenkins.extensions.JiraInstance;
+import com.adaptavist.tm4j.jenkins.extensions.JiraServerInstance;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
 import hudson.util.Secret;
@@ -33,7 +33,7 @@ public class FormHelper {
         if (!(serverAddress.trim().startsWith("https://") || serverAddress.trim().startsWith("http://"))) {
             return FormValidation.error(INCORRECT_SERVER_ADDRESS_FORMAT);
         }
-        if (!new JiraInstance(serverAddress, username, Secret.fromString(password)).isValidCredentials()) {
+        if (!new JiraServerInstance(serverAddress, username, Secret.fromString(password)).isValidCredentials()) {
             return FormValidation.error(INVALID_CREDENTIALS);
         }
         return FormValidation.ok(CONNECTION_TO_JIRA_HAS_BEEN_VALIDATED);

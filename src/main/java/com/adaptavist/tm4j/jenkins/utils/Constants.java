@@ -29,4 +29,6 @@ public class Constants {
     private static final String PLUGIN_NAME = "[Zephyr Scale]";
     public static final String INFO = String.format("%s [INFO]", PLUGIN_NAME);
     public static final String ERROR = String.format("%s [ERROR]", PLUGIN_NAME);
+    public static final String INVALID_INSTANCE_TYPE = "Invalid instance type. value must be either 'cloud' or 'server'";
+    public static final String INVALID_URL_FORMAT= "Invalid url format";
 }

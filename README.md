@@ -89,3 +89,26 @@ After cloning this repository, these are the 2 steps you should follow:
 2. Run `./run.sh`: this will run Jenkins with the Zephyr Scale plugin installed
 3. Browse to http://localhost:8080/jenkins to access Jenkins
 
+## Configuring the Zephyr Scale Jenkins plugin using Jenkins Configuration as Code (JCasC) plugin
+You can configure the plugin by following the steps below:
+1. Install the JCasC plugin by visiting the "manage plugins" page and installing the Configuration as Code plugin
+2. Configure your Jira instances by creating a yaml file with the following configuration
+```yaml
+unclassified:
+  zephyr-scale:
+    jiraInstances:
+      - value: "server"
+        serverAddress: "yourJiraServerAddress.com"
+        username: "yourJiraServerUsername"
+        password: "yourJiraServerPassword"
+      - value: "cloud"
+        jwt: "yourCloudToken"
+        
+```
+Note: 
+- For server configurations, set the `value` property to `server`, then provide the `serverAddress`, `username` and `password` 
+- For cloud configurations, set the `value` property to `cloud`, then set the `jwt`. The jwt property can be generated [here](https://support.smartbear.com/zephyr-scale-cloud/docs/rest-api/generating-api-access-tokens.html)
+
+If any of these are configured incorrectly, no instances will be created.
+Note That you can configure as many instances as you want by simply adding another `jiraInstances` list entry
+

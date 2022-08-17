@@ -12,9 +12,14 @@ import hudson.util.Secret;
 import java.io.File;
 import java.text.MessageFormat;
 import java.text.ParseException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import net.minidev.json.JSONObject;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+
+import static com.adaptavist.tm4j.jenkins.utils.Constants.INFO;
 
 public class JiraCloudInstance extends Instance {
 
@@ -25,6 +30,9 @@ public class JiraCloudInstance extends Instance {
     private static final String HEALTH_CHECK_ENDPOINT = "{0}/v2/healthcheck";
     private static final String API_BASE_URL = "https://api.zephyrscale.smartbear.com";
 
+    private static final Logger LOGGER = Logger.getLogger(JiraCloudInstance.class.getName());
+
+    private String cloudAddress;
     private Secret jwt;
     private String name;
 
@@ -52,7 +60,7 @@ public class JiraCloudInstance extends Instance {
     }
 
     public String getCloudAddress() {
-        return this.name;
+        return this.cloudAddress;
     }
 
     @Override
@@ -66,7 +74,7 @@ public class JiraCloudInstance extends Instance {
 
             return response.getStatus() == 200;
         } catch (UnirestException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.WARNING, "Invalid cloud instance credentials", e);
         }
         return false;
     }
@@ -115,6 +123,7 @@ public class JiraCloudInstance extends Instance {
     public void setJwt(Secret jwt) {
         this.jwt = jwt;
         this.name = getBaseUrl();
+        this.cloudAddress = name;
     }
 
     public Boolean getCloud() {
@@ -127,7 +136,7 @@ public class JiraCloudInstance extends Instance {
             if (context instanceof JSONObject) {
                 return (String) ((JSONObject) context).get("baseUrl");
             }
-
+            LOGGER.log(Level.WARNING, "Invalid jwt. Please provide a valid Zephyr scale jwt by updating your jira cloud configuration");
             return null;
 
         } catch (ParseException e) {
@@ -162,5 +171,10 @@ public class JiraCloudInstance extends Instance {
 
     protected void setUnirestHttpClient(final HttpClient httpClient) {
         Unirest.setHttpClient(httpClient);
+    }
+
+    @Override
+    public void setCloudAddress(String cloudAddress) {
+        this.cloudAddress = cloudAddress;
     }
 }
