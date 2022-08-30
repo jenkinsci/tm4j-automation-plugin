@@ -53,7 +53,7 @@ public class Tm4jGlobalConfiguration extends GlobalConfiguration {
 
             if(formJiraInstances instanceof JSONArray) {
                 jiraInstancesList = formData.getJSONArray(JIRA_INSTANCES);
-            } else {
+            } else if(formJiraInstances instanceof JSONObject) {
                 jiraInstancesList.add(formData.getJSONObject(JIRA_INSTANCES));
             }
 
