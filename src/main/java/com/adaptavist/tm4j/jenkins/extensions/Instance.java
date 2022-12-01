@@ -45,7 +45,7 @@ public abstract class Instance {
         try {
             return body.asJson();
         } catch (final UnirestException e) {
-            throw new RuntimeException(body.asString().getBody());
+            throw new RuntimeException(e);
         }
     }
 

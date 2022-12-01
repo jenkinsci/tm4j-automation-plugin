@@ -357,6 +357,21 @@ public class JiraServerInstanceTest {
 
     }
 
+    @Test
+    public void getBodyAsJsonOrThrowExceptionWithBody() throws UnirestException {
+        // given
+        final MultipartBody multipartBody = mock(MultipartBody.class);
+
+        when(multipartBody.asJson()).thenThrow(new UnirestException("Something went terribly wrong!"));
+
+        final JiraServerInstance jiraServerInstance = this.getValidJiraInstance();
+
+        // when then
+        assertThatExceptionOfType(RuntimeException.class)
+                .isThrownBy(() -> jiraServerInstance.getBodyAsJsonOrThrowExceptionWithBody(multipartBody))
+                .withMessageContaining("Something went terribly wrong!");
+    }
+
     private JiraServerInstance getValidJiraInstance() {
         return new JiraServerInstance(BASE_URL, USERNAME, getSecret());
     }
