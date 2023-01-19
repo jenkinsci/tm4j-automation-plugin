@@ -74,7 +74,7 @@ public class JiraCloudInstance extends Instance {
 
             return response.getStatus() == 200;
         } catch (UnirestException e) {
-            LOGGER.log(Level.WARNING, String.format("Couldn't connect to Jira public REST API at: %s", API_BASE_URL), e);
+            LOGGER.log(Level.WARNING, String.format("Couldn't connect to Zephir Scale public REST API at: %s", API_BASE_URL), e);
         }
         return false;
     }
