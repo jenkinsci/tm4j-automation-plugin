@@ -112,3 +112,8 @@ Note:
 If any of these are configured incorrectly, no instances will be created.
 Note That you can configure as many instances as you want by simply adding another `jiraInstances` list entry
 
+## Running Jenkins behind a proxy
+If the Jenkins instance is running behind a proxy, please make sure that the proxy is well configured on Jenkins and that the proxy settings have been set up on JVM startup:
+
+- Setting up Jenkins behind a proxy: https://wiki.jenkins.io/display/JENKINS/JenkinsBehindProxy
+- JVM proxy configuration: https://docs.oracle.com/javase/8/docs/technotes/guides/net/proxies.html
