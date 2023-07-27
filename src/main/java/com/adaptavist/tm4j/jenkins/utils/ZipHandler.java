@@ -33,7 +33,7 @@ public class ZipHandler {
                 }
                 return builder.toString();
             } catch (Exception e) {
-                throw new PrintingZipFileContentException(String.format("was not possible to reach the content for file %s", file.getAbsolutePath(), e));
+                throw new PrintingZipFileContentException(String.format("was not possible to read the content for file %s", file.getAbsolutePath(), e));
             }
         } else {
             throw new PrintingZipFileContentException(String.format("the temporal zip file:%s does not exist", file.getAbsolutePath()));
