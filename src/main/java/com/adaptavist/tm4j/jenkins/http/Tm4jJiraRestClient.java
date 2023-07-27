@@ -109,9 +109,11 @@ public class Tm4jJiraRestClient {
             StringBuilder builder = new StringBuilder();
             while (entries.hasMoreElements()) {
                 ZipEntry entry = entries.nextElement();
-                builder.append(String.format("file with name: '%s' and content:\n[start content]", entry.getName()));
-                InputStream inputStream = zipFile.getInputStream(entry);
-                builder.append(IOUtils.toString(inputStream, StandardCharsets.UTF_8.name()));
+                builder.append(String.format("file with name: '%s' and content:\n", entry.getName()));
+                try (InputStream inputStream = zipFile.getInputStream(entry)) {
+                    builder.append("[start content]");
+                    builder.append(IOUtils.toString(inputStream, StandardCharsets.UTF_8.name()));
+                }
                 builder.append("[end content]:");
             }
             return builder.toString();
