@@ -27,7 +27,7 @@ public class ZipHandler {
                         builder.append("[start content]%n");
                         builder.append(IOUtils.toString(inputStream, StandardCharsets.UTF_8));
                     } catch (IOException e) {
-                        builder.append("not possible to reach the content");
+                        builder.append("not possible to read the content");
                     }
                     builder.append("%n[end content]%n");
                 }
