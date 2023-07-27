@@ -1,5 +1,6 @@
 package com.adaptavist.tm4j.jenkins.utils;
 
+import com.adaptavist.tm4j.jenkins.exception.PrintingZipFileContentException;
 import org.apache.commons.io.IOUtils;
 
 import java.io.File;
@@ -32,10 +33,10 @@ public class ZipHandler {
                 }
                 return builder.toString();
             } catch (Exception e) {
-                throw new RuntimeException(String.format("was not possible to reach the content for file %s", file.getAbsolutePath(), e));
+                throw new PrintingZipFileContentException(String.format("was not possible to reach the content for file %s", file.getAbsolutePath(), e));
             }
         } else {
-            throw new RuntimeException(String.format("the temporal zip file:%s does not exist", file.getAbsolutePath()));
+            throw new PrintingZipFileContentException(String.format("the temporal zip file:%s does not exist", file.getAbsolutePath()));
         }
     }
 }
