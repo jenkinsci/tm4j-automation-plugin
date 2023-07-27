@@ -1,41 +1,28 @@
 package com.adaptavist.tm4j.jenkins.http;
 
-import static com.adaptavist.tm4j.jenkins.utils.Constants.ERROR;
-import static com.adaptavist.tm4j.jenkins.utils.Constants.INFO;
-
 import com.adaptavist.tm4j.jenkins.exception.NoTestCasesFoundException;
 import com.adaptavist.tm4j.jenkins.extensions.ExpandedCustomTestCycle;
 import com.adaptavist.tm4j.jenkins.extensions.Instance;
-import com.adaptavist.tm4j.jenkins.extensions.JiraCloudInstance;
 import com.adaptavist.tm4j.jenkins.io.FileReader;
 import com.adaptavist.tm4j.jenkins.io.FileWriter;
 import com.adaptavist.tm4j.jenkins.utils.Constants;
-import com.google.common.base.Charsets;
-import com.google.common.io.Files;
+import com.adaptavist.tm4j.jenkins.utils.ZipHandler;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import hudson.FilePath;
-
-import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.text.MessageFormat;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.stream.Collectors;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.json.JSONObject;
 
+import java.io.*;
+import java.text.MessageFormat;
+import java.util.List;
+
+import static com.adaptavist.tm4j.jenkins.utils.Constants.ERROR;
+import static com.adaptavist.tm4j.jenkins.utils.Constants.INFO;
+
 public class Tm4jJiraRestClient {
 
-    private static final Logger LOGGER = Logger.getLogger(Tm4jJiraRestClient.class.getName());
     private final Instance jiraInstance;
     private final PrintStream logger;
 
@@ -98,34 +85,14 @@ public class Tm4jJiraRestClient {
             processUploadingResultsResponse(jsonResponse);
             deleteFile(file);
         } catch (Exception e) {
-            logger.printf("%s An error was raised, the file will not be removed for troubleshooting purposes, when trying to send file on path:'%s' with content:\n %s %n", ERROR, file.getAbsolutePath(), getContentForFile(file));
-        }
-    }
-
-    private static String getContentForFile(File file) throws IOException {
-        try {
-            ZipFile zipFile = new ZipFile(file);
-            Enumeration<? extends ZipEntry> entries = zipFile.entries();
-            StringBuilder builder = new StringBuilder();
-            while (entries.hasMoreElements()) {
-                ZipEntry entry = entries.nextElement();
-                builder.append(String.format("file with name: '%s' and content:\n", entry.getName()));
-                try (InputStream inputStream = zipFile.getInputStream(entry)) {
-                    builder.append("[start content]");
-                    builder.append(IOUtils.toString(inputStream, StandardCharsets.UTF_8.name()));
-                }
-                builder.append("[end content]:");
-            }
-            return builder.toString();
-        } catch (Exception e) {
-            return Files.toString(file, Charsets.UTF_8);
+            logger.printf("%s An error was raised, the file will not be removed for troubleshooting purposes, when trying to send file on path:'%s' with content:%n %s %n", ERROR, file.getAbsolutePath(), ZipHandler.getContentFromFilesInZip(file));
+            throw e;
         }
     }
 
     private void deleteFile(final File file) {
         if (!file.delete()) {
-            logger.printf("%s The generated ZIP file couldn't be deleted. Please check folder permissions and delete the file manually: " +
-                    file.getAbsolutePath() + " %n", INFO);
+            logger.printf("%s The generated ZIP file couldn't be deleted. Please check folder permissions and delete the file manually: %s %n", INFO, file.getAbsolutePath());
         }
     }
 
