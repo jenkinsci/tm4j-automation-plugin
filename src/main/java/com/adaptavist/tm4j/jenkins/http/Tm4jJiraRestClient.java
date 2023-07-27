@@ -6,23 +6,36 @@ import static com.adaptavist.tm4j.jenkins.utils.Constants.INFO;
 import com.adaptavist.tm4j.jenkins.exception.NoTestCasesFoundException;
 import com.adaptavist.tm4j.jenkins.extensions.ExpandedCustomTestCycle;
 import com.adaptavist.tm4j.jenkins.extensions.Instance;
+import com.adaptavist.tm4j.jenkins.extensions.JiraCloudInstance;
 import com.adaptavist.tm4j.jenkins.io.FileReader;
 import com.adaptavist.tm4j.jenkins.io.FileWriter;
 import com.adaptavist.tm4j.jenkins.utils.Constants;
+import com.google.common.base.Charsets;
+import com.google.common.io.Files;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import hudson.FilePath;
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintStream;
+
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
+import java.util.Enumeration;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.json.JSONObject;
 
 public class Tm4jJiraRestClient {
 
+    private static final Logger LOGGER = Logger.getLogger(Tm4jJiraRestClient.class.getName());
     private final Instance jiraInstance;
     private final PrintStream logger;
 
@@ -38,14 +51,14 @@ public class Tm4jJiraRestClient {
         final FileReader fileReader = new FileReader();
 
         final File file = filePath.endsWith("json")
-            ? fileReader.getJsonCucumberZip(directory, filePath, this.logger)
-            : fileReader.getZip(directory, filePath);
+                ? fileReader.getJsonCucumberZip(directory, filePath, this.logger)
+                : fileReader.getZip(directory, filePath);
 
         HttpResponse<JsonNode> jsonResponse = jiraInstance.publishCucumberFormatBuildResult(
-            projectKey,
-            autoCreateTestCases,
-            file,
-            expandedCustomTestCycle
+                projectKey,
+                autoCreateTestCases,
+                file,
+                expandedCustomTestCycle
         );
 
         processUploadingResultsResponse(jsonResponse);
@@ -59,10 +72,10 @@ public class Tm4jJiraRestClient {
         File file = new FileReader().getZipForCustomFormat(directory);
 
         HttpResponse<JsonNode> jsonResponse = jiraInstance.publishCustomFormatBuildResult(
-            projectKey,
-            autoCreateTestCases,
-            file,
-            expandedCustomTestCycle
+                projectKey,
+                autoCreateTestCases,
+                file,
+                expandedCustomTestCycle
         );
 
         processUploadingResultsResponse(jsonResponse);
@@ -72,32 +85,51 @@ public class Tm4jJiraRestClient {
 
     public void uploadJUnitXmlResultFile(final String directory, final String filePath, final String projectKey,
                                          final Boolean autoCreateTestCases, final ExpandedCustomTestCycle expandedCustomTestCycle)
-        throws Exception {
+            throws Exception {
 
         File file = new FileReader().getZip(directory, filePath);
+        try {
+            HttpResponse<JsonNode> jsonResponse = jiraInstance.publishJUnitFormatBuildResult(
+                    projectKey,
+                    autoCreateTestCases,
+                    file,
+                    expandedCustomTestCycle
+            );
+            processUploadingResultsResponse(jsonResponse);
+            deleteFile(file);
+        } catch (Exception e) {
+            logger.printf("%s An error was raised, the file will not be removed for troubleshooting purposes, when trying to send file on path:'%s' with content:\n %s %n", ERROR, file.getAbsolutePath(), getContentForFile(file));
+        }
+    }
 
-        HttpResponse<JsonNode> jsonResponse = jiraInstance.publishJUnitFormatBuildResult(
-            projectKey,
-            autoCreateTestCases,
-            file,
-            expandedCustomTestCycle
-        );
-
-        processUploadingResultsResponse(jsonResponse);
-
-        deleteFile(file);
+    private static String getContentForFile(File file) throws IOException {
+        try {
+            ZipFile zipFile = new ZipFile(file);
+            Enumeration<? extends ZipEntry> entries = zipFile.entries();
+            StringBuilder builder = new StringBuilder();
+            while (entries.hasMoreElements()) {
+                ZipEntry entry = entries.nextElement();
+                builder.append(String.format("file with name: '%s' and content:\n[start content]", entry.getName()));
+                InputStream inputStream = zipFile.getInputStream(entry);
+                builder.append(IOUtils.toString(inputStream, StandardCharsets.UTF_8.name()));
+                builder.append("[end content]:");
+            }
+            return builder.toString();
+        } catch (Exception e) {
+            return Files.toString(file, Charsets.UTF_8);
+        }
     }
 
     private void deleteFile(final File file) {
         if (!file.delete()) {
             logger.printf("%s The generated ZIP file couldn't be deleted. Please check folder permissions and delete the file manually: " +
-                file.getAbsolutePath() + " %n", INFO);
+                    file.getAbsolutePath() + " %n", INFO);
         }
     }
 
 
     public void importFeatureFiles(File rootDir, FilePath workspace, String targetPath, String projectKey)
-        throws Exception {
+            throws Exception {
         try {
             HttpResponse<String> httpResponse = jiraInstance.downloadFeatureFile(projectKey);
             processDownloadingFeatureFilesResponse(rootDir, workspace, targetPath, httpResponse);
@@ -123,11 +155,11 @@ public class Tm4jJiraRestClient {
             }
 
             throw new RuntimeException(
-                "There was an error while trying to request from Jira. Http Status Code: " + httpResponse.getStatus());
+                    "There was an error while trying to request from Jira. Http Status Code: " + httpResponse.getStatus());
         } else if (isServerError(httpResponse)) {
             throw new RuntimeException(
-                MessageFormat.format("There was an error with the Jira Instance({0}). Http Status Code: {1}", jiraInstance.name(),
-                    httpResponse.getStatus()));
+                    MessageFormat.format("There was an error with the Jira Instance({0}). Http Status Code: {1}", jiraInstance.name(),
+                            httpResponse.getStatus()));
         }
     }
 
@@ -142,11 +174,11 @@ public class Tm4jJiraRestClient {
             processErrorMessages(jsonResponse);
             logger.printf("%s Test Cycle was not created %n", ERROR);
             throw new RuntimeException(
-                "There was an error while trying to import files to Jira. Http Status Code: " + jsonResponse.getStatus());
+                    "There was an error while trying to import files to Jira. Http Status Code: " + jsonResponse.getStatus());
         } else if (isServerError(jsonResponse)) {
             throw new RuntimeException(
-                MessageFormat.format("There was an error with the Jira Instance({0}). Http Status Code: {1}", jiraInstance.name(),
-                    jsonResponse.getStatus()));
+                    MessageFormat.format("There was an error with the Jira Instance({0}). Http Status Code: {1}", jiraInstance.name(),
+                            jsonResponse.getStatus()));
         }
     }
 
