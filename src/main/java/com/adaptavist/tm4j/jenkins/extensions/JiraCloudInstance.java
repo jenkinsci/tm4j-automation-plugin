@@ -172,7 +172,10 @@ public class JiraCloudInstance extends Instance {
 
     protected void setUnirestHttpClient(final HttpClient httpClient) {
         HttpHost proxy = new HttpHost(System.getProperty("https.proxyHost")
-                              , new Integer(System.getProperty("https.proxyPort")));
+                              , valueOf(System.getProperty("https.proxyPort")));
+                              
+        LOGGER.log(Level.WARNING, "Setting proxy host: " + System.getProperty("https.proxyHost") + " and port: " + System.getProperty("https.proxyPort"));
+                                
         Unirest.setProxy(proxy);        
         Unirest.setHttpClient(httpClient);
     }
