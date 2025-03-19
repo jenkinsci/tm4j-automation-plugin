@@ -18,6 +18,7 @@ import java.util.logging.Logger;
 import net.minidev.json.JSONObject;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.HttpHost;
 
 import static com.adaptavist.tm4j.jenkins.utils.Constants.INFO;
 
@@ -170,6 +171,9 @@ public class JiraCloudInstance extends Instance {
     }
 
     protected void setUnirestHttpClient(final HttpClient httpClient) {
+        HttpHost proxy = new HttpHost(System.getProperty("https.proxyHost")
+                              , new Integer(System.getProperty("https.proxyPort")));
+        Unirest.setProxy(proxy);        
         Unirest.setHttpClient(httpClient);
     }
 
