@@ -8,9 +8,9 @@
         <version>4.13</version>
         <relativePath/>
     </parent>
-    <name>Zephyr Scale</name>
+    <name>Zephyr</name>
     <url>https://github.com/jenkinsci/tm4j-automation-plugin</url>
-    <description>Integration with Zephyr Scale (by SmartBear), for automatic publishing of test results.</description>
+    <description>Integration with Zephyr (by SmartBear), for automatic publishing of test results.</description>
     <groupId>com.adaptavist</groupId>
     <artifactId>tm4j-automation</artifactId>
     <version>3.3.4</version>
@@ -25,7 +25,7 @@
 
     <developers>
         <developer>
-            <name>SmartBear - Zephyr Scale</name>
+            <name>SmartBear - Zephyr</name>
             <organization>SmartBear</organization>
             <organizationUrl>https://smartbear.com/</organizationUrl>
         </developer>

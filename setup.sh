@@ -2,7 +2,7 @@
 set -e
 server=http://localhost:8080/jenkins
 
-echo "[==== SETUP ====] Starting Zephyr Scale Jenkins plugin setup..."
+echo "[==== SETUP ====] Starting Zephyr Jenkins plugin setup..."
 
 is_running() {
 	if [ 200 == $(curl -o /dev/null -s -w "%{http_code}\n" $server/jnlpJars/jenkins-cli.jar) ]
@@ -56,11 +56,11 @@ wait_start
 
 echo "[==== SETUP ====] Setting Jenkins configurations"
 echo "[==== SETUP ====] Creating jobs"
-java -jar jenkins-cli.jar -s $server create-job zephyr-scale-junit-integration-example-legacy-version < setup/zephyr-scale-junit-integration-example-legacy-version.xml
-java -jar jenkins-cli.jar -s $server create-job zephyr-scale-cucumber-calculator-example < setup/zephyr-scale-cucumber-calculator-example.xml
-java -jar jenkins-cli.jar -s $server create-job zephyr-scale-cucumber-integration-example < setup/zephyr-scale-cucumber-integration-example.xml
-java -jar jenkins-cli.jar -s $server create-job zephyr-scale-cucumber-integration-example-pipeline < setup/zephyr-scale-cucumber-integration-example-pipeline.xml
-java -jar jenkins-cli.jar -s $server create-job zephyr-scale-junit-integration-example < setup/zephyr-scale-junit-integration-example.xml
+java -jar jenkins-cli.jar -s $server create-job zephyr-junit-integration-example-legacy-version < setup/zephyr-junit-integration-example-legacy-version.xml
+java -jar jenkins-cli.jar -s $server create-job zephyr-cucumber-calculator-example < setup/zephyr-cucumber-calculator-example.xml
+java -jar jenkins-cli.jar -s $server create-job zephyr-cucumber-integration-example < setup/zephyr-cucumber-integration-example.xml
+java -jar jenkins-cli.jar -s $server create-job zephyr-cucumber-integration-example-pipeline < setup/zephyr-cucumber-integration-example-pipeline.xml
+java -jar jenkins-cli.jar -s $server create-job zephyr-junit-integration-example < setup/zephyr-junit-integration-example.xml
 
 cp setup/com.adaptavist.tm4j.jenkins.extensions.configuration.Tm4jGlobalConfiguration.xml work/
 

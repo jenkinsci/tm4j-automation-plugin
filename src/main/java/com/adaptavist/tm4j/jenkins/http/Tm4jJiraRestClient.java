@@ -138,7 +138,7 @@ public class Tm4jJiraRestClient {
             String testCycleKey = (String) testRun.get("key");
             String testCycleUrl = (String) testRun.get("url");
             logger.printf("%s Test Cycle created with the following KEY: %s. %s %n", INFO, testCycleKey, testCycleUrl);
-            logger.printf("%s Test results published to Zephyr Scale successfully.%n", INFO);
+            logger.printf("%s Test results published to Zephyr successfully.%n", INFO);
         } else if (isClientError(jsonResponse)) {
             processErrorMessages(jsonResponse);
             logger.printf("%s Test Cycle was not created %n", ERROR);

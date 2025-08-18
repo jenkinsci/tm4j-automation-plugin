@@ -101,7 +101,7 @@ public class TestResultPublisher extends Notifier implements SimpleBuildStep {
     private void handlePublishException(final PrintStream logger, final Run<?, ?> run, final Exception exception) {
         run.setResult(Result.FAILURE);
 
-        logger.printf("%s There was an error while publishing test results to Zephyr Scale and they were not sent. Error details: %n",
+        logger.printf("%s There was an error while publishing test results to Zephyr and they were not sent. Error details: %n",
             ERROR);
 
         throw new RuntimeException(exception);
