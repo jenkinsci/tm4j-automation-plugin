@@ -74,7 +74,7 @@ public class JiraCloudInstance extends Instance {
 
             return response.getStatus() == 200;
         } catch (UnirestException e) {
-            LOGGER.log(Level.WARNING, String.format("Couldn't connect to Zephyr Scale public REST API at: %s", API_BASE_URL), e);
+            LOGGER.log(Level.WARNING, String.format("Couldn't connect to Zephyr public REST API at: %s", API_BASE_URL), e);
         }
         return false;
     }
@@ -136,7 +136,7 @@ public class JiraCloudInstance extends Instance {
             if (context instanceof JSONObject) {
                 return (String) ((JSONObject) context).get("baseUrl");
             }
-            LOGGER.log(Level.WARNING, "Invalid jwt. Please provide a valid Zephyr scale jwt by updating your jira cloud configuration");
+            LOGGER.log(Level.WARNING, "Invalid jwt. Please provide a valid Zephyr jwt by updating your jira cloud configuration");
             return null;
 
         } catch (ParseException e) {

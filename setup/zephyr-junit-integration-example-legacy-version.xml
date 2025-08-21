@@ -39,8 +39,8 @@
     <com.adaptavist.tm4j.jenkins.extensions.postbuildactions.TestResultPublisher plugin="tm4j-automation@2.0.0">
       <serverAddress>http://localhost:2990/jira</serverAddress>
       <projectKey>JQA</projectKey>
-      <filePath>zephyrscale_result.json</filePath>
-      <format>Zephyr Scale Output Result For JUnit</format>
+      <filePath>zephyr_result.json</filePath>
+      <format>Zephyr Output Result For JUnit</format>
       <autoCreateTestCases>true</autoCreateTestCases>
     </com.adaptavist.tm4j.jenkins.extensions.postbuildactions.TestResultPublisher>
   </publishers>

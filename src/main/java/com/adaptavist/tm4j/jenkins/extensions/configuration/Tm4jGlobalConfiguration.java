@@ -21,10 +21,10 @@ import javax.annotation.Nonnull;
 import java.text.MessageFormat;
 import java.util.*;
 
-import static com.adaptavist.tm4j.jenkins.utils.Constants.ZEPHYR_SCALE_GLOBAL_CONFIGURATION;
+import static com.adaptavist.tm4j.jenkins.utils.Constants.ZEPHYR_GLOBAL_CONFIGURATION;
 
 @Extension
-@Symbol("zephyr-scale")
+@Symbol("zephyr")
 public class Tm4jGlobalConfiguration extends GlobalConfiguration {
 
     private static final String CLOUD_TYPE = "cloud";
@@ -39,7 +39,7 @@ public class Tm4jGlobalConfiguration extends GlobalConfiguration {
     @Nonnull
     @Override
     public String getDisplayName() {
-        return ZEPHYR_SCALE_GLOBAL_CONFIGURATION;
+        return ZEPHYR_GLOBAL_CONFIGURATION;
     }
 
     @Override

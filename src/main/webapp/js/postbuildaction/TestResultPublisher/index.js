@@ -21,7 +21,7 @@
                 filePath.value = 'target/surefire-reports/*.xml';
                 filePath.disabled = false;
             } else {
-                filePath.value = 'zephyrscale_result.json';
+                filePath.value = 'zephyr_result.json';
                 filePath.disabled = true;
             }
             filePath.onchange();

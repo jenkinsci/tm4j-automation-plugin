@@ -89,14 +89,14 @@ public class FileReaderTest {
         final File zip = new FileReader().getZipForCustomFormat(FILE_PATH);
         final List<String> files = getFileNames(zip);
         assertEquals(1, files.size());
-        assertEquals(FILE_PATH + "zephyrscale_result.json", files.get(0));
+        assertEquals(FILE_PATH + "zephyr_result.json", files.get(0));
     }
 
     @Test
     public void shouldThrowAnExceptionWhenCustomFileDoesNotExist() throws Exception {
         final FileReader fileReader = new FileReader();
         FileNotFoundException exception = assertThrows(FileNotFoundException.class, () -> fileReader.getZipForCustomFormat("not/found"));
-        assertEquals("File not found: zephyrscale_result.json.", exception.getMessage());
+        assertEquals("File not found: zephyr_result.json.", exception.getMessage());
     }
 
     private List<String> getFileNames(File zip) throws IOException {

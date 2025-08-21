@@ -101,7 +101,7 @@ public class JiraServerInstance extends Instance {
     public HttpResponse<JsonNode> publishJUnitFormatBuildResult(final String projectKey, final Boolean autoCreateTestCases, final File zip,
                                                                 final ExpandedCustomTestCycle expandedCustomTestCycle)
         throws UnirestException {
-        throw new RuntimeException("Not implemented for Zephyr Scale Server/DC");
+        throw new RuntimeException("Not implemented for Zephyr Server/DC");
     }
 
     public String getServerAddress() {

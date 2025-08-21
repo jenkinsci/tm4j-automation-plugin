@@ -1,5 +1,5 @@
 unclassified:
-  zephyr-scale:
+  zephyr:
     jiraInstances:
       - one:
         serverAddress: "http://localhost:2990/jira"
