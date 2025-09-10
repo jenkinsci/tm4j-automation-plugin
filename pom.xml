@@ -13,7 +13,7 @@
     <description>Integration with Zephyr (by SmartBear), for automatic publishing of test results.</description>
     <groupId>com.adaptavist</groupId>
     <artifactId>tm4j-automation</artifactId>
-    <version>3.3.4</version>
+    <version>3.4.0</version>
     <packaging>hpi</packaging>
 
     <licenses>
