@@ -353,7 +353,7 @@ public class JiraServerInstanceTest {
 
         assertThatExceptionOfType(RuntimeException.class)
             .isThrownBy(() -> jiraServerInstance.publishJUnitFormatBuildResult(PROJECT_KEY, true, zip, null))
-            .withMessage("Not implemented for Zephyr Scale Server/DC");
+            .withMessage("Not implemented for Zephyr Server/DC");
 
     }
 

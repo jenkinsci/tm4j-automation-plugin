@@ -1,4 +1,4 @@
 <?jelly escape-by-default='true'?>
 <div>
-    Integration with Zephyr Scale for automatic publishing of test results.
+    Integration with Zephyr for automatic publishing of test results.
 </div>
