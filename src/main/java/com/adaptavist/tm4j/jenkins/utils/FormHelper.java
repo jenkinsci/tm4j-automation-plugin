@@ -4,10 +4,10 @@ import com.adaptavist.tm4j.jenkins.exception.InvalidJwtException;
 import com.adaptavist.tm4j.jenkins.extensions.Instance;
 import com.adaptavist.tm4j.jenkins.extensions.JiraCloudInstance;
 import com.adaptavist.tm4j.jenkins.extensions.JiraServerInstance;
+import hudson.Util;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
 import hudson.util.Secret;
-import org.apache.commons.lang.StringUtils;
 
 import java.util.List;
 
@@ -20,14 +20,16 @@ public class FormHelper {
     }
 
     private FormValidation testConnectionServer(String serverAddress, String username, String password) {
-        serverAddress = StringUtils.removeEnd(serverAddress, "/");
-        if (StringUtils.isBlank(serverAddress)) {
+        if (serverAddress != null && serverAddress.endsWith("/")) {
+            serverAddress = serverAddress.substring(0, serverAddress.length() - 1);
+        }
+        if (Util.fixEmptyAndTrim(serverAddress) == null) {
             return FormValidation.error(PLEASE_ENTER_THE_SERVER_NAME);
         }
-        if (StringUtils.isBlank(username)) {
+        if (Util.fixEmptyAndTrim(username) == null) {
             return FormValidation.error(PLEASE_ENTER_THE_USERNAME);
         }
-        if (StringUtils.isBlank(password)) {
+        if (Util.fixEmptyAndTrim(password) == null) {
             return FormValidation.error(PLEASE_ENTER_THE_PASSWORD);
         }
         if (!(serverAddress.trim().startsWith("https://") || serverAddress.trim().startsWith("http://"))) {
@@ -73,30 +75,30 @@ public class FormHelper {
 
 
     public FormValidation doCheckProjectKey(String projectKey) {
-        return StringUtils.isBlank(projectKey) ? FormValidation.error(Constants.PROJECT_KEY_IS_REQUIRED) : FormValidation.ok();
+        return Util.fixEmptyAndTrim(projectKey) == null ? FormValidation.error(Constants.PROJECT_KEY_IS_REQUIRED) : FormValidation.ok();
     }
 
     public FormValidation doCheckFilePath(String filePath) {
-        return StringUtils.isBlank(filePath) ? FormValidation.error(Constants.FILE_PATH_IS_REQUIRED) : FormValidation.ok();
+        return Util.fixEmptyAndTrim(filePath) == null ? FormValidation.error(Constants.FILE_PATH_IS_REQUIRED) : FormValidation.ok();
     }
 
     public FormValidation doCheckTargetPath(String fileTarget) {
-    	return StringUtils.isBlank(fileTarget) ? FormValidation.error(Constants.FILE_TARGET_IS_REQUIRED) : FormValidation.ok();
+    	return Util.fixEmptyAndTrim(fileTarget) == null ? FormValidation.error(Constants.FILE_TARGET_IS_REQUIRED) : FormValidation.ok();
     }
 
     public FormValidation doCheckServerAddress(String serverAddress) {
-        return StringUtils.isBlank(serverAddress) ? FormValidation.error(PLEASE_ENTER_THE_SERVER_NAME) : FormValidation.ok();
+        return Util.fixEmptyAndTrim(serverAddress) == null ? FormValidation.error(PLEASE_ENTER_THE_SERVER_NAME) : FormValidation.ok();
     }
 
     public FormValidation doCheckUsername(String userName) {
-        return StringUtils.isBlank(userName) ? FormValidation.error(PLEASE_ENTER_THE_USERNAME) : FormValidation.ok();
+        return Util.fixEmptyAndTrim(userName) == null ? FormValidation.error(PLEASE_ENTER_THE_USERNAME) : FormValidation.ok();
     }
 
     public FormValidation doCheckPassword(String password) {
-        return StringUtils.isBlank(password) ? FormValidation.error(PLEASE_ENTER_THE_PASSWORD) : FormValidation.ok();
+        return Util.fixEmptyAndTrim(password) == null ? FormValidation.error(PLEASE_ENTER_THE_PASSWORD) : FormValidation.ok();
     }
 
     public FormValidation doCheckJwt(String jwt) {
-        return StringUtils.isBlank(jwt) ? FormValidation.error(PLEASE_ENTER_THE_JWT) : FormValidation.ok();
+        return Util.fixEmptyAndTrim(jwt) == null ? FormValidation.error(PLEASE_ENTER_THE_JWT) : FormValidation.ok();
     }
 }

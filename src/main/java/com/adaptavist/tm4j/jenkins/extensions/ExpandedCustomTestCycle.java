@@ -1,7 +1,7 @@
 package com.adaptavist.tm4j.jenkins.extensions;
 
-import static org.apache.commons.lang.StringUtils.isBlank;
 
+import hudson.Util;
 import com.adaptavist.tm4j.jenkins.utils.GsonUtils;
 import com.google.gson.reflect.TypeToken;
 import hudson.EnvVars;
@@ -57,15 +57,15 @@ public class ExpandedCustomTestCycle {
     }
 
     public boolean isEmpty() {
-        return isBlank(name)
-            && isBlank(description)
+        return Util.fixEmptyAndTrim(name) == null
+            && Util.fixEmptyAndTrim(description) == null
             && (customFields == null || customFields.size() == 0)
             && (jiraProjectVersion == null || jiraProjectVersion == 0)
             && (folderId == null || folderId == 0);
     }
 
     private String setStringIfNotBlank(final String value) {
-        return isBlank(value)
+        return Util.fixEmptyAndTrim(value) == null
             ? null
             : value;
     }
