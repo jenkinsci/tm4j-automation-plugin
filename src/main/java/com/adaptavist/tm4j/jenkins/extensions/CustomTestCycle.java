@@ -1,7 +1,7 @@
 package com.adaptavist.tm4j.jenkins.extensions;
 
-import static org.apache.commons.lang.StringUtils.isBlank;
 
+import hudson.Util;
 import hudson.EnvVars;
 import org.kohsuke.stapler.DataBoundConstructor;
 
@@ -48,11 +48,11 @@ public class CustomTestCycle {
     }
 
     public boolean isEmpty() {
-        return isBlank(name)
-            && isBlank(description)
-            && isBlank(customFields)
-            && isBlank(jiraProjectVersion)
-            && isBlank(folderId);
+        return Util.fixEmptyAndTrim(name) == null
+            && Util.fixEmptyAndTrim(description) == null
+            && Util.fixEmptyAndTrim(customFields) == null
+            && Util.fixEmptyAndTrim(jiraProjectVersion) == null
+            && Util.fixEmptyAndTrim(folderId) == null;
     }
 
     public ExpandedCustomTestCycle expandEnvVars(final EnvVars envVars) {

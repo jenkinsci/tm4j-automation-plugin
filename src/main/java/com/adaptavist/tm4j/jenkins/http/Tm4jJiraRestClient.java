@@ -11,7 +11,6 @@ import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import hudson.FilePath;
-import org.apache.commons.lang.StringUtils;
 import org.json.JSONObject;
 
 import java.io.*;
@@ -20,6 +19,7 @@ import java.util.List;
 
 import static com.adaptavist.tm4j.jenkins.utils.Constants.ERROR;
 import static com.adaptavist.tm4j.jenkins.utils.Constants.INFO;
+import hudson.Util;
 
 public class Tm4jJiraRestClient {
 
@@ -181,7 +181,7 @@ public class Tm4jJiraRestClient {
             throw new IllegalStateException(Constants.THERE_ARE_NO_JIRA_INSTANCES_CONFIGURED);
         }
         for (Instance jiraInstance : jiraInstances) {
-            if (StringUtils.isNotBlank(jiraInstance.name()) && jiraInstance.name().trim().equals(name)) {
+            if (Util.fixEmptyAndTrim(jiraInstance.name()) != null && jiraInstance.name().trim().equals(name)) {
                 return jiraInstance;
             }
         }
