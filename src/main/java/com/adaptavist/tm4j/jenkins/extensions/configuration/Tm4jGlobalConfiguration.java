@@ -10,7 +10,6 @@ import hudson.util.Secret;
 import jenkins.model.GlobalConfiguration;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-import org.apache.commons.lang.StringUtils;
 import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
@@ -22,6 +21,7 @@ import java.text.MessageFormat;
 import java.util.*;
 
 import static com.adaptavist.tm4j.jenkins.utils.Constants.ZEPHYR_GLOBAL_CONFIGURATION;
+import hudson.Util;
 
 @Extension
 @Symbol("zephyr")
@@ -203,7 +203,11 @@ public class Tm4jGlobalConfiguration extends GlobalConfiguration {
         String serverAddress = formJiraInstance.getServerAddress();
         String username = formJiraInstance.getUsername();
         Secret password = formJiraInstance.getPassword();
-        jiraServerInstance.setServerAddress(StringUtils.removeEnd(serverAddress.trim(), "/"));
+        String trimmedServerAddress = serverAddress.trim();
+        if (trimmedServerAddress.endsWith("/")) {
+            trimmedServerAddress = trimmedServerAddress.substring(0, trimmedServerAddress.length() - 1);
+        }
+        jiraServerInstance.setServerAddress(trimmedServerAddress);
         jiraServerInstance.setUsername(username.trim());
         jiraServerInstance.setPassword(password);
         jiraServerInstance.setValue(SERVER_TYPE);
@@ -232,13 +236,13 @@ public class Tm4jGlobalConfiguration extends GlobalConfiguration {
         String serverAddress = jiraInstance.getServerAddress();
         String username = jiraInstance.getUsername();
         Secret password = jiraInstance.getPassword();
-        if (StringUtils.isBlank(serverAddress)) {
+        if (Util.fixEmptyAndTrim(serverAddress) == null) {
             throw new Exception(Constants.PLEASE_ENTER_THE_SERVER_NAME);
         }
-        if (StringUtils.isBlank(username)) {
+        if (Util.fixEmptyAndTrim(username) == null) {
             throw new Exception(Constants.PLEASE_ENTER_THE_USERNAME);
         }
-        if (StringUtils.isBlank(password.getPlainText())) {
+        if (Util.fixEmptyAndTrim(password.getPlainText()) == null) {
             throw new Exception(Constants.PLEASE_ENTER_THE_PASSWORD);
         }
 
@@ -246,7 +250,7 @@ public class Tm4jGlobalConfiguration extends GlobalConfiguration {
 
     private void validateCloudInstance(JiraInstance jiraInstance) throws Exception {
         Secret jwt = jiraInstance.getJwt();
-        if (StringUtils.isBlank(jwt.getPlainText())) {
+        if (Util.fixEmptyAndTrim(jwt.getPlainText()) == null) {
             throw new Exception(Constants.PLEASE_ENTER_THE_JWT);
         }
 
